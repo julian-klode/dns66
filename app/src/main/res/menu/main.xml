@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_menu_save"
+        android:orderInCategory="100"
+        android:title="@string/action_save"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_load_defaults"
+        android:orderInCategory="100"
+        android:title="@string/load_defaults"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_import"
+        android:orderInCategory="100"
+        android:title="@string/action_import"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        android:title="@string/action_export"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_menu_info"
+        android:orderInCategory="100"
+        android:title="@string/action_about"
+        app:showAsAction="never" />
+</menu>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">AdBlocking and Custom DNS Servers</string>
+
+    <string name="start_description">Long press to turn on or off</string>
+    <string name="custom_dns">Enable custom DNS servers</string>
+    <string name="enable_hosts">Enable Domain Filtering</string>
+    <string name="start_tab">Start / Stop</string>
+    <string name="hosts_tab">Domain Filters</string>
+    <string name="dns_tab">DNS Servers</string>
+    <string name="action_export">Export</string>
+    <string name="action_import">Import</string>
+    <string name="action_save">Save</string>
+    <string name="action_restore_defaults">Restore Default Settings</string>
+    <string name="load_defaults">Load default settings</string>
+    <string name="action_about">About</string>
+    <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="switch_onboot">Automatically start on boot</string>
+    <string name="running">Running</string>
+    <string name="activity_edit">Edit Item</string>
+    <string name="title">Title</string>
+    <string name="location">Location (URL or host)</string>
+    <string name="action">Action</string>
+    <string-array name="item_states">
+        <item>Deny</item>
+        <item>Allow</item>
+        <item>Ignore</item>
+    </string-array>>
+</resources>

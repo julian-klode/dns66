@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "autoStart": true,
+  "dnsServers": {
+    "enabled": true,
+    "items": [
+      {
+        "title": "Chaos Computer Club (DE)",
+        "location": "213.73.91.35",
+        "state": 1
+      },
+      {
+        "title": "Digitalcourage e.V. (DE)",
+        "location": "85.214.20.141",
+        "state": 1
+      },
+      {
+        "title": "AS250.NET (DE)",
+        "location": "194.150.168.168",
+        "state": 1
+      },
+      {
+        "title": "ISC (US)",
+        "location": "204.152.184.76",
+        "state": 0
+      }
+    ]
+  },
+  "hosts": {
+    "enabled": true,
+    "items": [
+      {
+        "title": "Adaway hosts file",
+        "location": "https://adaway.org/hosts.txt",
+        "state": 0
+      },
+      {
+        "title": "Dan Pollock's hosts file",
+        "location": "http://someonewhocares.org/hosts/hosts",
+        "state": 0
+      },
+      {
+        "title": "hpHosts’s Ad and tracking servers",
+        "location": "http://hosts-file.net/ad_servers.txt",
+        "state": 2
+      },
+      {
+        "title": "Long-lived malware domains",
+        "location": "http://mirror1.malwaredomains.com/files/immortal_domains.txt",
+        "state": 2
+      },
+      {
+        "title": "Malware Domain List",
+        "location": "http://www.malwaredomainlist.com/hostslist/hosts.txt",
+        "state": 0
+      },
+      {
+        "title": "Malware domains",
+        "location": "http://mirror1.malwaredomains.com/files/justdomains",
+        "state": 2
+      },
+      {
+        "title": "MVPS HOSTS",
+        "location": "http://winhelp2002.mvps.org/hosts.txt",
+        "state": 0
+      },
+      {
+        "title": "Peter Lowe’s Ad server list",
+        "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
+        "state": 0
+      }
+    ]
+  }
+}
