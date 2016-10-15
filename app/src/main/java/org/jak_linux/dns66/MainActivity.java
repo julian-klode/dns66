@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         if (item != null) {
             editIntent.putExtra("ITEM_TITLE", item.title);
             editIntent.putExtra("ITEM_LOCATION", item.location);
-            editIntent.putExtra("ITEM_STATE", item.location);
+            editIntent.putExtra("ITEM_STATE", item.state);
         }
         startActivityForResult(editIntent, REQUEST_ITEM_EDIT);
     }
