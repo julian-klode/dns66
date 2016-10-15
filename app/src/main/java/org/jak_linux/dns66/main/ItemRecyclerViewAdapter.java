@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.jak_linux.dns66.Configuration;
+import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.ItemChangedListener;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
@@ -87,6 +88,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
             if (v == iconView) {
                 item.state = (item.state + 1) % 3;
                 ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
             } else if (v == view) {
                 // Start edit activity
                 MainActivity main = (MainActivity) v.getContext();
@@ -95,6 +97,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                             public void onItemChanged(Configuration.Item changedItem) {
                                 items.set(position, changedItem);
                                 ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                                FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
                             }
                         }
                 );

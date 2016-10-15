@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import org.jak_linux.dns66.Configuration;
+import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.ItemChangedListener;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
@@ -60,6 +61,7 @@ public class HostsFragment extends Fragment {
                     public void onItemChanged(Configuration.Item item) {
                         MainActivity.config.hosts.items.add(item);
                         mAdapter.notifyItemInserted(mAdapter.getItemCount() - 1);
+                        FileHelper.writeSettings(getContext(), MainActivity.config);
                     }
                 });
             }
@@ -71,6 +73,7 @@ public class HostsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.config.hosts.enabled = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
 

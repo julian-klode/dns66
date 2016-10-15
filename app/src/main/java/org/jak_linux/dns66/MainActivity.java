@@ -92,16 +92,15 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_save:
-                FileHelper.writeSettings(this, config);
-                break;
             case R.id.action_restore:
                 config = FileHelper.loadPreviousSettings(this);
+                FileHelper.writeSettings(this, MainActivity.config);
                 reload();
                 break;
             case R.id.action_load_defaults:
                 config = FileHelper.loadDefaultSettings(this);
                 reload();
+                FileHelper.writeSettings(this, MainActivity.config);
                 break;
             case R.id.action_import:
                 Intent intent = new Intent()
@@ -142,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Cannot read file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
             reload();
+            FileHelper.writeSettings(this, MainActivity.config);
         }
         if (requestCode == REQUEST_FILE_STORE && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData(); //The uri with the location of the file

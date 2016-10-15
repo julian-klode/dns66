@@ -9,6 +9,10 @@ package org.jak_linux.dns66.main;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+
+import org.jak_linux.dns66.FileHelper;
+import org.jak_linux.dns66.MainActivity;
 
 import java.util.Collections;
 
@@ -39,4 +43,11 @@ class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
         mAdapter.items.remove(viewHolder.getAdapterPosition());
         mAdapter.notifyDataSetChanged();
     }
+
+    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
+        Log.d("ItemTouchHelperCallback", "clearView: Done with interaction. Saving settings.");
+        FileHelper.writeSettings(viewHolder.itemView.getContext(), MainActivity.config);
+    }
+
 }

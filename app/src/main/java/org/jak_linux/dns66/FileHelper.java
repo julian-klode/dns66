@@ -3,6 +3,7 @@ package org.jak_linux.dns66;
 import android.content.Context;
 import android.util.JsonReader;
 import android.util.JsonWriter;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -75,6 +76,7 @@ public final class FileHelper {
     }
 
     public static void writeSettings(Context context, Configuration config) {
+        Log.d("FileHelper", "writeSettings: Writing the settings file");
         try {
             JsonWriter writer = new JsonWriter(new OutputStreamWriter(FileHelper.openWrite(context, "settings.json")));
             config.write(writer);
