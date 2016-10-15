@@ -54,7 +54,7 @@ public class HostsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity main = (MainActivity) getActivity();
+                final MainActivity main = (MainActivity) getActivity();
                 main.editItem(null, new ItemChangedListener() {
                     @Override
                     public void onItemChanged(Configuration.Item item) {

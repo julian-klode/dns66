@@ -27,6 +27,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -45,12 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            config = new Configuration();
-            try {
-                config.read(new JsonReader(new InputStreamReader(getAssets().open("defaults.json"))));
-            } catch (IOException exception) {
-                Toast.makeText(this, "Cannot read configuration: " + exception, Toast.LENGTH_SHORT).show();
-            }
+            config = FileHelper.loadCurrentSettings(this);
         }
         setContentView(R.layout.activity_main);
 
@@ -96,13 +92,15 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_save:
+                FileHelper.writeSettings(this, config);
+                break;
+            case R.id.action_restore:
+                config = FileHelper.loadPreviousSettings(this);
+                reload();
+                break;
             case R.id.action_load_defaults:
-                config = new Configuration();
-                try {
-                    config.read(new JsonReader(new InputStreamReader(getAssets().open("defaults.json"))));
-                } catch (IOException exception) {
-                    Toast.makeText(this, "Cannot read configuration: " + exception, Toast.LENGTH_SHORT).show();
-                }
+                config = FileHelper.loadDefaultSettings(this);
                 reload();
                 break;
             case R.id.action_import:

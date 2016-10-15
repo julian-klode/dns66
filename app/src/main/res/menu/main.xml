@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_restore"
+        android:icon="@drawable/ic_restore"
+        android:orderInCategory="100"
+        android:title="@string/action_restore"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_save"
         android:icon="@drawable/ic_menu_save"
         android:orderInCategory="100"

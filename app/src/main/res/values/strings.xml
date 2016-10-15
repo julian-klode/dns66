@@ -22,6 +22,11 @@
     <string name="title">Title</string>
     <string name="location">Location (URL or host)</string>
     <string name="action">Action</string>
+    <string name="cannot_restore_previous_config">Cannot restore previous configuration: %s</string>
+    <string name="cannot_read_config">Cannot read configuration: %s</string>
+    <string name="cannot_load_default_config">Cannot read default settings: %s - This should not happen</string>
+    <string name="action_restore">Restore previous configuration</string>
+    <string name="cannot_write_config">Cannot write configuration: %s</string>
     <string-array name="item_states">
         <item>Deny</item>
         <item>Allow</item>
