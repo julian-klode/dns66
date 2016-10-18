@@ -136,9 +136,10 @@ public class MainActivity extends AppCompatActivity {
         for (Configuration.Item item : config.hosts.items) {
             File file = FileHelper.getItemFile(this, item);
 
-            if (file != null) {
+            if (file != null && item.state != 2) {
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.location));
                 Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
+                file.delete();
                 request.setDestinationUri(Uri.fromFile(file));
                 request.setTitle(item.title);
                 request.setVisibleInDownloadsUi(false);
