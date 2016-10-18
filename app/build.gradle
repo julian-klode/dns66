@@ -29,5 +29,11 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.aurelhubert:ahbottomnavigation:1.5.1'
+
+    // Proxy stuff
+    compile 'org.pcap4j:pcap4j-core:1.6.4'
+    compile 'org.pcap4j:pcap4j-packetfactory-propertiesbased:1.6.4'
+    compile 'dnsjava:dnsjava:2.1.7'
+
     testCompile 'junit:junit:4.12'
 }

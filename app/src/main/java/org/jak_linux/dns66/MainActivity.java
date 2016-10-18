@@ -8,10 +8,15 @@
 package org.jak_linux.dns66;
 
 import android.app.DownloadManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,24 +25,34 @@ import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
+import org.jak_linux.dns66.vpn.AdVpnService;
+import org.jak_linux.dns66.vpn.Command;
 
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_START_VPN = 4;
     private static final int REQUEST_FILE_OPEN = 1;
     private static final int REQUEST_FILE_STORE = 2;
     private static final int REQUEST_ITEM_EDIT = 3;
-
     public static Configuration config;
     private ViewPager viewPager;
+    BroadcastReceiver vpnServiceBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int str_id = intent.getIntExtra(AdVpnService.VPN_UPDATE_STATUS_EXTRA, R.string.notification_stopped);
+            updateStatus(str_id);
+        }
+    };
     private AHBottomNavigation bottomNavigation;
     private ItemChangedListener itemChangedListener = null;
 
@@ -149,8 +164,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_START_VPN && resultCode == RESULT_OK) {
+            Intent intent = new Intent(this, AdVpnService.class);
+            intent.putExtra("COMMAND", Command.START.ordinal());
+            intent.putExtra("NOTIFICATION_INTENT",
+                    PendingIntent.getActivity(this, 0,
+                            new Intent(this, MainActivity.class), 0));
+            startService(intent);
+        }
         if (requestCode == REQUEST_FILE_OPEN && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData(); //The uri with the location of the file
 
@@ -190,6 +213,28 @@ public class MainActivity extends AppCompatActivity {
             item.state = data.getIntExtra("ITEM_STATE", 0);
             this.itemChangedListener.onItemChanged(item);
         }
+    }
+
+    private void updateStatus(int status) {
+        if (viewPager.getChildAt(0) == null)
+            return;
+        TextView stateText = (TextView) viewPager.getChildAt(0).getRootView().findViewById(R.id.state_textview);
+        if (stateText != null)
+            stateText.setText(getString(AdVpnService.vpnStatusToTextId(status)));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(vpnServiceBroadcastReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatus(AdVpnService.vpnStatus);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(vpnServiceBroadcastReceiver, new IntentFilter(AdVpnService.VPN_UPDATE_STATUS_INTENT));
     }
 
     private void reload() {

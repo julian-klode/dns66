@@ -12,13 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:id="@+id/start_button"
         app:srcCompat="@drawable/ic_menu_start" />
 
     <TextView
         android:id="@+id/state_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/running"
+        android:text="@string/notification_stopped"
         android:textAlignment="center" />
 
     <TextView
