@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.location));
                 Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
                 request.setDestinationUri(Uri.fromFile(file));
+                request.setTitle(item.title);
                 dm.enqueue(request);
             }
         }
