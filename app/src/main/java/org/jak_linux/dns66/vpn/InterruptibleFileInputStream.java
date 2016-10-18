@@ -44,8 +44,17 @@ public class InterruptibleFileInputStream extends FileInputStream {
         blockFd.events = (short) (OsConstants.POLLHUP | OsConstants.POLLERR);
 
         StructPollfd[] pollArray = {mainFd, blockFd};
-        // TODO Handle EINTER (the irony...)
-        Os.poll(pollArray, -1);
+
+        while (true) {
+            try {
+                Os.poll(pollArray, -1);
+                break;
+            } catch (ErrnoException e) {
+                if (e.errno != OsConstants.EINTR)
+                    throw e;
+            }
+        }
+
 
         if (pollArray[1].revents != 0) {
             return BlockInterrupt.INTERRUPT;
