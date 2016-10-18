@@ -26,11 +26,9 @@ import org.jak_linux.dns66.MainActivity;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
-import org.xbill.DNS.ARecord;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Rcode;
-import org.xbill.DNS.Section;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,15 +38,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 public class AdVpnThread implements Runnable {
@@ -188,24 +181,20 @@ public class AdVpnThread implements Runnable {
         // Allocate the buffer for a single packet.
         byte[] packet = new byte[32767];
 
-        // Like this `Executors.newCachedThreadPool()`, except with an upper limit
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 32, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-
         try {
             // Now we are connected. Set the flag and show the message.
             if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
-            while (!readPacketFromDevice(pfd, inputStream, packet, executor))
+            while (!readPacketFromDevice(pfd, inputStream, packet))
                 ;
         } finally {
-            executor.shutdownNow();
             pfd.close();
             vpnFileDescriptor = null;
         }
     }
 
-    private boolean readPacketFromDevice(ParcelFileDescriptor pfd, InterruptibleFileInputStream inputStream, byte[] packet, ThreadPoolExecutor executor) throws IOException {
+    private boolean readPacketFromDevice(ParcelFileDescriptor pfd, InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
         // Read the outgoing packet from the input stream.
         int length;
         try {
@@ -231,17 +220,8 @@ public class AdVpnThread implements Runnable {
 
         Log.i(TAG, "Starting new thread to handle dns request" +
                 " (active = " + executor.getActiveCount() + " backlog = " + executor.getQueue().size());
-        // Start a new thread to handle the DNS request
-        try {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    handleDnsRequest(readPacket, dnsSocket, outFd);
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            throw new VpnNetworkException("High backlog in dns thread pool executor, network probably stalled");
-        }
+
+        handleDnsRequest(readPacket, dnsSocket, outFd);
         return false;
     }
 
