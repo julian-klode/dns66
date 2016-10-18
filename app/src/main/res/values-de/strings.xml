@@ -24,5 +24,7 @@
         <item>Verbieten</item>
         <item>Erlauben</item>
         <item>Ignorieren</item>
-    </string-array>>
+    </string-array>
+    <string name="action_refresh">Filterlisten aktualisieren</string>
+    <string name="action_restore">Vorherige Einstellungen wiederherstellen</string>>
 </resources>

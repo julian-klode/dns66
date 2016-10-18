@@ -13,6 +13,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by jak on 15/10/16.
@@ -83,6 +88,24 @@ public final class FileHelper {
             writer.close();
         } catch (IOException e) {
             Toast.makeText(context, context.getString(R.string.cannot_write_config, e.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Returns a file where the item should be downloaded to.
+     * @param context
+     * @param item
+     * @return File or null, if that item is not downloadable.
+     */
+    public static File getItemFile(Context context, Configuration.Item item) {
+        if (!item.location.contains("/"))
+            return null;
+
+        try {
+            return new File(context.getExternalFilesDir(null), java.net.URLEncoder.encode(item.location, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

@@ -27,6 +27,7 @@
     <string name="cannot_load_default_config">Cannot read default settings: %s - This should not happen</string>
     <string name="action_restore">Restore previous configuration</string>
     <string name="cannot_write_config">Cannot write configuration: %s</string>
+    <string name="action_refresh">Refresh host files</string>
     <string-array name="item_states">
         <item>Deny</item>
         <item>Allow</item>

@@ -7,6 +7,7 @@
  */
 package org.jak_linux.dns66;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +27,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 FileHelper.writeSettings(this, MainActivity.config);
                 reload();
                 break;
+            case R.id.action_refresh:
+                refresh();
+                break;
             case R.id.action_load_defaults:
                 config = FileHelper.loadDefaultSettings(this);
                 reload();
@@ -127,6 +130,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void refresh() {
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
+        for (Configuration.Item item : config.hosts.items) {
+            File file = FileHelper.getItemFile(this, item);
+
+            if (file != null) {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.location));
+                Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
+                request.setDestinationUri(Uri.fromFile(file));
+                dm.enqueue(request);
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -155,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 try {
                     writer.close();
-                } catch(Exception e) {
+                } catch (Exception e) {
 
                 }
             }
@@ -178,7 +196,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Start the item editor activity
-     * @param item an item to edit, may be null
+     *
+     * @param item     an item to edit, may be null
      * @param listener A listener that will be called once the editor returns
      */
     public void editItem(Configuration.Item item, ItemChangedListener listener) {
