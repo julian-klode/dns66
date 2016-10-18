@@ -36,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -178,6 +179,9 @@ public class AdVpnThread implements Runnable {
         InterruptibleFileInputStream inputStream = new InterruptibleFileInputStream(pfd.getFileDescriptor());
         interruptible = inputStream;
 
+        // Packets received need to be written to this output stream.
+        FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+
         // Allocate the buffer for a single packet.
         byte[] packet = new byte[32767];
 
@@ -186,7 +190,7 @@ public class AdVpnThread implements Runnable {
             if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
-            while (!readPacketFromDevice(pfd, inputStream, packet))
+            while (!readPacketFromDevice(outFd, inputStream, packet))
                 ;
         } finally {
             pfd.close();
@@ -194,7 +198,7 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean readPacketFromDevice(ParcelFileDescriptor pfd, InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
+    private boolean readPacketFromDevice(OutputStream outFd, InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
         // Read the outgoing packet from the input stream.
         int length;
         try {
@@ -211,21 +215,15 @@ public class AdVpnThread implements Runnable {
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
 
-        // Packets received need to be written to this output stream.
-        final FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
-
         // Packets to be sent to the real DNS server will need to be protected from the VPN
         final DatagramSocket dnsSocket = new DatagramSocket();
         vpnService.protect(dnsSocket);
-
-        Log.i(TAG, "Starting new thread to handle dns request" +
-                " (active = " + executor.getActiveCount() + " backlog = " + executor.getQueue().size());
 
         handleDnsRequest(readPacket, dnsSocket, outFd);
         return false;
     }
 
-    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket, FileOutputStream outFd) {
+    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket, OutputStream outFd) {
         try {
             IpV4Packet parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
 
@@ -273,7 +271,7 @@ public class AdVpnThread implements Runnable {
 
     }
 
-    private void handleRawDnsResponse(FileOutputStream outFd, IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
+    private void handleRawDnsResponse(OutputStream outFd, IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
         byte[] response;
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
@@ -282,7 +280,7 @@ public class AdVpnThread implements Runnable {
         handleDnsResponse(outFd, parsedPacket, response);
     }
 
-    private void handleDnsResponse(FileOutputStream outFd, IpV4Packet parsedPacket, byte[] response) {
+    private void handleDnsResponse(OutputStream outFd, IpV4Packet parsedPacket, byte[] response) {
         UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
         IpV4Packet ipOutPacket = new IpV4Packet.Builder(parsedPacket)
                 .srcAddr(parsedPacket.getHeader().getDstAddr())
