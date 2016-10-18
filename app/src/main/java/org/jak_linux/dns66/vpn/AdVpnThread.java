@@ -331,7 +331,6 @@ public class AdVpnThread implements Runnable {
         for (Configuration.Item item : config.hosts.items) {
             File file = FileHelper.getItemFile(vpnService, item);
 
-            Log.d(TAG, "loadBlockedHosts: Reading: " + file.getAbsolutePath());
             FileReader reader = null;
             if (file == null || item.state == 2)
                 continue;
@@ -341,8 +340,10 @@ public class AdVpnThread implements Runnable {
                 e.printStackTrace();
                 continue;
             }
+
             int count = 0;
             try {
+                Log.d(TAG, "loadBlockedHosts: Reading: " + file.getAbsolutePath());
                 try (BufferedReader br = new BufferedReader(reader)) {
                     String line;
                     while ((line = br.readLine()) != null) {
@@ -356,7 +357,10 @@ public class AdVpnThread implements Runnable {
                             String[] split = s.split("[ \t]+");
                             if (split.length == 2 && (split[0].equals("127.0.0.1") || split[0].equals("0.0.0.0"))) {
                                 count += 1;
-                                blockedHosts.add(split[1].toLowerCase());
+                                if (item.state == 0)
+                                    blockedHosts.add(split[1].toLowerCase());
+                                else if (item.state == 1)
+                                    blockedHosts.remove(split[1].toLowerCase());
                             }
                         }
 
