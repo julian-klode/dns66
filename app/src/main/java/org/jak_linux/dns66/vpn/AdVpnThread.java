@@ -250,7 +250,7 @@ public class AdVpnThread implements Runnable {
             pollFd.events = (short) OsConstants.POLLIN;
         }
 
-        Log.i(TAG, "doOne: Polling " + polls.length + " file descriptors");
+        Log.d(TAG, "doOne: Polling " + polls.length + " file descriptors");
         int result = FileHelper.poll(polls, -1);
         if (blockFd.revents != 0) {
             Log.i(TAG, "Told to stop VPN");
@@ -262,7 +262,7 @@ public class AdVpnThread implements Runnable {
             writeToDevice(outFd);
         }
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
-            Log.i(TAG, "Read from device");
+            Log.d(TAG, "Read from device");
             if (!readPacketFromDevice(inputStream, packet))
                 return false;
         }
@@ -315,7 +315,7 @@ public class AdVpnThread implements Runnable {
             IpV4Packet parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
 
             if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
-                Log.i(TAG, "Ignoring unknown packet type ${parsedPacket.payload}");
+                Log.i(TAG, "Ignoring unknown packet type " + parsedPacket.getPayload());
                 return;
             }
 
