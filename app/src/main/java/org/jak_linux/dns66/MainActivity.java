@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
                 request.setDestinationUri(Uri.fromFile(file));
                 request.setTitle(item.title);
+                request.setVisibleInDownloadsUi(false);
                 dm.enqueue(request);
             }
         }
