@@ -192,6 +192,7 @@ public class AdVpnThread implements Runnable {
                 ;
         } finally {
             pfd.close();
+            outFd.close();
         }
     }
 
@@ -259,11 +260,6 @@ public class AdVpnThread implements Runnable {
             //ExceptionHandler.saveException(e, Thread.currentThread(), null);
         } finally {
             dnsSocket.close();
-            try {
-                outFd.close();
-            } catch (IOException e) {
-                Log.w(TAG, "handleDnsRequest: Ignoring failure to close outFd: " + e.getMessage());
-            }
         }
 
     }
