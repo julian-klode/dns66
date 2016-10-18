@@ -54,6 +54,9 @@ public class AdVpnThread implements Runnable {
     private static final String TAG = "AdVpnThread";
     private static final int MIN_RETRY_TIME = 5;
     private static final int MAX_RETRY_TIME = 2 * 60;
+    /* Maximum number of responses we want to wait for */
+    private static final int DNS_MAXIMUM_WAITING = 1024;
+    private static final long DNS_TIMEOUT_SEC = 10;
 
     private VpnService vpnService;
     private Notify notify;
@@ -64,8 +67,20 @@ public class AdVpnThread implements Runnable {
     private Set<String> blockedHosts = new HashSet<>();
     /* Data to be written to the device */
     private Queue<byte[]> deviceWrites = new LinkedList<>();
-    private LinkedHashMap<DatagramSocket, DatagramPacket> dnsOut = new LinkedHashMap<>();
-    private LinkedHashMap<DatagramSocket, IpV4Packet> dnsIn = new LinkedHashMap<>();
+    // HashMap that keeps an upper limit of packets
+    private LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>> dnsIn = new LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>>() {
+        @Override
+        protected boolean removeEldestEntry(Entry<DatagramSocket, TimedValue<IpV4Packet>> eldest) {
+            boolean timeout = eldest.getValue().ageSeconds() > DNS_TIMEOUT_SEC;
+            boolean overflow = size() > DNS_MAXIMUM_WAITING;
+            if (timeout || overflow) {
+                Log.d(TAG, "removeEldestEntry: Removing entry due to reason timeout=" + timeout + ", overflow=" + overflow);
+                eldest.getKey().close();
+                return true;
+            }
+            return false;
+        }
+    };
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -247,8 +262,8 @@ public class AdVpnThread implements Runnable {
         for (int i = 0; i < others.length; i++) {
             if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
                 DatagramSocket socket = others[i];
-                IpV4Packet parsedPacket = dnsIn.get(socket);
-                Log.i(TAG, "Read from DNS socket" + socket);
+                IpV4Packet parsedPacket = dnsIn.get(socket).get();
+                Log.d(TAG, "Read from DNS socket" + socket);
                 dnsIn.remove(socket);
                 handleRawDnsResponse(parsedPacket, socket);
                 socket.close();
@@ -315,7 +330,7 @@ public class AdVpnThread implements Runnable {
                 DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, dnsServer, 53);
 
                 dnsSocket.send(outPacket);
-                dnsIn.put(dnsSocket, parsedPacket);
+                dnsIn.put(dnsSocket, new TimedValue<IpV4Packet>(parsedPacket));
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
@@ -454,6 +469,24 @@ public class AdVpnThread implements Runnable {
     public static class VpnNetworkException extends RuntimeException {
         public VpnNetworkException(String s) {
             super(s);
+        }
+    }
+
+    private static class TimedValue<T> {
+        private T value;
+        private long time;
+
+        public TimedValue(T value) {
+            this.value = value;
+            this.time = System.currentTimeMillis();
+        }
+
+        public long ageSeconds() {
+            return (System.currentTimeMillis() - time) / 1000;
+        }
+
+        public T get() {
+            return value;
         }
     }
 }
