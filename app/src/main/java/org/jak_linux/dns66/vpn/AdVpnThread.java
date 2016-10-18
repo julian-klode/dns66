@@ -19,6 +19,7 @@ import android.net.NetworkInfo;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 import android.system.ErrnoException;
+import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructPollfd;
 import android.util.Log;
@@ -35,6 +36,8 @@ import org.xbill.DNS.Rcode;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -63,7 +66,8 @@ public class AdVpnThread implements Runnable {
 
     private InetAddress dnsServer = null;
     private Thread thread = null;
-    private InterruptibleFileInputStream interruptible = null;
+    private FileDescriptor mBlockFd = null;
+    private FileDescriptor mInterruptFd = null;
     private Set<String> blockedHosts = new HashSet<>();
     /* Data to be written to the device */
     private Queue<byte[]> deviceWrites = new LinkedList<>();
@@ -115,9 +119,10 @@ public class AdVpnThread implements Runnable {
     public void stopThread() {
         Log.i(TAG, "Stopping Vpn Thread");
         if (thread != null) thread.interrupt();
-        if (interruptible != null) try {
-            interruptible.interrupt();
-        } catch (IOException e) {
+        if (mBlockFd != null) try {
+            Os.close(mBlockFd);
+            mBlockFd = null;
+        } catch (ErrnoException e) {
             e.printStackTrace();
         }
         try {
@@ -197,12 +202,14 @@ public class AdVpnThread implements Runnable {
         // Authenticate and configure the virtual network interface.
         ParcelFileDescriptor pfd = configure();
 
-        // Packets to be sent are queued in this input stream.
-        InterruptibleFileInputStream inputStream = new InterruptibleFileInputStream(pfd.getFileDescriptor());
-        interruptible = inputStream;
-
-        // Packets received need to be written to this output stream.
+        // Read and write views of the tun device
+        FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
         FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+
+        // A pipe we can interrupt the poll() call with by closing the interruptFd end
+        FileDescriptor[] pipes = Os.pipe();
+        mInterruptFd = pipes[0];
+        mBlockFd = pipes[1];
 
         // Allocate the buffer for a single packet.
         byte[] packet = new byte[32767];
@@ -220,12 +227,12 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean doOne(InterruptibleFileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException {
+    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException {
         StructPollfd deviceFd = new StructPollfd();
         deviceFd.fd = inputStream.getFD();
         deviceFd.events = (short) OsConstants.POLLIN;
         StructPollfd blockFd = new StructPollfd();
-        blockFd.fd = inputStream.mBlockFd;
+        blockFd.fd = mBlockFd;
         blockFd.events = (short) (OsConstants.POLLHUP | OsConstants.POLLERR);
 
         if (!deviceWrites.isEmpty())
@@ -281,19 +288,16 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean readPacketFromDevice(InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
+    private boolean readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws IOException {
         // Read the outgoing packet from the input stream.
         int length;
-        try {
-            length = inputStream.read(packet);
-        } catch (InterruptibleFileInputStream.InterruptedStreamException e) {
-            Log.i(TAG, "Told to stop VPN");
-            return false;
-        }
+
+        length = inputStream.read(packet);
 
         if (length == 0) {
             // TODO: Possibly change to exception
             Log.w(TAG, "Got empty packet!");
+            return true;
         }
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
