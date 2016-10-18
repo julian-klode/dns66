@@ -29,6 +29,7 @@ import org.pcap4j.packet.UnknownPacket;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;
+import org.xbill.DNS.Rcode;
 import org.xbill.DNS.Section;
 
 import java.io.BufferedReader;
@@ -273,10 +274,7 @@ public class AdVpnThread implements Runnable {
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
-                dnsMsg.addRecord(new ARecord(dnsMsg.getQuestion().getName(),
-                        dnsMsg.getQuestion().getDClass(),
-                        10l,
-                        Inet4Address.getLocalHost()), Section.ANSWER);
+                dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
                 handleDnsResponse(outFd, parsedPacket, dnsMsg.toWire());
             }
         } catch (VpnNetworkException e) {
