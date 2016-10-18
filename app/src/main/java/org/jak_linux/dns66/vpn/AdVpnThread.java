@@ -44,6 +44,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,7 +65,6 @@ public class AdVpnThread implements Runnable {
     private VpnService vpnService;
     private Notify notify;
 
-    private InetAddress dnsServer = null;
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -91,7 +91,8 @@ public class AdVpnThread implements Runnable {
         this.notify = notify;
     }
 
-    public static InetAddress getDnsServers(Context context) {
+    public static Set<InetAddress> getDnsServers(Context context) {
+        Set<InetAddress> out = new HashSet<>();
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(VpnService.CONNECTIVITY_SERVICE);
         // Seriously, Android? Seriously?
         NetworkInfo activeInfo = cm.getActiveNetworkInfo();
@@ -104,9 +105,9 @@ public class AdVpnThread implements Runnable {
                     || ni.getSubtype() != activeInfo.getSubtype())
                 continue;
             for (InetAddress address : cm.getLinkProperties(nw).getDnsServers())
-                return address;
+                out.add(address);
         }
-        throw new VpnNetworkException("No DNS Server");
+        return out;
     }
 
     public void startThread() {
@@ -319,7 +320,8 @@ public class AdVpnThread implements Runnable {
                 return;
             }
 
-            byte[] dnsRawData = ((UdpPacket) parsedPacket.getPayload()).getPayload().getRawData();
+            UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
+            byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
             Message dnsMsg = new Message(dnsRawData);
             if (dnsMsg.getQuestion() == null) {
                 Log.i(TAG, "Ignoring DNS packet with no query " + dnsMsg);
@@ -330,8 +332,8 @@ public class AdVpnThread implements Runnable {
             byte[] response;
 
             if (!blockedHosts.contains(dnsQueryName)) {
-                Log.i(TAG, "DNS Name " + dnsQueryName + " Allowed!");
-                DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, dnsServer, 53);
+                Log.i(TAG, "DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
+                DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
 
                 dnsSocket.send(outPacket);
                 dnsIn.put(dnsSocket, new TimedValue<IpV4Packet>(parsedPacket));
@@ -445,15 +447,21 @@ public class AdVpnThread implements Runnable {
         Log.i(TAG, "Configuring");
 
         // Get the current DNS servers before starting the VPN
-        dnsServer = getDnsServers(vpnService);
-        Log.i(TAG, "Got DNS server = " + dnsServer);
+        Set<InetAddress> dnsServers = getDnsServers(vpnService);
+        Log.i(TAG, "Got DNS servers = " + dnsServers);
 
         // Configure a builder while parsing the parameters.
-        // TODO: Make this dynamic
         VpnService.Builder builder = vpnService.new Builder();
         builder.addAddress("192.168.50.1", 24);
-        builder.addDnsServer("192.168.50.5");
-        builder.addRoute("192.168.50.0", 24);
+        // Add all knows DNS servers
+        for (InetAddress addr : dnsServers) {
+            if (addr instanceof Inet4Address) {
+                Log.i(TAG, "configure: Adding DNS Server " + addr);
+                builder.addDnsServer(addr);
+                builder.addRoute(addr, 32);
+            }
+        }
+
         builder.setBlocking(true);
 
         // Create a new interface using the builder and save the parameters.
