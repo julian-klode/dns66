@@ -195,49 +195,53 @@ public class AdVpnThread implements Runnable {
             if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
-            while (true) {
-                // Read the outgoing packet from the input stream.
-                int length;
-                try {
-                    length = inputStream.read(packet);
-                } catch (InterruptibleFileInputStream.InterruptedStreamException e) {
-                    Log.i(TAG, "Told to stop VPN");
-                    return;
-                }
-
-                if (length == 0) {
-                    // TODO: Possibly change to exception
-                    Log.w(TAG, "Got empty packet!");
-                }
-
-                final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
-
-                // Packets received need to be written to this output stream.
-                final FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
-
-                // Packets to be sent to the real DNS server will need to be protected from the VPN
-                final DatagramSocket dnsSocket = new DatagramSocket();
-                vpnService.protect(dnsSocket);
-
-                Log.i(TAG, "Starting new thread to handle dns request" +
-                        " (active = " + executor.getActiveCount() + " backlog = " + executor.getQueue().size());
-                // Start a new thread to handle the DNS request
-                try {
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            handleDnsRequest(readPacket, dnsSocket, outFd);
-                        }
-                    });
-                } catch (RejectedExecutionException e) {
-                    throw new VpnNetworkException("High backlog in dns thread pool executor, network probably stalled");
-                }
-            }
+            while (!readPacketFromDevice(pfd, inputStream, packet, executor))
+                ;
         } finally {
             executor.shutdownNow();
             pfd.close();
             vpnFileDescriptor = null;
         }
+    }
+
+    private boolean readPacketFromDevice(ParcelFileDescriptor pfd, InterruptibleFileInputStream inputStream, byte[] packet, ThreadPoolExecutor executor) throws IOException {
+        // Read the outgoing packet from the input stream.
+        int length;
+        try {
+            length = inputStream.read(packet);
+        } catch (InterruptibleFileInputStream.InterruptedStreamException e) {
+            Log.i(TAG, "Told to stop VPN");
+            return true;
+        }
+
+        if (length == 0) {
+            // TODO: Possibly change to exception
+            Log.w(TAG, "Got empty packet!");
+        }
+
+        final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
+
+        // Packets received need to be written to this output stream.
+        final FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+
+        // Packets to be sent to the real DNS server will need to be protected from the VPN
+        final DatagramSocket dnsSocket = new DatagramSocket();
+        vpnService.protect(dnsSocket);
+
+        Log.i(TAG, "Starting new thread to handle dns request" +
+                " (active = " + executor.getActiveCount() + " backlog = " + executor.getQueue().size());
+        // Start a new thread to handle the DNS request
+        try {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    handleDnsRequest(readPacket, dnsSocket, outFd);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            throw new VpnNetworkException("High backlog in dns thread pool executor, network probably stalled");
+        }
+        return false;
     }
 
     private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket, FileOutputStream outFd) {
