@@ -18,6 +18,9 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
+import android.system.ErrnoException;
+import android.system.OsConstants;
+import android.system.StructPollfd;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
@@ -40,8 +43,11 @@ import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.sql.Struct;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 
@@ -57,6 +63,8 @@ public class AdVpnThread implements Runnable {
     private Thread thread = null;
     private InterruptibleFileInputStream interruptible = null;
     private Set<String> blockedHosts = new HashSet<>();
+    /* Data to be written to the device */
+    private Queue<byte[]> deviceWrites = new LinkedList<>();
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -188,7 +196,7 @@ public class AdVpnThread implements Runnable {
             if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
-            while (!readPacketFromDevice(outFd, inputStream, packet))
+            while (doOne(inputStream, outFd, packet))
                 ;
         } finally {
             pfd.close();
@@ -196,14 +204,54 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean readPacketFromDevice(OutputStream outFd, InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
+    private boolean doOne(InterruptibleFileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException {
+        StructPollfd deviceFd = new StructPollfd();
+        deviceFd.fd = inputStream.getFD();
+        deviceFd.events = (short) OsConstants.POLLIN;
+        StructPollfd blockFd = new StructPollfd();
+        blockFd.fd = inputStream.mBlockFd;
+        blockFd.events = (short) (OsConstants.POLLHUP | OsConstants.POLLERR);
+
+        if (!deviceWrites.isEmpty())
+            deviceFd.events |= (short) OsConstants.POLLOUT;
+
+        StructPollfd[] polls = new StructPollfd[] {deviceFd, blockFd};
+
+        int result = FileHelper.poll(polls, 1);
+        if (blockFd.revents != 0) {
+            Log.i(TAG, "Told to stop VPN");
+            return false;
+        }
+
+        if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
+            Log.d(TAG, "Write to device");
+            writeToDevice(outFd);
+        }
+        if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
+            Log.i(TAG, "Read from device");
+            if (!readPacketFromDevice(inputStream, packet))
+                return false;
+        }
+        return true;
+    }
+
+    private void writeToDevice(FileOutputStream outFd) {
+        try {
+            outFd.write(deviceWrites.poll());
+        } catch (IOException e) {
+            // TODO: Make this more specific, only for: "File descriptor closed"
+            throw new VpnNetworkException("Outgoing VPN output stream closed");
+        }
+    }
+
+    private boolean readPacketFromDevice(InterruptibleFileInputStream inputStream, byte[] packet) throws IOException {
         // Read the outgoing packet from the input stream.
         int length;
         try {
             length = inputStream.read(packet);
         } catch (InterruptibleFileInputStream.InterruptedStreamException e) {
             Log.i(TAG, "Told to stop VPN");
-            return true;
+            return false;
         }
 
         if (length == 0) {
@@ -217,11 +265,11 @@ public class AdVpnThread implements Runnable {
         final DatagramSocket dnsSocket = new DatagramSocket();
         vpnService.protect(dnsSocket);
 
-        handleDnsRequest(readPacket, dnsSocket, outFd);
-        return false;
+        handleDnsRequest(readPacket, dnsSocket);
+        return true;
     }
 
-    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket, OutputStream outFd) {
+    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) {
         try {
             IpV4Packet parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
 
@@ -246,12 +294,12 @@ public class AdVpnThread implements Runnable {
 
                 dnsSocket.send(outPacket);
 
-                handleRawDnsResponse(outFd, parsedPacket, dnsSocket);
+                handleRawDnsResponse(parsedPacket, dnsSocket);
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
                 dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
-                handleDnsResponse(outFd, parsedPacket, dnsMsg.toWire());
+                handleDnsResponse(parsedPacket, dnsMsg.toWire());
             }
         } catch (VpnNetworkException e) {
             Log.w(TAG, "Ignoring exception, stopping thread", e);
@@ -264,16 +312,16 @@ public class AdVpnThread implements Runnable {
 
     }
 
-    private void handleRawDnsResponse(OutputStream outFd, IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
+    private void handleRawDnsResponse(IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
         byte[] response;
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
         response = datagramData;
-        handleDnsResponse(outFd, parsedPacket, response);
+        handleDnsResponse(parsedPacket, response);
     }
 
-    private void handleDnsResponse(OutputStream outFd, IpV4Packet parsedPacket, byte[] response) {
+    private void handleDnsResponse(IpV4Packet parsedPacket, byte[] response) {
         UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
         IpV4Packet ipOutPacket = new IpV4Packet.Builder(parsedPacket)
                 .srcAddr(parsedPacket.getHeader().getDstAddr())
@@ -293,12 +341,8 @@ public class AdVpnThread implements Runnable {
                                                 .rawData(response)
                                 )
                 ).build();
-        try {
-            outFd.write(ipOutPacket.getRawData());
-        } catch (IOException e) {
-            // TODO: Make this more specific, only for: "File descriptor closed"
-            throw new VpnNetworkException("Outgoing VPN output stream closed");
-        }
+
+        deviceWrites.add(ipOutPacket.getRawData());
     }
 
     private void loadBlockedHosts() {

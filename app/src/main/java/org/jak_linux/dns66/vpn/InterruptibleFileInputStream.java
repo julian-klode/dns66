@@ -24,8 +24,8 @@ import java.io.IOException;
  */
 public class InterruptibleFileInputStream extends FileInputStream {
 
-    private FileDescriptor mInterruptFd = null;
-    private FileDescriptor mBlockFd = null;
+    public FileDescriptor mInterruptFd = null;
+    public FileDescriptor mBlockFd = null;
 
     public InterruptibleFileInputStream(FileDescriptor fd) throws IOException, ErrnoException {
         super(fd);

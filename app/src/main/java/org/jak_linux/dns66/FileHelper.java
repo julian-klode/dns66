@@ -1,6 +1,10 @@
 package org.jak_linux.dns66;
 
 import android.content.Context;
+import android.system.ErrnoException;
+import android.system.Os;
+import android.system.OsConstants;
+import android.system.StructPollfd;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
@@ -106,6 +110,18 @@ public final class FileHelper {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static int poll(StructPollfd[] fds, int timeout) throws ErrnoException {
+        while (true) {
+            try {
+                return Os.poll(fds, timeout);
+            } catch (ErrnoException e) {
+                if (e.errno == OsConstants.EINTR)
+                    continue;
+                throw e;
+            }
         }
     }
 
