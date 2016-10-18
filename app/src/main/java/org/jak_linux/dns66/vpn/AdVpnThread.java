@@ -54,7 +54,6 @@ public class AdVpnThread implements Runnable {
     private Notify notify;
 
     private InetAddress dnsServer = null;
-    private ParcelFileDescriptor vpnFileDescriptor = null;
     private Thread thread = null;
     private InterruptibleFileInputStream interruptible = null;
     private Set<String> blockedHosts = new HashSet<>();
@@ -173,7 +172,6 @@ public class AdVpnThread implements Runnable {
     public void runVpn() throws Exception {
         // Authenticate and configure the virtual network interface.
         ParcelFileDescriptor pfd = configure();
-        vpnFileDescriptor = pfd;
 
         // Packets to be sent are queued in this input stream.
         InterruptibleFileInputStream inputStream = new InterruptibleFileInputStream(pfd.getFileDescriptor());
@@ -194,7 +192,6 @@ public class AdVpnThread implements Runnable {
                 ;
         } finally {
             pfd.close();
-            vpnFileDescriptor = null;
         }
     }
 
