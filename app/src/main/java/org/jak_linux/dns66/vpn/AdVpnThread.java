@@ -39,13 +39,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.sql.Struct;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -65,6 +64,8 @@ public class AdVpnThread implements Runnable {
     private Set<String> blockedHosts = new HashSet<>();
     /* Data to be written to the device */
     private Queue<byte[]> deviceWrites = new LinkedList<>();
+    private LinkedHashMap<DatagramSocket, DatagramPacket> dnsOut = new LinkedHashMap<>();
+    private LinkedHashMap<DatagramSocket, IpV4Packet> dnsIn = new LinkedHashMap<>();
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -215,9 +216,20 @@ public class AdVpnThread implements Runnable {
         if (!deviceWrites.isEmpty())
             deviceFd.events |= (short) OsConstants.POLLOUT;
 
-        StructPollfd[] polls = new StructPollfd[] {deviceFd, blockFd};
+        DatagramSocket[] others = new DatagramSocket[dnsIn.size()];
+        dnsIn.keySet().toArray(others);
 
-        int result = FileHelper.poll(polls, 1);
+        StructPollfd[] polls = new StructPollfd[2 + others.length];
+        polls[0] = deviceFd;
+        polls[1] = blockFd;
+        for (int i = 0; i < others.length; i++) {
+            StructPollfd pollFd = polls[2 + i] = new StructPollfd();
+            pollFd.fd = ParcelFileDescriptor.fromDatagramSocket(others[i]).getFileDescriptor();
+            pollFd.events = (short) OsConstants.POLLIN;
+        }
+
+        Log.i(TAG, "doOne: Polling " + polls.length + " file descriptors");
+        int result = FileHelper.poll(polls, -1);
         if (blockFd.revents != 0) {
             Log.i(TAG, "Told to stop VPN");
             return false;
@@ -231,6 +243,16 @@ public class AdVpnThread implements Runnable {
             Log.i(TAG, "Read from device");
             if (!readPacketFromDevice(inputStream, packet))
                 return false;
+        }
+        for (int i = 0; i < others.length; i++) {
+            if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
+                DatagramSocket socket = others[i];
+                IpV4Packet parsedPacket = dnsIn.get(socket);
+                Log.i(TAG, "Read from DNS socket" + socket);
+                dnsIn.remove(socket);
+                handleRawDnsResponse(parsedPacket, socket);
+                socket.close();
+            }
         }
         return true;
     }
@@ -293,8 +315,7 @@ public class AdVpnThread implements Runnable {
                 DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, dnsServer, 53);
 
                 dnsSocket.send(outPacket);
-
-                handleRawDnsResponse(parsedPacket, dnsSocket);
+                dnsIn.put(dnsSocket, parsedPacket);
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
@@ -306,8 +327,6 @@ public class AdVpnThread implements Runnable {
         } catch (Exception e) {
             Log.e(TAG, "Got exception", e);
             //ExceptionHandler.saveException(e, Thread.currentThread(), null);
-        } finally {
-            dnsSocket.close();
         }
 
     }
