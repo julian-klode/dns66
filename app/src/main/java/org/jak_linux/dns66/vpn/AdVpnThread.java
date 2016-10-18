@@ -265,10 +265,7 @@ public class AdVpnThread implements Runnable {
 
                 dnsSocket.send(outPacket);
 
-                byte[] datagramData = new byte[1024];
-                DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
-                dnsSocket.receive(replyPacket);
-                response = datagramData;
+                handleRawDnsResponse(outFd, parsedPacket, dnsSocket);
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
@@ -276,34 +273,7 @@ public class AdVpnThread implements Runnable {
                         dnsMsg.getQuestion().getDClass(),
                         10l,
                         Inet4Address.getLocalHost()), Section.ANSWER);
-                response = dnsMsg.toWire();
-            }
-
-
-            UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
-            IpV4Packet ipOutPacket = new IpV4Packet.Builder(parsedPacket)
-                    .srcAddr(parsedPacket.getHeader().getDstAddr())
-                    .dstAddr(parsedPacket.getHeader().getSrcAddr())
-                    .correctChecksumAtBuild(true)
-                    .correctLengthAtBuild(true)
-                    .payloadBuilder(
-                            new UdpPacket.Builder(udpOutPacket)
-                                    .srcPort(udpOutPacket.getHeader().getDstPort())
-                                    .dstPort(udpOutPacket.getHeader().getSrcPort())
-                                    .srcAddr(parsedPacket.getHeader().getDstAddr())
-                                    .dstAddr(parsedPacket.getHeader().getSrcAddr())
-                                    .correctChecksumAtBuild(true)
-                                    .correctLengthAtBuild(true)
-                                    .payloadBuilder(
-                                            new UnknownPacket.Builder()
-                                                    .rawData(response)
-                                    )
-                    ).build();
-            try {
-                outFd.write(ipOutPacket.getRawData());
-            } catch (IOException e) {
-                // TODO: Make this more specific, only for: "File descriptor closed"
-                throw new VpnNetworkException("Outgoing VPN output stream closed");
+                handleDnsResponse(outFd, parsedPacket, dnsMsg.toWire());
             }
         } catch (VpnNetworkException e) {
             Log.w(TAG, "Ignoring exception, stopping thread", e);
@@ -319,6 +289,43 @@ public class AdVpnThread implements Runnable {
             }
         }
 
+    }
+
+    private void handleRawDnsResponse(FileOutputStream outFd, IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
+        byte[] response;
+        byte[] datagramData = new byte[1024];
+        DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
+        dnsSocket.receive(replyPacket);
+        response = datagramData;
+        handleDnsResponse(outFd, parsedPacket, response);
+    }
+
+    private void handleDnsResponse(FileOutputStream outFd, IpV4Packet parsedPacket, byte[] response) {
+        UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
+        IpV4Packet ipOutPacket = new IpV4Packet.Builder(parsedPacket)
+                .srcAddr(parsedPacket.getHeader().getDstAddr())
+                .dstAddr(parsedPacket.getHeader().getSrcAddr())
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UdpPacket.Builder(udpOutPacket)
+                                .srcPort(udpOutPacket.getHeader().getDstPort())
+                                .dstPort(udpOutPacket.getHeader().getSrcPort())
+                                .srcAddr(parsedPacket.getHeader().getDstAddr())
+                                .dstAddr(parsedPacket.getHeader().getSrcAddr())
+                                .correctChecksumAtBuild(true)
+                                .correctLengthAtBuild(true)
+                                .payloadBuilder(
+                                        new UnknownPacket.Builder()
+                                                .rawData(response)
+                                )
+                ).build();
+        try {
+            outFd.write(ipOutPacket.getRawData());
+        } catch (IOException e) {
+            // TODO: Make this more specific, only for: "File descriptor closed"
+            throw new VpnNetworkException("Outgoing VPN output stream closed");
+        }
     }
 
     private void loadBlockedHosts() {
