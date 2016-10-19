@@ -120,9 +120,9 @@ class AdVpnThread implements Runnable {
     public void stopThread() {
         Log.i(TAG, "Stopping Vpn Thread");
         if (thread != null) thread.interrupt();
-        if (mBlockFd != null) try {
-            Os.close(mBlockFd);
-            mBlockFd = null;
+        if (mInterruptFd != null) try {
+            Os.close(mInterruptFd);
+            mInterruptFd = null;
         } catch (ErrnoException e) {
             e.printStackTrace();
         }
