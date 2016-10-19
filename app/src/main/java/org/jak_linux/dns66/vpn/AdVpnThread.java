@@ -264,8 +264,7 @@ public class AdVpnThread implements Runnable {
         }
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
-            if (!readPacketFromDevice(inputStream, packet))
-                return false;
+            readPacketFromDevice(inputStream, packet);
         }
         for (int i = 0; i < others.length; i++) {
             if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
@@ -289,7 +288,7 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws IOException {
+    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws IOException {
         // Read the outgoing packet from the input stream.
         int length;
 
@@ -298,7 +297,7 @@ public class AdVpnThread implements Runnable {
         if (length == 0) {
             // TODO: Possibly change to exception
             Log.w(TAG, "Got empty packet!");
-            return true;
+            return;
         }
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
@@ -308,7 +307,6 @@ public class AdVpnThread implements Runnable {
         vpnService.protect(dnsSocket);
 
         handleDnsRequest(readPacket, dnsSocket);
-        return true;
     }
 
     private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) {
