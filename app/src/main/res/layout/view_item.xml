@@ -18,7 +18,7 @@
         android:layout_toEndOf="@+id/item_enabled"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
