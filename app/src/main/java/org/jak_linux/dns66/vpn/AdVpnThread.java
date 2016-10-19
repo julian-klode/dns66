@@ -327,14 +327,12 @@ class AdVpnThread implements Runnable {
             }
             String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
 
-            byte[] response;
-
             if (!blockedHosts.contains(dnsQueryName)) {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
                 DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
 
                 dnsSocket.send(outPacket);
-                dnsIn.put(dnsSocket, new TimedValue<IpV4Packet>(parsedPacket));
+                dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
             } else {
                 Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
                 dnsMsg.getHeader().setFlag(Flags.QR);
@@ -391,7 +389,7 @@ class AdVpnThread implements Runnable {
         for (Configuration.Item item : config.hosts.items) {
             File file = FileHelper.getItemFile(vpnService, item);
 
-            FileReader reader = null;
+            FileReader reader;
             if (file == null || item.state == 2)
                 continue;
             try {
@@ -464,7 +462,7 @@ class AdVpnThread implements Runnable {
         ParcelFileDescriptor pfd = builder
                 .setSession("Ad Buster")
                 .setConfigureIntent(
-                        PendingIntent.getActivity((Context) vpnService, 1, new Intent(vpnService, MainActivity.class),
+                        PendingIntent.getActivity(vpnService, 1, new Intent(vpnService, MainActivity.class),
                                 PendingIntent.FLAG_CANCEL_CURRENT)).establish();
         Log.i(TAG, "Configured");
         return pfd;

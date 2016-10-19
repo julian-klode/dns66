@@ -3,7 +3,6 @@
     <string name="action_export">Exportieren</string>
     <string name="action_about">Über</string>
     <string name="action_import">Importieren</string>
-    <string name="action_restore_defaults">Auf Standardeinstellungen zurücksetzen</string>
     <string name="action_save">Speichern</string>
     <string name="app_shortdesc">Werbung blockieren und angepasste DNS Server</string>
     <string name="custom_dns">Eigene DNS Server verwenden</string>
@@ -15,7 +14,6 @@
     <string name="switch_onboot">Automatisch beim Systemstart aktivieren</string>
     <string name="start_tab">Start / Stop</string>
     <string name="start_description">Lange drücken um an- bzw. abzuschalten</string>
-    <string name="running">Aktiv</string>
     <string name="activity_edit">Eintrag bearbeiten</string>
     <string name="action">Regel</string>
     <string name="location">Ort (URL oder Host)</string>

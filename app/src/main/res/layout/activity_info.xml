@@ -13,7 +13,6 @@
     tools:context="org.jak_linux.dns66.InfoActivity">
 
     <ImageView
-        android:id="@+id/infoAppIcon"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -21,7 +20,6 @@
 
 
     <TextView
-        android:id="@+id/infoAppShortDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="-5dp"
@@ -30,7 +28,6 @@
 
 
     <TextView
-        android:id="@+id/infoAppCopyright"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
@@ -38,7 +35,6 @@
         android:textAlignment="center" />
 
     <TextView
-        android:id="@+id/infoAppLicense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"

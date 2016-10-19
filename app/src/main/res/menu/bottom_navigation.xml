@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_start"
         android:icon="@drawable/ic_menu_start"
         android:title="@string/start_tab" />
     <item
-        android:id="@+id/nav_block"
         android:icon="@drawable/ic_menu_hosts"
         android:title="@string/hosts_tab" />
     <item
-        android:id="@+id/nav_dns"
         android:icon="@drawable/ic_menu_dns"
         android:title="@string/dns_tab" />
 </menu>

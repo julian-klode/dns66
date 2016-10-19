@@ -11,14 +11,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.util.JsonReader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class ItemActivity extends AppCompatActivity {
 

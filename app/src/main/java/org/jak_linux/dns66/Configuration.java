@@ -69,7 +69,7 @@ public class Configuration {
 
     private static List<Item> readItemList(JsonReader reader) throws IOException {
         reader.beginArray();
-        List<Item> list = new ArrayList<Item>();
+        List<Item> list = new ArrayList<>();
         while (reader.hasNext())
             list.add(readItem(reader));
 
