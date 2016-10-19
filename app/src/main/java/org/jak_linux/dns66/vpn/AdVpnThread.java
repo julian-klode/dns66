@@ -353,12 +353,10 @@ public class AdVpnThread implements Runnable {
     }
 
     private void handleRawDnsResponse(IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
-        byte[] response;
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
-        response = datagramData;
-        handleDnsResponse(parsedPacket, response);
+        handleDnsResponse(parsedPacket, datagramData);
     }
 
     private void handleDnsResponse(IpV4Packet parsedPacket, byte[] response) {
@@ -443,7 +441,7 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    private ParcelFileDescriptor configure() throws Exception {
+    private ParcelFileDescriptor configure()  {
         Log.i(TAG, "Configuring");
 
         // Get the current DNS servers before starting the VPN

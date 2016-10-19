@@ -43,8 +43,6 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     public static final String VPN_UPDATE_STATUS_INTENT = "org.jak_linux.dns66.VPN_UPDATE_STATUS";
     public static final String VPN_UPDATE_STATUS_EXTRA = "VPN_STATUS";
 
-    public static final int MIN_RETRY_TIME = 5;
-    public static final int MAX_RETRY_TIME = 2 * 60;
     private static final String TAG = "VpnService";
     // TODO: Temporary Hack til refactor is done
     public static int vpnStatus = VPN_STATUS_STOPPED;
