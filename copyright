@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
 Copyright: 2016 Julian Andres Klode <jak@jak-linux.org>
@@ -23,13 +23,17 @@ License: GPL-3
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, version 3.
+Comment:
+ The code in this package is derived from dbrodie's code, located at:
+  https://github.com/dbrodie/AdBuster
 
 Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_menu_dns.xml
        app/src/main/res/drawable/ic_menu_hosts.xml
        app/src/main/res/drawable/ic_menu_info.xml
-       app/src/main/res/drawable/ic_menu_save.xml
        app/src/main/res/drawable/ic_menu_start.xml
+       app/src/main/res/drawable/ic_refresh.xml
+       app/src/main/res/drawable/ic_restore.xml
 Copyright: 2014-2016 Google
 License: Apache-2.0
  We have made these icons available for you to incorporate them into your
@@ -37,3 +41,7 @@ License: Apache-2.0
  re-share these icons and documentation in your products. We'd love
  attribution in your app's about screen, but it's not required. The
  only thing we ask is that you not re-sell these icons.
+Comment:
+ These files come from Google's material design icon set. They were translated
+ from SVG to Android vector graphics and for some icons, the color has been
+ changed in the resulting file.
