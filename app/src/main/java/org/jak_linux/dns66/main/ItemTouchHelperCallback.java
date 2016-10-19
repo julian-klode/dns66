@@ -17,7 +17,7 @@ import org.jak_linux.dns66.MainActivity;
 import java.util.Collections;
 
 /**
- * Created by jak on 14/10/16.
+ * Simple ItemTouchHelper callback for a collection based adapter.
  */
 class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
     private final ItemRecyclerViewAdapter mAdapter;

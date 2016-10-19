@@ -8,7 +8,9 @@
 package org.jak_linux.dns66;
 
 /**
- * Created by jak on 15/10/16.
+ * A callback for returns from the {@link ItemActivity}.
+ * The method {@link #onItemChanged(Configuration.Item)} will be called with a new item as
+ * returned by the ItemActivity.
  */
 public interface ItemChangedListener {
     void onItemChanged(Configuration.Item item);

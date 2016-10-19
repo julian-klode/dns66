@@ -10,12 +10,11 @@ package org.jak_linux.dns66.main;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
 /**
- * Created by jak on 14/10/16.
+ * Adapter for the pager that holds the fragments of the main activity.
  */
 
 public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
