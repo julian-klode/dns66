@@ -462,6 +462,22 @@ class AdVpnThread implements Runnable {
         // Configure a builder while parsing the parameters.
         VpnService.Builder builder = vpnService.new Builder();
         builder.addAddress("192.168.50.1", 24);
+
+        // Add configured DNS servers
+        Configuration config = FileHelper.loadCurrentSettings(vpnService);
+        if (config.dnsServers.enabled) {
+            for (Configuration.Item item : config.dnsServers.items) {
+                if (item.state == item.STATE_ALLOW) {
+                    Log.i(TAG, "configure: Adding DNS Server " + item.location);
+                    try {
+                        builder.addDnsServer(item.location);
+                        builder.addRoute(item.location, 32);
+                    } catch (Exception e) {
+                        Log.e(TAG, "configure: Cannot add custom DNS server", e);
+                    }
+                }
+            }
+        }
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
             if (addr instanceof Inet4Address) {
