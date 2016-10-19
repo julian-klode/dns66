@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 try {
                     writer.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }
