@@ -54,7 +54,7 @@ import java.util.Queue;
 import java.util.Set;
 
 
-public class AdVpnThread implements Runnable {
+class AdVpnThread implements Runnable {
     private static final String TAG = "AdVpnThread";
     private static final int MIN_RETRY_TIME = 5;
     private static final int MAX_RETRY_TIME = 2 * 60;
@@ -62,17 +62,17 @@ public class AdVpnThread implements Runnable {
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
 
-    private VpnService vpnService;
-    private Notify notify;
+    private final VpnService vpnService;
+    private final Notify notify;
 
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
     private Set<String> blockedHosts = new HashSet<>();
     /* Data to be written to the device */
-    private Queue<byte[]> deviceWrites = new LinkedList<>();
+    private final Queue<byte[]> deviceWrites = new LinkedList<>();
     // HashMap that keeps an upper limit of packets
-    private LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>> dnsIn = new LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>>() {
+    private final LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>> dnsIn = new LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>>() {
         @Override
         protected boolean removeEldestEntry(Entry<DatagramSocket, TimedValue<IpV4Packet>> eldest) {
             boolean timeout = eldest.getValue().ageSeconds() > DNS_TIMEOUT_SEC;
@@ -91,7 +91,7 @@ public class AdVpnThread implements Runnable {
         this.notify = notify;
     }
 
-    public static Set<InetAddress> getDnsServers(Context context) {
+    private static Set<InetAddress> getDnsServers(Context context) {
         Set<InetAddress> out = new HashSet<>();
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(VpnService.CONNECTIVITY_SERVICE);
         // Seriously, Android? Seriously?
@@ -199,7 +199,7 @@ public class AdVpnThread implements Runnable {
         }
     }
 
-    public void runVpn() throws Exception {
+    private void runVpn() throws Exception {
         // Authenticate and configure the virtual network interface.
         ParcelFileDescriptor pfd = configure();
 
@@ -481,8 +481,8 @@ public class AdVpnThread implements Runnable {
     }
 
     private static class TimedValue<T> {
-        private T value;
-        private long time;
+        private final T value;
+        private final long time;
 
         public TimedValue(T value) {
             this.value = value;

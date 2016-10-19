@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ITEM_EDIT = 3;
     public static Configuration config;
     private ViewPager viewPager;
-    BroadcastReceiver vpnServiceBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver vpnServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int str_id = intent.getIntExtra(AdVpnService.VPN_UPDATE_STATUS_EXTRA, R.string.notification_stopped);

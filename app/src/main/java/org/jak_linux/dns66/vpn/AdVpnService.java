@@ -37,8 +37,8 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     public static final int VPN_STATUS_RECONNECTING_NETWORK_ERROR = 5;
     public static final int VPN_STATUS_STOPPED = 6;
 
-    public static final int VPN_MSG_STATUS_UPDATE = 0;
-    public static final int VPN_MSG_NETWORK_CHANGED = 1;
+    private static final int VPN_MSG_STATUS_UPDATE = 0;
+    private static final int VPN_MSG_NETWORK_CHANGED = 1;
 
     public static final String VPN_UPDATE_STATUS_INTENT = "org.jak_linux.dns66.VPN_UPDATE_STATUS";
     public static final String VPN_UPDATE_STATUS_EXTRA = "VPN_STATUS";
@@ -47,19 +47,19 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     // TODO: Temporary Hack til refactor is done
     public static int vpnStatus = VPN_STATUS_STOPPED;
     private final Handler handler = new Handler(this);
-    private AdVpnThread vpnThread = new AdVpnThread(this, new AdVpnThread.Notify() {
+    private final AdVpnThread vpnThread = new AdVpnThread(this, new AdVpnThread.Notify() {
         @Override
         public void run(int value) {
             handler.sendMessage(handler.obtainMessage(VPN_MSG_STATUS_UPDATE, value, 0));
         }
     });
-    private BroadcastReceiver connectivityChangedReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver connectivityChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             handler.sendMessage(handler.obtainMessage(VPN_MSG_NETWORK_CHANGED, intent));
         }
     };
-    private NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+    private final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
             .setSmallIcon(R.drawable.ic_menu_info) // TODO: Notification icon
             .setPriority(Notification.PRIORITY_MIN);
 

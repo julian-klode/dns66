@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private ArrayList<Fragment> fragments = new ArrayList<>();
+    private final ArrayList<Fragment> fragments = new ArrayList<>();
 
     public MainFragmentPagerAdapter(FragmentManager fm) {
         super(fm);

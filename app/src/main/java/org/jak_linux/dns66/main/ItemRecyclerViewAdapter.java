@@ -24,7 +24,7 @@ import org.jak_linux.dns66.R;
 import java.util.List;
 
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
-    public List<Configuration.Item> items;
+    public final List<Configuration.Item> items;
     private Context context;
 
     public ItemRecyclerViewAdapter(List<Configuration.Item> items) {
@@ -65,10 +65,10 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public Configuration.Item item;
-        public View view;
-        public TextView titleView;
-        public TextView subtitleView;
-        public ImageView iconView;
+        public final View view;
+        public final TextView titleView;
+        public final TextView subtitleView;
+        public final ImageView iconView;
 
         public ViewHolder(View view) {
             super(view);
