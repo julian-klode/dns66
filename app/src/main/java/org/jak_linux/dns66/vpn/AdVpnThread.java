@@ -393,8 +393,19 @@ class AdVpnThread implements Runnable {
         for (Configuration.Item item : config.hosts.items) {
             File file = FileHelper.getItemFile(vpnService, item);
 
+            if (file == null && !item.location.contains("/")) {
+                // Single address to block
+                if (item.state == Configuration.Item.STATE_ALLOW) {
+                    blockedHosts.remove(item.location);
+                } else if (item.state == Configuration.Item.STATE_DENY) {
+                    blockedHosts.add(item.location);
+                }
+
+                continue;
+            }
+
             FileReader reader;
-            if (file == null || item.state == 2)
+            if (file == null || item.state == Configuration.Item.STATE_IGNORE)
                 continue;
             try {
                 reader = new FileReader(file);
