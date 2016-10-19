@@ -37,7 +37,7 @@
         android:layout_height="32dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         app:srcCompat="@drawable/ic_state_ignore" />
 
 </RelativeLayout>
