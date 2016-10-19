@@ -25,6 +25,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.jak_linux.dns66.Configuration;
+import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 
@@ -81,17 +83,17 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         }
     }
 
-    private static void checkStartVpnOnBoot(Context context) {
+    public static void checkStartVpnOnBoot(Context context) {
         Log.i("BOOT", "Checking whether to start ad buster on boot");
 
         SharedPreferences pref = context.getSharedPreferences(context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE);
-        if (!pref.getBoolean(context.getString(R.string.vpn_enabled_key), false)) {
+        Configuration config = FileHelper.loadCurrentSettings(context);
+        if (config == null || !config.autoStart) {
             return;
         }
 
         if (VpnService.prepare(context) != null) {
             Log.i("BOOT", "VPN preparation not confirmed by user, changing enabled to false");
-            pref.edit().putBoolean(context.getString(R.string.vpn_enabled_key), false).apply();
         }
 
         Log.i("BOOT", "Starting ad buster from boot");
