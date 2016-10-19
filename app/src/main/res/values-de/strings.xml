@@ -24,5 +24,18 @@
         <item>Ignorieren</item>
     </string-array>
     <string name="action_refresh">Filterlisten aktualisieren</string>
-    <string name="action_restore">Vorherige Einstellungen wiederherstellen</string>>
+    <string name="action_restore">Vorherige Einstellungen wiederherstellen</string>
+    <string name="cannot_load_default_config">Standardeinstellungen konnten nicht gelesen werden: %s - Das sollte nicht passieren!</string>
+    <string name="cannot_read_config">Kann Einstellungen nicht lesen: %s</string>
+    <string name="cannot_restore_previous_config">Kann vorherige Einstellungen nicht wiederherstellen: %s</string>
+    <string name="cannot_write_config">Kann Einstellungen nicht speichern: %s</string>
+    <string name="notification_reconnecting">Verbindung wird wiederhergestellt</string>
+    <string name="notification_reconnecting_error">Verbindung konnte nicht wiederhergestellt werden</string>
+    <string name="notification_running">Aktiv</string>
+    <string name="notification_starting">Am Starten</string>
+    <string name="notification_stopped">Inaktiv</string>
+    <string name="notification_stopping">Am Stoppen</string>
+    <string name="notification_title">DNS66</string>
+    <string name="notification_waiting_for_net">Warte auf Netzwerk</string>
+    >
 </resources>
