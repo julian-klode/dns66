@@ -386,6 +386,10 @@ class AdVpnThread implements Runnable {
 
         Log.i(TAG, "Loading block list");
 
+        if (!config.hosts.enabled) {
+            Log.d(TAG, "loadBlockedHosts: Not loading, disabled.");
+        }
+
         for (Configuration.Item item : config.hosts.items) {
             File file = FileHelper.getItemFile(vpnService, item);
 
