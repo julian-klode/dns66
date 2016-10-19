@@ -36,13 +36,10 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     public static final int VPN_STATUS_RECONNECTING = 4;
     public static final int VPN_STATUS_RECONNECTING_NETWORK_ERROR = 5;
     public static final int VPN_STATUS_STOPPED = 6;
-
-    private static final int VPN_MSG_STATUS_UPDATE = 0;
-    private static final int VPN_MSG_NETWORK_CHANGED = 1;
-
     public static final String VPN_UPDATE_STATUS_INTENT = "org.jak_linux.dns66.VPN_UPDATE_STATUS";
     public static final String VPN_UPDATE_STATUS_EXTRA = "VPN_STATUS";
-
+    private static final int VPN_MSG_STATUS_UPDATE = 0;
+    private static final int VPN_MSG_NETWORK_CHANGED = 1;
     private static final String TAG = "VpnService";
     // TODO: Temporary Hack til refactor is done
     public static int vpnStatus = VPN_STATUS_STOPPED;
@@ -217,7 +214,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
             return;
         }
 
-        if (intent.getAction() != ConnectivityManager.CONNECTIVITY_ACTION) {
+        if (!ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
             Log.e(TAG, "Got bad intent on connectivity changed " + intent.getAction());
         }
         if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
