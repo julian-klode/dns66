@@ -121,12 +121,8 @@ class AdVpnThread implements Runnable {
     public void stopThread() {
         Log.i(TAG, "Stopping Vpn Thread");
         if (thread != null) thread.interrupt();
-        if (mInterruptFd != null) try {
-            Os.close(mInterruptFd);
-            mInterruptFd = null;
-        } catch (ErrnoException e) {
-            Log.w(TAG, "stopThread: Could not interrupt poll()", e);
-        }
+
+        mInterruptFd = FileHelper.closeOrWarn(mInterruptFd, TAG, "stopThread: Could not close interruptFd");
         try {
             if (thread != null) thread.join(2000);
         } catch (InterruptedException e) {
@@ -194,31 +190,29 @@ class AdVpnThread implements Runnable {
     }
 
     private void runVpn() throws InterruptedException, ErrnoException, IOException, VpnNetworkException {
-        // Authenticate and configure the virtual network interface.
-        ParcelFileDescriptor pfd = configure();
-
-        // Read and write views of the tun device
-        FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
-        FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+        // Allocate the buffer for a single packet.
+        byte[] packet = new byte[32767];
 
         // A pipe we can interrupt the poll() call with by closing the interruptFd end
         FileDescriptor[] pipes = Os.pipe();
         mInterruptFd = pipes[0];
         mBlockFd = pipes[1];
 
-        // Allocate the buffer for a single packet.
-        byte[] packet = new byte[32767];
+        // Authenticate and configure the virtual network interface.
+        try (ParcelFileDescriptor pfd = configure()) {
+            // Read and write views of the tun device
+            FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
+            FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
 
-        try {
             // Now we are connected. Set the flag and show the message.
-            if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
+            if (notify != null)
+                notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
             while (doOne(inputStream, outFd, packet))
                 ;
         } finally {
-            pfd.close();
-            outFd.close();
+            mBlockFd = FileHelper.closeOrWarn(mBlockFd, TAG, "runVpn: Could not close blockFd");
         }
     }
 

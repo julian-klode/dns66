@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,6 +144,17 @@ public final class FileHelper {
                     continue;
                 throw e;
             }
+        }
+    }
+
+    public static FileDescriptor closeOrWarn(FileDescriptor fd, String tag, String message) {
+        try {
+            if (fd != null)
+                Os.close(fd);
+        } catch (ErrnoException e) {
+            Log.e(tag, "closeOrWarn: " + message, e);
+        } finally {
+            return null;
         }
     }
 
