@@ -47,6 +47,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -91,7 +92,7 @@ class AdVpnThread implements Runnable {
         this.notify = notify;
     }
 
-    private static Set<InetAddress> getDnsServers(Context context) {
+    private static Set<InetAddress> getDnsServers(Context context) throws VpnNetworkException {
         Set<InetAddress> out = new HashSet<>();
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(VpnService.CONNECTIVITY_SERVICE);
         // Seriously, Android? Seriously?
@@ -197,7 +198,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void runVpn() throws InterruptedException, ErrnoException, IOException {
+    private void runVpn() throws InterruptedException, ErrnoException, IOException, VpnNetworkException {
         // Authenticate and configure the virtual network interface.
         ParcelFileDescriptor pfd = configure();
 
@@ -226,7 +227,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException, InterruptedException {
+    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException, InterruptedException, VpnNetworkException {
         StructPollfd deviceFd = new StructPollfd();
         deviceFd.fd = inputStream.getFD();
         deviceFd.events = (short) OsConstants.POLLIN;
@@ -277,7 +278,7 @@ class AdVpnThread implements Runnable {
         return true;
     }
 
-    private void writeToDevice(FileOutputStream outFd) {
+    private void writeToDevice(FileOutputStream outFd) throws VpnNetworkException {
         try {
             outFd.write(deviceWrites.poll());
         } catch (IOException e) {
@@ -286,11 +287,16 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws IOException {
+    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws VpnNetworkException, SocketException {
         // Read the outgoing packet from the input stream.
         int length;
 
-        length = inputStream.read(packet);
+        try {
+            length = inputStream.read(packet);
+        } catch(IOException e) {
+            throw new VpnNetworkException("Cannot read from device", e);
+        }
+
 
         if (length == 0) {
             // TODO: Possibly change to exception
@@ -307,7 +313,7 @@ class AdVpnThread implements Runnable {
         handleDnsRequest(readPacket, dnsSocket);
     }
 
-    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) {
+    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) throws VpnNetworkException {
 
         IpV4Packet parsedPacket = null;
         try {
@@ -344,6 +350,12 @@ class AdVpnThread implements Runnable {
             try {
                 dnsSocket.send(outPacket);
             } catch (IOException e) {
+                if (e.getCause() instanceof ErrnoException) {
+                    ErrnoException errnoExc = (ErrnoException) e.getCause();
+                    if ((errnoExc.errno == OsConstants.ENETUNREACH) || (errnoExc.errno == OsConstants.EPERM)) {
+                        throw new VpnNetworkException("Cannot send message:", e);
+                    }
+                }
                 Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
                 return;
             }
@@ -460,7 +472,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private ParcelFileDescriptor configure() {
+    private ParcelFileDescriptor configure() throws VpnNetworkException {
         Log.i(TAG, "Configuring");
 
         // Get the current DNS servers before starting the VPN
@@ -511,10 +523,14 @@ class AdVpnThread implements Runnable {
         void run(int value);
     }
 
-    public static class VpnNetworkException extends RuntimeException {
-        public VpnNetworkException(String s) {
+    private static class VpnNetworkException extends Exception {
+        VpnNetworkException(String s) {
             super(s);
         }
+        VpnNetworkException(String s, Throwable t) {
+            super(s, t);
+        }
+
     }
 
     private static class TimedValue<T> {
