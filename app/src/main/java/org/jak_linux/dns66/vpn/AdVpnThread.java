@@ -27,6 +27,7 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
+import org.pcap4j.packet.IllegalRawDataException;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
@@ -308,42 +309,52 @@ class AdVpnThread implements Runnable {
     }
 
     private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) {
+
+        IpV4Packet parsedPacket = null;
         try {
-            IpV4Packet parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
-
-            if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
-                Log.i(TAG, "Ignoring unknown packet type " + parsedPacket.getPayload());
-                return;
-            }
-
-            UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
-            byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
-            Message dnsMsg = new Message(dnsRawData);
-            if (dnsMsg.getQuestion() == null) {
-                Log.i(TAG, "Ignoring DNS packet with no query " + dnsMsg);
-                return;
-            }
-            String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-
-            if (!blockedHosts.contains(dnsQueryName)) {
-                Log.i(TAG, "DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
-                DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
-
-                dnsSocket.send(outPacket);
-                dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
-            } else {
-                Log.i(TAG, "DNS Name " + dnsQueryName + " Blocked!");
-                dnsMsg.getHeader().setFlag(Flags.QR);
-                dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
-                handleDnsResponse(parsedPacket, dnsMsg.toWire());
-            }
-        } catch (VpnNetworkException e) {
-            Log.w(TAG, "Ignoring exception, stopping thread", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Got exception", e);
-            //ExceptionHandler.saveException(e, Thread.currentThread(), null);
+            parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
+        } catch (IllegalRawDataException e) {
+            Log.i(TAG, "handleDnsRequest: Discarding invalid IPv4 packet", e);
+            return;
         }
 
+        if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
+            Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getPayload());
+            return;
+        }
+
+        UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
+        byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
+        Message dnsMsg;
+        try {
+            dnsMsg = new Message(dnsRawData);
+        } catch (IOException e) {
+            Log.i(TAG, "handleDnsRequest: Discarding non-DNS or invalid packet", e);
+            return;
+        }
+        if (dnsMsg.getQuestion() == null) {
+            Log.i(TAG, "handleDnsRequest: Discarding DNS packet with no query " + dnsMsg);
+            return;
+        }
+        String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
+
+        if (!blockedHosts.contains(dnsQueryName)) {
+            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
+            DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
+
+            try {
+                dnsSocket.send(outPacket);
+            } catch (IOException e) {
+                Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
+                return;
+            }
+            dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
+        } else {
+            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
+            dnsMsg.getHeader().setFlag(Flags.QR);
+            dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
+            handleDnsResponse(parsedPacket, dnsMsg.toWire());
+        }
     }
 
     private void handleRawDnsResponse(IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
