@@ -37,4 +37,5 @@
     <string name="hosts_tab">域名过滤器</string>
     <string name="notification_reconnecting_error">重新连接错误</string>
     <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="translator_credits">简体中文:Kevin Jiang</string>
 </resources>
