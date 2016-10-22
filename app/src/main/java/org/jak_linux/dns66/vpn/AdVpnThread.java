@@ -249,15 +249,9 @@ class AdVpnThread implements Runnable {
             Log.i(TAG, "Told to stop VPN");
             return false;
         }
-
-        if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
-            Log.d(TAG, "Write to device");
-            writeToDevice(outFd);
-        }
-        if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
-            Log.d(TAG, "Read from device");
-            readPacketFromDevice(inputStream, packet);
-        }
+        // Need to do this before reading from the device, otherwise a new insertion there could
+        // invalidate one of the sockets we want to read from either due to size or time out
+        // constraints
         for (int i = 0; i < others.length; i++) {
             if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
                 DatagramSocket socket = others[i];
@@ -268,6 +262,15 @@ class AdVpnThread implements Runnable {
                 socket.close();
             }
         }
+        if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
+            Log.d(TAG, "Write to device");
+            writeToDevice(outFd);
+        }
+        if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
+            Log.d(TAG, "Read from device");
+            readPacketFromDevice(inputStream, packet);
+        }
+
         return true;
     }
 
