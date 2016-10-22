@@ -124,18 +124,19 @@ class AdVpnThread implements Runnable {
             Os.close(mInterruptFd);
             mInterruptFd = null;
         } catch (ErrnoException e) {
-            e.printStackTrace();
+            Log.w(TAG, "stopThread: Could not interrupt poll()", e);
         }
         try {
             if (thread != null) thread.join(2000);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Log.w(TAG, "stopThread: Interrupted while joining thread", e);
         }
         if (thread != null && thread.isAlive()) {
-            Log.w(TAG, "Couldn't kill Vpn Thread");
+            Log.w(TAG, "stopThread: Could not kill VPN thread, it is still alive");
+        } else {
+            thread = null;
+            Log.i(TAG, "Vpn Thread stopped");
         }
-        thread = null;
-        Log.i(TAG, "Vpn Thread stopped");
     }
 
     @Override
