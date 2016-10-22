@@ -10,6 +10,7 @@ import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -158,4 +159,14 @@ public final class FileHelper {
         }
     }
 
+    public static <T extends Closeable> T closeOrWarn(T fd, String tag, String message) {
+        try {
+            if (fd != null)
+                fd.close();
+        } catch (Exception e) {
+            Log.e(tag, "closeOrWarn: " + message, e);
+        } finally {
+            return null;
+        }
+    }
 }

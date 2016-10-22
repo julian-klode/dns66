@@ -302,14 +302,10 @@ class AdVpnThread implements Runnable {
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
 
-        // Packets to be sent to the real DNS server will need to be protected from the VPN
-        final DatagramSocket dnsSocket = new DatagramSocket();
-        vpnService.protect(dnsSocket);
-
-        handleDnsRequest(readPacket, dnsSocket);
+        handleDnsRequest(readPacket);
     }
 
-    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) throws VpnNetworkException {
+    private void handleDnsRequest(byte[] packet) throws VpnNetworkException {
 
         IpV4Packet parsedPacket = null;
         try {
@@ -342,10 +338,18 @@ class AdVpnThread implements Runnable {
         if (!blockedHosts.contains(dnsQueryName)) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
-
+            DatagramSocket dnsSocket = null;
             try {
+                // Packets to be sent to the real DNS server will need to be protected from the VPN
+                dnsSocket = new DatagramSocket();
+
+                vpnService.protect(dnsSocket);
+
                 dnsSocket.send(outPacket);
+
+                dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
             } catch (IOException e) {
+                FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
                 if (e.getCause() instanceof ErrnoException) {
                     ErrnoException errnoExc = (ErrnoException) e.getCause();
                     if ((errnoExc.errno == OsConstants.ENETUNREACH) || (errnoExc.errno == OsConstants.EPERM)) {
@@ -355,7 +359,6 @@ class AdVpnThread implements Runnable {
                 Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
                 return;
             }
-            dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
         } else {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
