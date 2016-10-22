@@ -197,7 +197,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void runVpn() throws Exception {
+    private void runVpn() throws InterruptedException, ErrnoException, IOException {
         // Authenticate and configure the virtual network interface.
         ParcelFileDescriptor pfd = configure();
 
