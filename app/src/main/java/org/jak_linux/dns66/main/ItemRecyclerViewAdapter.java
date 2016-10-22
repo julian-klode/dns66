@@ -64,11 +64,11 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public Configuration.Item item;
         public final View view;
         public final TextView titleView;
         public final TextView subtitleView;
         public final ImageView iconView;
+        public Configuration.Item item;
 
         public ViewHolder(View view) {
             super(view);

@@ -55,7 +55,7 @@ public class ItemActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_save:
-                Intent intent=new Intent();
+                Intent intent = new Intent();
                 intent.putExtra("ITEM_TITLE", titleText.getText().toString());
                 intent.putExtra("ITEM_LOCATION", locationText.getText().toString());
                 intent.putExtra("ITEM_STATE", stateSpinner.getSelectedItemPosition());

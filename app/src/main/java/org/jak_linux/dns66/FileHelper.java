@@ -39,7 +39,8 @@ public final class FileHelper {
 
     /**
      * Write to the given file in the private files dir, first renaming an old one to .bak
-     * @param context A context
+     *
+     * @param context  A context
      * @param filename A filename as for @{link {@link Context#openFileOutput(String, int)}}
      * @return See @{link {@link Context#openFileOutput(String, int)}}
      * @throws IOException See @{link {@link Context#openFileOutput(String, int)}}
@@ -106,7 +107,7 @@ public final class FileHelper {
      * Returns a file where the item should be downloaded to.
      *
      * @param context A context to work in
-     * @param item A configuration item.
+     * @param item    A configuration item.
      * @return File or null, if that item is not downloadable.
      */
     public static File getItemFile(Context context, Configuration.Item item) {

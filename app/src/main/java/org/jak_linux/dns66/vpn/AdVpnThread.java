@@ -65,11 +65,6 @@ class AdVpnThread implements Runnable {
 
     private final VpnService vpnService;
     private final Notify notify;
-
-    private Thread thread = null;
-    private FileDescriptor mBlockFd = null;
-    private FileDescriptor mInterruptFd = null;
-    private Set<String> blockedHosts = new HashSet<>();
     /* Data to be written to the device */
     private final Queue<byte[]> deviceWrites = new LinkedList<>();
     // HashMap that keeps an upper limit of packets
@@ -86,6 +81,10 @@ class AdVpnThread implements Runnable {
             return false;
         }
     };
+    private Thread thread = null;
+    private FileDescriptor mBlockFd = null;
+    private FileDescriptor mInterruptFd = null;
+    private Set<String> blockedHosts = new HashSet<>();
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -461,7 +460,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private ParcelFileDescriptor configure()  {
+    private ParcelFileDescriptor configure() {
         Log.i(TAG, "Configuring");
 
         // Get the current DNS servers before starting the VPN
