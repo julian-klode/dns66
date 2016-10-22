@@ -178,10 +178,7 @@ class AdVpnThread implements Runnable {
 
                 // ...wait and try again
                 Log.i(TAG, "Retrying to connect in " + retryTimeout + "seconds...");
-                try {
-                    Thread.sleep((long) retryTimeout * 1000);
-                } catch (InterruptedException ignored) {
-                }
+                Thread.sleep((long) retryTimeout * 1000);
 
                 if (retryTimeout < MAX_RETRY_TIME)
                     retryTimeout *= 2;
