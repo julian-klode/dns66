@@ -20,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.VpnService;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -103,11 +104,12 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         context.startService(intent);
     }
 
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand");
-        switch (Command.values()[intent.getIntExtra("COMMAND", Command.START.ordinal())]) {
+        switch (intent == null ? Command.START : Command.values()[intent.getIntExtra("COMMAND", Command.START.ordinal())]) {
             case START:
-                startVpn((PendingIntent) intent.getParcelableExtra("NOTIFICATION_INTENT"));
+                startVpn(intent == null ? null : (PendingIntent) intent.getParcelableExtra("NOTIFICATION_INTENT"));
                 break;
             case STOP:
                 stopVpn();
@@ -132,7 +134,8 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
     private void startVpn(PendingIntent notificationIntent) {
         notificationBuilder.setContentTitle(getString(R.string.notification_title));
-        notificationBuilder.setContentIntent(notificationIntent);
+        if (notificationIntent != null)
+            notificationBuilder.setContentIntent(notificationIntent);
         updateVpnStatus(VPN_STATUS_STARTING);
 
         registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));

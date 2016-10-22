@@ -47,6 +47,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -91,7 +92,7 @@ class AdVpnThread implements Runnable {
         this.notify = notify;
     }
 
-    private static Set<InetAddress> getDnsServers(Context context) {
+    private static Set<InetAddress> getDnsServers(Context context) throws VpnNetworkException {
         Set<InetAddress> out = new HashSet<>();
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(VpnService.CONNECTIVITY_SERVICE);
         // Seriously, Android? Seriously?
@@ -120,12 +121,8 @@ class AdVpnThread implements Runnable {
     public void stopThread() {
         Log.i(TAG, "Stopping Vpn Thread");
         if (thread != null) thread.interrupt();
-        if (mInterruptFd != null) try {
-            Os.close(mInterruptFd);
-            mInterruptFd = null;
-        } catch (ErrnoException e) {
-            Log.w(TAG, "stopThread: Could not interrupt poll()", e);
-        }
+
+        mInterruptFd = FileHelper.closeOrWarn(mInterruptFd, TAG, "stopThread: Could not close interruptFd");
         try {
             if (thread != null) thread.join(2000);
         } catch (InterruptedException e) {
@@ -141,92 +138,89 @@ class AdVpnThread implements Runnable {
 
     @Override
     public synchronized void run() {
+        Log.i(TAG, "Starting");
+
+        // Load the block list
         try {
-            Log.i(TAG, "Starting");
-
-            // Load the block list
             loadBlockedHosts();
-
-            if (notify != null) {
-                notify.run(AdVpnService.VPN_STATUS_STARTING);
-                notify.run(AdVpnService.VPN_STATUS_STARTING);
-            }
-
-            int retryTimeout = MIN_RETRY_TIME;
-            // Try connecting the vpn continuously
-            while (true) {
-                try {
-                    // If the function returns, that means it was interrupted
-                    runVpn();
-
-                    Log.i(TAG, "Told to stop");
-                    break;
-                } catch (InterruptedException e) {
-                    throw e;
-                } catch (VpnNetworkException e) {
-                    // We want to filter out VpnNetworkException from out crash analytics as these
-                    // are exceptions that we expect to happen from network errors
-                    Log.w(TAG, "Network exception in vpn thread, ignoring and reconnecting", e);
-                    // If an exception was thrown, show to the user and try again
-                    if (notify != null)
-                        notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
-                } catch (Exception e) {
-                    Log.e(TAG, "Network exception in vpn thread, reconnecting", e);
-                    //ExceptionHandler.saveException(e, Thread.currentThread(), null);
-                    if (notify != null)
-                        notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
-                }
-
-                // ...wait and try again
-                Log.i(TAG, "Retrying to connect in " + retryTimeout + "seconds...");
-                Thread.sleep((long) retryTimeout * 1000);
-
-                if (retryTimeout < MAX_RETRY_TIME)
-                    retryTimeout *= 2;
-            }
-
-            Log.i(TAG, "Stopped");
         } catch (InterruptedException e) {
-            Log.i(TAG, "Vpn Thread interrupted");
-        } catch (Exception e) {
-            //ExceptionHandler.saveException(e, Thread.currentThread(), null);
-            Log.e(TAG, "Exception in run() ", e);
-        } finally {
-            if (notify != null) notify.run(AdVpnService.VPN_STATUS_STOPPING);
-            Log.i(TAG, "Exiting");
+            return;
         }
+
+        if (notify != null) {
+            notify.run(AdVpnService.VPN_STATUS_STARTING);
+        }
+
+        int retryTimeout = MIN_RETRY_TIME;
+        // Try connecting the vpn continuously
+        while (true) {
+            try {
+                // If the function returns, that means it was interrupted
+                runVpn();
+
+                Log.i(TAG, "Told to stop");
+                break;
+            } catch (InterruptedException e) {
+                break;
+            } catch (VpnNetworkException e) {
+                // We want to filter out VpnNetworkException from out crash analytics as these
+                // are exceptions that we expect to happen from network errors
+                Log.w(TAG, "Network exception in vpn thread, ignoring and reconnecting", e);
+                // If an exception was thrown, show to the user and try again
+                if (notify != null)
+                    notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
+            } catch (Exception e) {
+                Log.e(TAG, "Network exception in vpn thread, reconnecting", e);
+                //ExceptionHandler.saveException(e, Thread.currentThread(), null);
+                if (notify != null)
+                    notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
+            }
+
+            // ...wait and try again
+            Log.i(TAG, "Retrying to connect in " + retryTimeout + "seconds...");
+            try {
+                Thread.sleep((long) retryTimeout * 1000);
+            } catch (InterruptedException e) {
+                break;
+            }
+
+            if (retryTimeout < MAX_RETRY_TIME)
+                retryTimeout *= 2;
+        }
+
+        if (notify != null)
+            notify.run(AdVpnService.VPN_STATUS_STOPPING);
+        Log.i(TAG, "Exiting");
     }
 
-    private void runVpn() throws Exception {
-        // Authenticate and configure the virtual network interface.
-        ParcelFileDescriptor pfd = configure();
-
-        // Read and write views of the tun device
-        FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
-        FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+    private void runVpn() throws InterruptedException, ErrnoException, IOException, VpnNetworkException {
+        // Allocate the buffer for a single packet.
+        byte[] packet = new byte[32767];
 
         // A pipe we can interrupt the poll() call with by closing the interruptFd end
         FileDescriptor[] pipes = Os.pipe();
         mInterruptFd = pipes[0];
         mBlockFd = pipes[1];
 
-        // Allocate the buffer for a single packet.
-        byte[] packet = new byte[32767];
+        // Authenticate and configure the virtual network interface.
+        try (ParcelFileDescriptor pfd = configure()) {
+            // Read and write views of the tun device
+            FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
+            FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
 
-        try {
             // Now we are connected. Set the flag and show the message.
-            if (notify != null) notify.run(AdVpnService.VPN_STATUS_RUNNING);
+            if (notify != null)
+                notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
             while (doOne(inputStream, outFd, packet))
                 ;
         } finally {
-            pfd.close();
-            outFd.close();
+            mBlockFd = FileHelper.closeOrWarn(mBlockFd, TAG, "runVpn: Could not close blockFd");
         }
     }
 
-    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException, InterruptedException {
+    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException, InterruptedException, VpnNetworkException {
         StructPollfd deviceFd = new StructPollfd();
         deviceFd.fd = inputStream.getFD();
         deviceFd.events = (short) OsConstants.POLLIN;
@@ -255,15 +249,9 @@ class AdVpnThread implements Runnable {
             Log.i(TAG, "Told to stop VPN");
             return false;
         }
-
-        if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
-            Log.d(TAG, "Write to device");
-            writeToDevice(outFd);
-        }
-        if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
-            Log.d(TAG, "Read from device");
-            readPacketFromDevice(inputStream, packet);
-        }
+        // Need to do this before reading from the device, otherwise a new insertion there could
+        // invalidate one of the sockets we want to read from either due to size or time out
+        // constraints
         for (int i = 0; i < others.length; i++) {
             if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
                 DatagramSocket socket = others[i];
@@ -274,10 +262,19 @@ class AdVpnThread implements Runnable {
                 socket.close();
             }
         }
+        if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
+            Log.d(TAG, "Write to device");
+            writeToDevice(outFd);
+        }
+        if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
+            Log.d(TAG, "Read from device");
+            readPacketFromDevice(inputStream, packet);
+        }
+
         return true;
     }
 
-    private void writeToDevice(FileOutputStream outFd) {
+    private void writeToDevice(FileOutputStream outFd) throws VpnNetworkException {
         try {
             outFd.write(deviceWrites.poll());
         } catch (IOException e) {
@@ -286,11 +283,16 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws IOException {
+    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws VpnNetworkException, SocketException {
         // Read the outgoing packet from the input stream.
         int length;
 
-        length = inputStream.read(packet);
+        try {
+            length = inputStream.read(packet);
+        } catch (IOException e) {
+            throw new VpnNetworkException("Cannot read from device", e);
+        }
+
 
         if (length == 0) {
             // TODO: Possibly change to exception
@@ -307,7 +309,7 @@ class AdVpnThread implements Runnable {
         handleDnsRequest(readPacket, dnsSocket);
     }
 
-    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) {
+    private void handleDnsRequest(byte[] packet, DatagramSocket dnsSocket) throws VpnNetworkException {
 
         IpV4Packet parsedPacket = null;
         try {
@@ -344,6 +346,12 @@ class AdVpnThread implements Runnable {
             try {
                 dnsSocket.send(outPacket);
             } catch (IOException e) {
+                if (e.getCause() instanceof ErrnoException) {
+                    ErrnoException errnoExc = (ErrnoException) e.getCause();
+                    if ((errnoExc.errno == OsConstants.ENETUNREACH) || (errnoExc.errno == OsConstants.EPERM)) {
+                        throw new VpnNetworkException("Cannot send message:", e);
+                    }
+                }
                 Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
                 return;
             }
@@ -387,7 +395,7 @@ class AdVpnThread implements Runnable {
         deviceWrites.add(ipOutPacket.getRawData());
     }
 
-    private void loadBlockedHosts() {
+    private void loadBlockedHosts() throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
 
         blockedHosts = new HashSet<>();
@@ -399,6 +407,8 @@ class AdVpnThread implements Runnable {
         }
 
         for (Configuration.Item item : config.hosts.items) {
+            if (Thread.interrupted())
+                throw new InterruptedException("Interrupted");
             File file = FileHelper.getItemFile(vpnService, item);
 
             if (file == null && !item.location.contains("/")) {
@@ -428,6 +438,8 @@ class AdVpnThread implements Runnable {
                 try (BufferedReader br = new BufferedReader(reader)) {
                     String line;
                     while ((line = br.readLine()) != null) {
+                        if (Thread.interrupted())
+                            throw new InterruptedException("Interrupted");
                         String s = line.trim();
 
                         if (s.length() != 0) {
@@ -460,7 +472,7 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private ParcelFileDescriptor configure() {
+    private ParcelFileDescriptor configure() throws VpnNetworkException {
         Log.i(TAG, "Configuring");
 
         // Get the current DNS servers before starting the VPN
@@ -511,10 +523,15 @@ class AdVpnThread implements Runnable {
         void run(int value);
     }
 
-    public static class VpnNetworkException extends RuntimeException {
-        public VpnNetworkException(String s) {
+    private static class VpnNetworkException extends Exception {
+        VpnNetworkException(String s) {
             super(s);
         }
+
+        VpnNetworkException(String s, Throwable t) {
+            super(s, t);
+        }
+
     }
 
     private static class TimedValue<T> {
