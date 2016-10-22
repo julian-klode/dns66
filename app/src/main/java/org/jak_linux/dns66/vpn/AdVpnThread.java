@@ -142,60 +142,55 @@ class AdVpnThread implements Runnable {
 
     @Override
     public synchronized void run() {
-        try {
-            Log.i(TAG, "Starting");
+        Log.i(TAG, "Starting");
 
-            // Load the block list
-            loadBlockedHosts();
+        // Load the block list
+        loadBlockedHosts();
 
-            if (notify != null) {
-                notify.run(AdVpnService.VPN_STATUS_STARTING);
-                notify.run(AdVpnService.VPN_STATUS_STARTING);
-            }
-
-            int retryTimeout = MIN_RETRY_TIME;
-            // Try connecting the vpn continuously
-            while (true) {
-                try {
-                    // If the function returns, that means it was interrupted
-                    runVpn();
-
-                    Log.i(TAG, "Told to stop");
-                    break;
-                } catch (InterruptedException e) {
-                    throw e;
-                } catch (VpnNetworkException e) {
-                    // We want to filter out VpnNetworkException from out crash analytics as these
-                    // are exceptions that we expect to happen from network errors
-                    Log.w(TAG, "Network exception in vpn thread, ignoring and reconnecting", e);
-                    // If an exception was thrown, show to the user and try again
-                    if (notify != null)
-                        notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
-                } catch (Exception e) {
-                    Log.e(TAG, "Network exception in vpn thread, reconnecting", e);
-                    //ExceptionHandler.saveException(e, Thread.currentThread(), null);
-                    if (notify != null)
-                        notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
-                }
-
-                // ...wait and try again
-                Log.i(TAG, "Retrying to connect in " + retryTimeout + "seconds...");
-                Thread.sleep((long) retryTimeout * 1000);
-
-                if (retryTimeout < MAX_RETRY_TIME)
-                    retryTimeout *= 2;
-            }
-
-            Log.i(TAG, "Stopped");
-        } catch (InterruptedException e) {
-            Log.i(TAG, "Vpn Thread interrupted");
-        } catch (Exception e) {
-            //ExceptionHandler.saveException(e, Thread.currentThread(), null);
-            Log.e(TAG, "Exception in run() ", e);
-        } finally {
-            if (notify != null) notify.run(AdVpnService.VPN_STATUS_STOPPING);
-            Log.i(TAG, "Exiting");
+        if (notify != null) {
+            notify.run(AdVpnService.VPN_STATUS_STARTING);
         }
+
+        int retryTimeout = MIN_RETRY_TIME;
+        // Try connecting the vpn continuously
+        while (true) {
+            try {
+                // If the function returns, that means it was interrupted
+                runVpn();
+
+                Log.i(TAG, "Told to stop");
+                break;
+            } catch (InterruptedException e) {
+                break;
+            } catch (VpnNetworkException e) {
+                // We want to filter out VpnNetworkException from out crash analytics as these
+                // are exceptions that we expect to happen from network errors
+                Log.w(TAG, "Network exception in vpn thread, ignoring and reconnecting", e);
+                // If an exception was thrown, show to the user and try again
+                if (notify != null)
+                    notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
+            } catch (Exception e) {
+                Log.e(TAG, "Network exception in vpn thread, reconnecting", e);
+                //ExceptionHandler.saveException(e, Thread.currentThread(), null);
+                if (notify != null)
+                    notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
+            }
+
+            // ...wait and try again
+            Log.i(TAG, "Retrying to connect in " + retryTimeout + "seconds...");
+            try {
+                Thread.sleep((long) retryTimeout * 1000);
+            } catch (InterruptedException e) {
+                break;
+            }
+
+            if (retryTimeout < MAX_RETRY_TIME)
+                retryTimeout *= 2;
+        }
+
+        if (notify != null)
+            notify.run(AdVpnService.VPN_STATUS_STOPPING);
+        Log.i(TAG, "Exiting");
     }
 
     private void runVpn() throws InterruptedException, ErrnoException, IOException, VpnNetworkException {
@@ -293,7 +288,7 @@ class AdVpnThread implements Runnable {
 
         try {
             length = inputStream.read(packet);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new VpnNetworkException("Cannot read from device", e);
         }
 
@@ -527,6 +522,7 @@ class AdVpnThread implements Runnable {
         VpnNetworkException(String s) {
             super(s);
         }
+
         VpnNetworkException(String s, Throwable t) {
             super(s, t);
         }
