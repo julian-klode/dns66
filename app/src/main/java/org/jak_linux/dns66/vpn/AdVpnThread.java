@@ -312,7 +312,7 @@ class AdVpnThread implements Runnable {
         IpV4Packet parsedPacket = null;
         try {
             parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
-        } catch (IllegalRawDataException e) {
+        } catch (Exception e) {
             Log.i(TAG, "handleDnsRequest: Discarding invalid IPv4 packet", e);
             return;
         }
