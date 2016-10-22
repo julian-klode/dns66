@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_export">导出</string>
+    <string name="action_about">关于</string>
+    <string name="action_import">导入</string>
+    <string name="action_save">保存</string>
+    <string name="app_shortdesc">屏蔽广告和DNS服务器</string>
+    <string name="custom_dns">自定义DNS服务器</string>
+    <string name="dns_tab">DNS 服务器</string>
+    <string name="enable_hosts">启用域名过滤</string>
+    <string name="switch_onboot">开机时自动运行</string>
+    <string name="start_tab">启动/停止</string>
+    <string name="start_description">长按启动或关闭</string>
+    <string name="activity_edit">修改项目</string>
+    <string name="action">行为</string>
+    <string name="location">位置 (URL 或 Host)</string>
+    <string name="title">标题</string>
+    <string-array name="item_states">
+        <item>拒绝</item>
+        <item>允许</item>
+        <item>忽略</item>
+    </string-array>
+    <string name="action_restore">恢复之前设置</string>
+    <string name="cannot_read_config">无法读取设置: %s</string>
+    <string name="cannot_restore_previous_config">无法还原之前设置: %s</string>
+    <string name="cannot_write_config">无法写入设置: %s</string>
+    <string name="notification_reconnecting">重新连接中</string>
+    <string name="notification_running">正在运行</string>
+    <string name="notification_starting">正在启动</string>
+    <string name="notification_stopped">已停止</string>
+    <string name="notification_stopping">正在停止</string>
+    <string name="notification_title">DNS66</string>
+    <string name="notification_waiting_for_net">等待网络</string>
+    <string name="action_refresh">更新Hosts文件</string>
+    <string name="load_defaults">载入初始化设置</string>
+    <string name="cannot_load_default_config">无法读取默认设置:%s - 这不应该发生</string>
+    <string name="hosts_tab">域名过滤器</string>
+    <string name="notification_reconnecting_error">重新连接错误</string>
+    <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="translator_credits">简体中文:Kevin Jiang</string>
+</resources>
