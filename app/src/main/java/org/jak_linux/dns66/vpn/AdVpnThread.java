@@ -141,7 +141,11 @@ class AdVpnThread implements Runnable {
         Log.i(TAG, "Starting");
 
         // Load the block list
-        loadBlockedHosts();
+        try {
+            loadBlockedHosts();
+        } catch (InterruptedException e) {
+            return;
+        }
 
         if (notify != null) {
             notify.run(AdVpnService.VPN_STATUS_STARTING);
@@ -388,7 +392,7 @@ class AdVpnThread implements Runnable {
         deviceWrites.add(ipOutPacket.getRawData());
     }
 
-    private void loadBlockedHosts() {
+    private void loadBlockedHosts() throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
 
         blockedHosts = new HashSet<>();
@@ -400,6 +404,8 @@ class AdVpnThread implements Runnable {
         }
 
         for (Configuration.Item item : config.hosts.items) {
+            if (Thread.interrupted())
+                throw new InterruptedException("Interrupted");
             File file = FileHelper.getItemFile(vpnService, item);
 
             if (file == null && !item.location.contains("/")) {
@@ -429,6 +435,8 @@ class AdVpnThread implements Runnable {
                 try (BufferedReader br = new BufferedReader(reader)) {
                     String line;
                     while ((line = br.readLine()) != null) {
+                        if (Thread.interrupted())
+                            throw new InterruptedException("Interrupted");
                         String s = line.trim();
 
                         if (s.length() != 0) {
