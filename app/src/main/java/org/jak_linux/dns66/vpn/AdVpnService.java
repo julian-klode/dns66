@@ -16,7 +16,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.VpnService;
 import android.os.Handler;
@@ -85,8 +84,6 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
     public static void checkStartVpnOnBoot(Context context) {
         Log.i("BOOT", "Checking whether to start ad buster on boot");
-
-        SharedPreferences pref = context.getSharedPreferences(context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE);
         Configuration config = FileHelper.loadCurrentSettings(context);
         if (config == null || !config.autoStart) {
             return;
@@ -134,11 +131,6 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
 
     private void startVpn(PendingIntent notificationIntent) {
-        // TODO: Should this be in the activity instead?
-        SharedPreferences.Editor edit_pref = getSharedPreferences(getString(R.string.preferences_file_key), MODE_PRIVATE).edit();
-        edit_pref.putBoolean(getString(R.string.vpn_enabled_key), true);
-        edit_pref.apply();
-
         notificationBuilder.setContentTitle(getString(R.string.notification_title));
         notificationBuilder.setContentIntent(notificationIntent);
         updateVpnStatus(VPN_STATUS_STARTING);
@@ -169,11 +161,6 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     }
 
     private void stopVpn() {
-        // TODO: Should this be in the activity instead?
-        SharedPreferences.Editor edit_pref = getSharedPreferences(getString(R.string.preferences_file_key), MODE_PRIVATE).edit();
-        edit_pref.putBoolean(getString(R.string.vpn_enabled_key), false);
-        edit_pref.apply();
-
         Log.i(TAG, "Stopping Service");
         stopVpnThread();
         try {
