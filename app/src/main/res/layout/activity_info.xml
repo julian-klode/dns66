@@ -26,18 +26,24 @@
         android:text="@string/app_shortdesc"
         android:textAlignment="center" />
 
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="15dp"
+        android:paddingTop="10dp"
         android:text="@string/info_app_copyright"
         android:textAlignment="center" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="30dp"
+        android:paddingTop="10dp"
+        android:text="@string/translator_credits"
+        android:textAlignment="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
         android:text="@string/info_app_license" />
 
 </LinearLayout>

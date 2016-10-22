@@ -37,5 +37,5 @@
     <string name="notification_stopping">Am Stoppen</string>
     <string name="notification_title">DNS66</string>
     <string name="notification_waiting_for_net">Warte auf Netzwerk</string>
-    >
+    <string name="translator_credits">Deutsche Übersetzung: Julian Andres Klode</string>
 </resources>

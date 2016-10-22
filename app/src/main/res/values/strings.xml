@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">DNS66</string>
     <string name="app_shortdesc">AdBlocking and Custom DNS Servers</string>
-
     <string name="start_description">Long press to turn on or off</string>
     <string name="custom_dns">Enable custom DNS servers</string>
     <string name="enable_hosts">Enable Domain Filtering</string>
@@ -38,5 +37,7 @@
         <item>Deny</item>
         <item>Allow</item>
         <item>Ignore</item>
-    </string-array>>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits" />
 </resources>
