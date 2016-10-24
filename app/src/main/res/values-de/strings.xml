@@ -4,9 +4,9 @@
     <string name="action_about">Über</string>
     <string name="action_import">Einstellungen importieren</string>
     <string name="action_save">Speichern</string>
-    <string name="app_shortdesc">Werbung blockieren und angepasste DNS Server</string>
-    <string name="custom_dns">Eigene DNS Server verwenden</string>
-    <string name="dns_tab">DNS Server</string>
+    <string name="app_shortdesc">Werbung blockieren und angepasste DNS-Server</string>
+    <string name="custom_dns">Eigene DNS-Server verwenden</string>
+    <string name="dns_tab">DNS-Server</string>
     <string name="enable_hosts">Filtern von Domänen aktivieren</string>
     <string name="hosts_tab">Domänen-Filter</string>
     <string name="info_app_license">"Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version. "</string>
@@ -50,9 +50,9 @@
         \n\nErlaube, verbiete, oder ignoriere einen Filter durch wechseln zwischen Grün, Rot, und Grau - durch Druck auf den Kreis.
         \n\nÄndere die Reihenfolge - Für jeden Host gilt immer der letzte Filter der für ihn definiert ist.
     </string>
-    <string name="welcome_title_dns">DNS Server Konfigurieren</string>
+    <string name="welcome_title_dns">DNS-Server Konfigurieren</string>
     <string name="welcome_message_dns">
-        Definiere einfach eigene DNS Server.
+        Definiere einfach eigene DNS-Server.
         \n\nWähle „erlaubt“ um einen Server zu nutzen, oder was anderes um ihn zu ignorieren.
         \n\nÄndere die Reihenfolge - Der bevorzugte Server ist oben.
     </string>
