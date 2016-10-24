@@ -4,7 +4,7 @@
     <string name="action_about">Über</string>
     <string name="action_import">Einstellungen importieren</string>
     <string name="action_save">Speichern</string>
-    <string name="app_shortdesc">Werbung blockieren und angepasste DNS-Server</string>
+    <string name="app_shortdesc">Hosts sperren und DNS-Server anpassen</string>
     <string name="custom_dns">Eigene DNS-Server verwenden</string>
     <string name="dns_tab">DNS-Server</string>
     <string name="enable_hosts">Filtern von Domänen aktivieren</string>
