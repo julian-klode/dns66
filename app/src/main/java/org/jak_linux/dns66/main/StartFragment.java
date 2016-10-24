@@ -7,6 +7,7 @@
  */
 package org.jak_linux.dns66.main;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
@@ -24,10 +25,12 @@ import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 import org.jak_linux.dns66.vpn.AdVpnService;
+import org.jak_linux.dns66.vpn.Command;
 
 import static android.app.Activity.RESULT_OK;
 
 public class StartFragment extends Fragment {
+    public static final int REQUEST_START_VPN = 1;
     private static final String TAG = "StartFragment";
 
     public StartFragment() {
@@ -57,9 +60,9 @@ public class StartFragment extends Fragment {
                     Log.i(TAG, "Attempting to connect");
                     Intent intent = VpnService.prepare(getContext());
                     if (intent != null) {
-                        startActivityForResult(intent, MainActivity.REQUEST_START_VPN);
+                        startActivityForResult(intent, REQUEST_START_VPN);
                     } else {
-                        ((MainActivity) getActivity()).onActivityResult(MainActivity.REQUEST_START_VPN, RESULT_OK, null);
+                        onActivityResult(REQUEST_START_VPN, RESULT_OK, null);
                     }
                 }
                 return true;
@@ -78,4 +81,18 @@ public class StartFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult: Received result=" + resultCode + " for request=" + requestCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_START_VPN && resultCode == RESULT_OK) {
+            Log.d("MainActivity", "onActivityResult: Starting service");
+            Intent intent = new Intent(getContext(), AdVpnService.class);
+            intent.putExtra("COMMAND", Command.START.ordinal());
+            intent.putExtra("NOTIFICATION_INTENT",
+                    PendingIntent.getActivity(getContext(), 0,
+                            new Intent(getContext(), MainActivity.class), 0));
+            getContext().startService(intent);
+        }
+    }
 }

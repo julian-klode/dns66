@@ -43,7 +43,6 @@
     <string name="welcome_message_start">
         Starte den Dienst erneut nach dem Ändern einer Einstellung damit sie aktiv wird.
         \n\nAktualisiere die Hosts-Dateien mindestens einmal vor dem ersten Start des Dienstes.
-        \n\nDrücke den Start-Knopf erneut wenn Android für VPN Berechtigungen verlangte.
     </string>
     <string name="welcome_title_hosts">Hosts Filtern</string>
     <string name="welcome_message_hosts">

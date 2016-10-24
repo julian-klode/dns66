@@ -45,7 +45,6 @@
     <string name="welcome_message_start">
         Restart the service manually after changing a setting in order to apply it.
         \n\nRefresh the hosts file at least once before starting to have working filtering.
-        \n\nLong-press the start button again if Android asks for VPN permission.
     </string>
     <string name="welcome_title_hosts">Host Blocking</string>
     <string name="welcome_message_hosts">

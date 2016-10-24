@@ -8,7 +8,6 @@
 package org.jak_linux.dns66;
 
 import android.app.DownloadManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,6 @@ import com.stephentuso.welcome.WelcomeHelper;
 
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.vpn.AdVpnService;
-import org.jak_linux.dns66.vpn.Command;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_FILE_OPEN = 1;
     private static final int REQUEST_FILE_STORE = 2;
     private static final int REQUEST_ITEM_EDIT = 3;
-    public static final int REQUEST_START_VPN = 4;
     private static final int REQUEST_SHOW_WELCOME_SCREEN = 5;
     public static Configuration config;
     private ViewPager viewPager;
@@ -174,15 +171,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("MainActivity", "onActivityResult: Received result=" + resultCode + " for request=" + requestCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_START_VPN && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, AdVpnService.class);
-            intent.putExtra("COMMAND", Command.START.ordinal());
-            intent.putExtra("NOTIFICATION_INTENT",
-                    PendingIntent.getActivity(this, 0,
-                            new Intent(this, MainActivity.class), 0));
-            startService(intent);
-        }
         if (requestCode == REQUEST_FILE_OPEN && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData(); //The uri with the location of the file
 
