@@ -65,4 +65,5 @@
     <string name="missing_hosts_files_title">Missing hosts file</string>
     <string name="button_no">No</string>
     <string name="button_yes">Yes</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
 </resources>

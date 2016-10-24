@@ -22,14 +22,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-5dp"
         android:text="@string/app_shortdesc"
         android:textAlignment="center" />
 
     <TextView
+        android:id="@+id/app_version_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/app_version_info"
         android:text="@string/app_version_info"
         android:textAlignment="center" />
 
@@ -37,21 +36,30 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
+        android:autoLink="web"
+        android:text="@string/website"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/info_app_copyright"
         android:textAlignment="center" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:text="@string/translator_credits"
         android:textAlignment="center" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-        android:text="@string/info_app_license" />
+        android:paddingTop="5dp"
+        android:text="@string/info_app_license"
+        android:textAlignment="center"/>
 
 </LinearLayout>
