@@ -336,7 +336,7 @@ class AdVpnThread implements Runnable {
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
 
-        if (!blockedHosts.contains(dnsQueryName)) {
+        if (!blockedHosts.contains(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
             DatagramSocket dnsSocket = null;
