@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 
@@ -453,9 +454,9 @@ class AdVpnThread implements Runnable {
                             String[] split = s.split("[ \t]+");
                             String host = null;
                             if (split.length == 2 && (split[0].equals("127.0.0.1") || split[0].equals("0.0.0.0"))) {
-                                host = split[1].toLowerCase();
+                                host = split[1].toLowerCase(Locale.ENGLISH);
                             } else if (split.length == 1) {
-                                host = split[0].toLowerCase();
+                                host = split[0].toLowerCase(Locale.ENGLISH);
                             }
                             if (host != null) {
                                 count += 1;
