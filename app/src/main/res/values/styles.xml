@@ -22,4 +22,10 @@
         <item name="android:paddingLeft">@dimen/input_label_horizontal_spacing</item>
         <item name="android:paddingRight">@dimen/input_label_horizontal_spacing</item>
     </style>
+
+    <!-- Custom theme for our WelcomeScreenTheme, so we can override the button text. -->
+    <style name="WelcomeTheme" parent="WelcomeScreenTheme">
+        <item name="welcomeButtonSkipText">@string/welcome_button_skip</item>
+        <item name="welcomeButtonDoneText">@string/welcome_button_done</item>
+    </style>
 </resources>

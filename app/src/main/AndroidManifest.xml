@@ -29,7 +29,9 @@
             android:label="@string/action_about"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
-
+        <activity
+            android:name=".DnsWelcomeActivity"
+            android:theme="@style/WelcomeTheme" />
         <activity
             android:name=".ItemActivity"
             android:label="@string/activity_edit"

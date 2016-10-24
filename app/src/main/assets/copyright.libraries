@@ -7,8 +7,10 @@ Comment:
 
 Libraries: com.android.*
            com.aurelhubert:ahbottomnavigation
+           com.stephentuso:welcome
 Copyright: 2016 The Android Open Source Project
            2016 Aurelien Hubert (http://github.com/aurelhubert)
+           2015-2016 Stephen Tuso
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

@@ -40,4 +40,25 @@
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits" />
+    <string name="welcome_title">Welcome to DNS66</string>
+    <string name="welcome_title_start">Things to look out for</string>
+    <string name="welcome_message_start">
+        Restart the service manually after changing a setting in order to apply it.
+        \n\nRefresh the hosts file at least once before starting to have working filtering.
+        \n\nLong-press the start button again if Android asks for VPN permission.
+    </string>
+    <string name="welcome_title_hosts">Host Blocking</string>
+    <string name="welcome_message_hosts">
+        Define filters based on URL to a host file or the name of a host.
+        \n\nEasily allow, deny, or ignore a filter by toggling between green, red, and grey by clicking on the circle.
+        \n\nChange the order of filters - The last item containing a host defines the action.
+    </string>
+    <string name="welcome_title_dns">Custom DNS Servers</string>
+    <string name="welcome_message_dns">
+        Easily define custom DNS servers.
+        \n\nSet a server to ‘allow’ to use a server, anything else to ignore it.
+        \n\nChange the order of DNS servers - the preferred server is at the top.
+    </string>
+    <string name="welcome_button_done">Done</string>
+    <string name="welcome_button_skip">Skip</string>
 </resources>
