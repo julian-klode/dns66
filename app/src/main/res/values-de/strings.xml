@@ -41,26 +41,26 @@
     <string name="welcome_title">Willkommen zu DNS66</string>
     <string name="welcome_title_start">Dinge, die zu beachten sind</string>
     <string name="welcome_message_start">
-        Starte den Dienst erneut nach dem Ändern einer Einstellung damit sie aktiv wird.
-        \n\nAktualisiere die Hosts-Dateien mindestens einmal vor dem ersten Start des Dienstes.
+        Starte den Dienst nach dem Ändern von Einstellungen erneut, damit diese aktiv werden.
+        \n\nAktualisiere die Filterlisten mindestens einmal vor dem ersten Start des Dienstes.
     </string>
-    <string name="welcome_title_hosts">Hosts Filtern</string>
+    <string name="welcome_title_hosts">Hosts filtern</string>
     <string name="welcome_message_hosts">
-        Definiere Filter anhand von einer Host-File-URL oder dem Namen eines Hosts.
-        \n\nErlaube, verbiete, oder ignoriere einen Filter durch wechseln zwischen Grün, Rot, und Grau - durch Druck auf den Kreis.
-        \n\nÄndere die Reihenfolge - Für jeden Host gilt immer der letzte Filter der für ihn definiert ist.
+        Definiere Filter anhand einer Filterlisten-URL oder dem Namen eines Hosts.
+        \n\nErlaube, verbiete oder ignoriere einen Filter durch wechseln via Klick zwischen Grün, Rot, und Grau
+        \n\nÄndere die Reihenfolge - Für jeden Host gilt immer der letzte Filter, der für ihn definiert ist.
     </string>
-    <string name="welcome_title_dns">DNS-Server Konfigurieren</string>
+    <string name="welcome_title_dns">DNS-Server konfigurieren</string>
     <string name="welcome_message_dns">
         Definiere einfach eigene DNS-Server.
-        \n\nWähle „erlaubt“ um einen Server zu nutzen, oder was anderes um ihn zu ignorieren.
-        \n\nÄndere die Reihenfolge - Der bevorzugte Server ist oben.
+        \n\nWähle „erlaubt“, um einen Server zu nutzen oder einen anderen Wert, um ihn zu ignorieren.
+        \n\nÄndere die Reihenfolge - Der bevorzugte Server steht oben.
     </string>
     <string name="welcome_button_skip">Überspringen</string>
     <string name="welcome_button_done">Fertig</string>
     <string name="app_version_info">Version: %s</string>
-    <string name="missing_hosts_files_message">Einige der konfigurierten (nicht ignorierten) Hosts-Dateien fehlt.\n\nVerwende die „Aktualisieren“-Aktion um die aktuellen Hosts-Dateien herunterzuladen.\n\nTrotzdem fortfahren?</string>
-    <string name="missing_hosts_files_title">Fehlende Hosts-Datei</string>
+    <string name="missing_hosts_files_message">Eine oder mehrere der konfigurierten (nicht ignorierten) Filterlisten fehlen.\n\nVerwende die „Aktualisieren“-Aktion, um aktuelle Filterlisten herunterzuladen.\n\nTrotzdem fortfahren?</string>
+    <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
 </resources>
