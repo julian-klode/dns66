@@ -34,6 +34,7 @@ Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_menu_start*.xml
        app/src/main/res/drawable/ic_refresh.xml
        app/src/main/res/drawable/ic_restore.xml
+       app/src/main/res/drawable/ic_warning.xml
 Copyright: 2014-2016 Google
 License: Apache-2.0
  We have made these icons available for you to incorporate them into your

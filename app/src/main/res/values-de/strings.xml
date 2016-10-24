@@ -59,4 +59,8 @@
     <string name="welcome_button_skip">Überspringen</string>
     <string name="welcome_button_done">Fertig</string>
     <string name="app_version_info">Version: %s</string>
+    <string name="missing_hosts_files_message">Einige der konfigurierten (nicht ignorierten) Hosts-Dateien fehlt.\n\nVerwende die „Aktualisieren“-Aktion um die aktuellen Hosts-Dateien herunterzuladen.\n\nTrotzdem fortfahren?</string>
+    <string name="missing_hosts_files_title">Fehlende Hosts-Datei</string>
+    <string name="button_yes">Ja</string>
+    <string name="button_no">Nein</string>
 </resources>

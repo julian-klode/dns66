@@ -7,7 +7,9 @@
  */
 package org.jak_linux.dns66.main;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
@@ -21,11 +23,14 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 import org.jak_linux.dns66.vpn.AdVpnService;
 import org.jak_linux.dns66.vpn.Command;
+
+import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -57,13 +62,7 @@ public class StartFragment extends Fragment {
                     intent.putExtra("COMMAND", org.jak_linux.dns66.vpn.Command.STOP.ordinal());
                     getActivity().startService(intent);
                 } else {
-                    Log.i(TAG, "Attempting to connect");
-                    Intent intent = VpnService.prepare(getContext());
-                    if (intent != null) {
-                        startActivityForResult(intent, REQUEST_START_VPN);
-                    } else {
-                        onActivityResult(REQUEST_START_VPN, RESULT_OK, null);
-                    }
+                    checkHostsFilesAndStartService();
                 }
                 return true;
             }
@@ -79,6 +78,58 @@ public class StartFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void checkHostsFilesAndStartService() {
+        if (!areHostsFilesExistant()) {
+            new AlertDialog.Builder(getActivity())
+                    .setIcon(R.drawable.ic_warning)
+                    .setTitle(R.string.missing_hosts_files_title)
+                    .setMessage(R.string.missing_hosts_files_message)
+                    .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /* Do nothing */
+                        }
+                    })
+                    .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startService();
+                        }
+                    })
+                    .show();
+            return;
+        }
+        startService();
+    }
+
+    private void startService() {
+        Log.i(TAG, "Attempting to connect");
+        Intent intent = VpnService.prepare(getContext());
+        if (intent != null) {
+            startActivityForResult(intent, REQUEST_START_VPN);
+        } else {
+            onActivityResult(REQUEST_START_VPN, RESULT_OK, null);
+        }
+    }
+
+    /**
+     * Check if all configured hosts files exist.
+     *
+     * @return true if all host files exist or no host files were configured.
+     */
+    private boolean areHostsFilesExistant() {
+        if (!MainActivity.config.hosts.enabled)
+            return true;
+        for (Configuration.Item item : MainActivity.config.hosts.items) {
+            File file = FileHelper.getItemFile(getContext(), item);
+            if (item.state != Configuration.Item.STATE_IGNORE && file != null) {
+                if (!file.exists())
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override
