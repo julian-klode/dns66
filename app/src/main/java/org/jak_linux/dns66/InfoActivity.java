@@ -9,6 +9,7 @@ package org.jak_linux.dns66;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 public class InfoActivity extends AppCompatActivity {
 
@@ -17,5 +18,7 @@ public class InfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_info);
+
+        ((TextView) findViewById(R.id.app_version_info)).setText(getString(R.string.app_version_info, BuildConfig.VERSION_NAME));
     }
 }

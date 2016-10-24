@@ -29,6 +29,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/app_version_info"
+        android:text="@string/app_version_info"
+        android:textAlignment="center" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:text="@string/info_app_copyright"
         android:textAlignment="center" />

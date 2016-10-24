@@ -59,4 +59,5 @@
     </string>
     <string name="welcome_button_skip">Überspringen</string>
     <string name="welcome_button_done">Fertig</string>
+    <string name="app_version_info">Version: %s</string>
 </resources>
