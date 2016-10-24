@@ -41,18 +41,19 @@
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits" />
     <string name="welcome_title">Welcome to DNS66</string>
-    <string name="welcome_title_start">Things to look out for</string>
+    <string name="welcome_title_start">Things (still) to look out for</string>
     <string name="welcome_message_start">
-        Restart the service manually after changing a setting in order to apply it.
+        We are not yet done with the user experience, therefore:
+        \n\nRestart the service manually after changing a setting in order to apply it.
         \n\nRefresh the hosts file at least once before starting to have working filtering.
     </string>
-    <string name="welcome_title_hosts">Host Blocking</string>
+    <string name="welcome_title_hosts">Host blocking</string>
     <string name="welcome_message_hosts">
         Define filters based on URL to a host file or the name of a host.
-        \n\nEasily allow, deny, or ignore a filter by toggling between green, red, and grey by clicking on the circle.
+        \n\nFilter with colors - Allow with green, deny with red, ignore with grey; change with a click.
         \n\nChange the order of filters - The last item containing a host defines the action.
     </string>
-    <string name="welcome_title_dns">Custom DNS Servers</string>
+    <string name="welcome_title_dns">Custom DNS servers</string>
     <string name="welcome_message_dns">
         Easily define custom DNS servers.
         \n\nSet a server to ‘allow’ to use a server, anything else to ignore it.
