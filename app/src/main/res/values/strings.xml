@@ -7,8 +7,8 @@
     <string name="start_tab">Start / Stop</string>
     <string name="hosts_tab">Domain Filters</string>
     <string name="dns_tab">DNS Servers</string>
-    <string name="action_export">Export</string>
-    <string name="action_import">Import</string>
+    <string name="action_export">Export settings</string>
+    <string name="action_import">Import settings</string>
     <string name="action_save">Save</string>
     <string name="load_defaults">Load default settings</string>
     <string name="action_about">About</string>

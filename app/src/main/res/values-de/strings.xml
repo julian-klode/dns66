@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_export">Exportieren</string>
+    <string name="action_export">Einstellungen exportieren</string>
     <string name="action_about">Über</string>
-    <string name="action_import">Importieren</string>
+    <string name="action_import">Einstellungen importieren</string>
     <string name="action_save">Speichern</string>
     <string name="app_shortdesc">Werbung blockieren und angepasste DNS Server</string>
     <string name="custom_dns">Eigene DNS Server verwenden</string>
