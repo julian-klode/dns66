@@ -451,12 +451,18 @@ class AdVpnThread implements Runnable {
                         }
                         if (s.length() != 0) {
                             String[] split = s.split("[ \t]+");
+                            String host = null;
                             if (split.length == 2 && (split[0].equals("127.0.0.1") || split[0].equals("0.0.0.0"))) {
+                                host = split[1].toLowerCase();
+                            } else if (split.length == 1) {
+                                host = split[0].toLowerCase();
+                            }
+                            if (host != null) {
                                 count += 1;
                                 if (item.state == 0)
-                                    blockedHosts.add(split[1].toLowerCase());
+                                    blockedHosts.add(host);
                                 else if (item.state == 1)
-                                    blockedHosts.remove(split[1].toLowerCase());
+                                    blockedHosts.remove(host);
                             }
                         }
 
@@ -472,6 +478,7 @@ class AdVpnThread implements Runnable {
                     e.printStackTrace();
                 }
             }
+            Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
         }
     }
 
