@@ -48,12 +48,13 @@ the Free Software Foundation, either version 3 of the License, or
 
 Parts of the program are licensed under only version 3 of the license, and
 some parts might be licensed under the terms of other compatible licenses. See
-the file [copyright](copyright) for further (machine-readable) information.
+the file [copyright](app/src/main/assets/copyright) for further (machine-readable) information.
 
 Binaries also bundle external libraries. To the best of our knowledge those
 are licensed under the Apache license, version 2.0, except for pcap4j, which
 is licensed under the MIT license, and dnsjava, which uses a 3 clause BSD
-license.
+license. See
+the file [copyright.libraries](app/src/main/assets/copyright.libraries) for further (machine-readable) information.
 
 Authors
 -------
