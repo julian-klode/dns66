@@ -114,7 +114,7 @@ class AdVpnThread implements Runnable {
 
     public void startThread() {
         Log.i(TAG, "Starting Vpn Thread");
-        thread = new Thread(this, "AdBusterVpnThread");
+        thread = new Thread(this, "AdVpnThread");
         thread.start();
         Log.i(TAG, "Vpn Thread started");
     }
@@ -522,7 +522,7 @@ class AdVpnThread implements Runnable {
 
         // Create a new interface using the builder and save the parameters.
         ParcelFileDescriptor pfd = builder
-                .setSession("Ad Buster")
+                .setSession("DNS66")
                 .setConfigureIntent(
                         PendingIntent.getActivity(vpnService, 1, new Intent(vpnService, MainActivity.class),
                                 PendingIntent.FLAG_CANCEL_CURRENT)).establish();
