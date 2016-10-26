@@ -20,6 +20,16 @@
         "state": 1
       },
       {
+        "title": "dns.watch server 1 (DE)",
+        "location": "84.200.69.80",
+        "state": 1
+      },
+      {
+        "title": "dns.watch server 2 (DE)",
+        "location": "84.200.70.40",
+        "state": 1
+      },
+      {
         "title": "ISC (US)",
         "location": "204.152.184.76",
         "state": 0
