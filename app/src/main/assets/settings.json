@@ -56,17 +56,17 @@
       },
       {
         "title": "Long-lived malware domains",
-        "location": "http://mirror1.malwaredomains.com/files/immortal_domains.txt",
+        "location": "https://mirror.cedia.org.ec/malwaredomains/immortal_domains.txt",
         "state": 2
       },
       {
         "title": "Malware Domain List",
-        "location": "http://www.malwaredomainlist.com/hostslist/hosts.txt",
+        "location": "https://www.malwaredomainlist.com/hostslist/hosts.txt",
         "state": 0
       },
       {
-        "title": "Malware domains",
-        "location": "http://mirror1.malwaredomains.com/files/justdomains",
+        "title": "Malware domains.com",
+        "location": "https://mirror.cedia.org.ec/malwaredomains/justdomains",
         "state": 2
       },
       {
