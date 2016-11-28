@@ -39,6 +39,33 @@ current connection's DNS servers are used. The app ships are pre-defined
 list of well known (mostly German) non-logging servers courtesy of the
 Chaos Computer Club.
 
+
+Privacy Guarantee
+-----------------
+Privacy is the most important aspect of DNS66. Currently, DNS66 is strictly
+data reducing: Running it can only reduce the amount of data leaving your
+device, not increase it (except for fetching hosts files, obviously), as for
+each request, we will either allow it to leave your device or not - we will
+not send other requests or add other information to the request.
+
+While not yet implemented, future versions of DNS66 might have additional
+features that might share more data than your phone normally would. Among
+these features are:
+
+1. Automatic updates. Your phone might periodically contact servers to query
+   for new upstream versions and new host lists. DNS66 will only include as
+   much data as necessary to complete the request.
+
+2. Debugging. We hope to have a better way to debug program failures than
+   manually running logcat. Such a feature by definition requires sharing
+   debug logs. Debug logs (including logcat) may include personal information,
+   and you should review them before sharing them publicly.
+
+If such a feature is added, you will be presented with the choice to enable
+it (it will be disabled by default). No such feature will be turned on without
+your explicit consent (for example, clicking yes in a dialog asking whether you
+want to have automatic updates).
+
 Contributing
 ------------
 Contributions are welcome. Any code contribution will be considered to grant
