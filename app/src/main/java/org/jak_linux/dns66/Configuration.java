@@ -24,6 +24,30 @@ public class Configuration {
     public boolean autoStart;
     public Hosts hosts;
     public DnsServers dnsServers;
+    public Whitelist whitelist;
+
+    private static Whitelist readWhitelist(JsonReader reader) throws IOException {
+        Whitelist whitelist = new Whitelist();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            switch (reader.nextName()) {
+                case "items":
+                    reader.beginArray();
+                    while (reader.hasNext())
+                        whitelist.items.add(reader.nextString());
+
+                    reader.endArray();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+        reader.endObject();
+
+        return whitelist;
+    }
 
     private static Hosts readHosts(JsonReader reader) throws IOException {
         Hosts hosts = new Hosts();
@@ -101,6 +125,17 @@ public class Configuration {
         return item;
     }
 
+    private static void writeWhitelist(JsonWriter writer, Whitelist w) throws IOException {
+        writer.beginObject();
+        writer.name("items");
+        writer.beginArray();
+        for (String string : w.items) {
+            writer.value(string);
+        }
+        writer.endArray();
+        writer.endObject();
+    }
+
     private static void writeHosts(JsonWriter writer, Hosts h) throws IOException {
         writer.beginObject();
         writer.name("enabled").value(h.enabled);
@@ -141,6 +176,8 @@ public class Configuration {
         writeHosts(writer, hosts);
         writer.name("dnsServers");
         writeDnsServers(writer, dnsServers);
+        writer.name("whitelist");
+        writeWhitelist(writer, whitelist);
         writer.endObject();
     }
 
@@ -161,6 +198,9 @@ public class Configuration {
                     break;
                 case "dnsServers":
                     dnsServers = readDnsServers(reader);
+                    break;
+                case "whitelist":
+                    whitelist = readWhitelist(reader);
                     break;
                 default:
                     reader.skipValue();
@@ -187,5 +227,9 @@ public class Configuration {
     public static class DnsServers {
         public boolean enabled;
         public List<Item> items = new ArrayList<>();
+    }
+
+    public static class Whitelist {
+        public List<String> items = new ArrayList<>();
     }
 }

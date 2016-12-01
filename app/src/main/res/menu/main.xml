@@ -29,6 +29,11 @@
         android:title="@string/action_export"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_whitelist"
+        android:orderInCategory="100"
+        android:title="@string/action_whitelist"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_menu_info"
         android:orderInCategory="100"

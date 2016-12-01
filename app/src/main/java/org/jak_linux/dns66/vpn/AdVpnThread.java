@@ -67,9 +67,6 @@ class AdVpnThread implements Runnable {
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
-    // Apps using DownloadManager that are known to be broken on Nougat when a VPN is active, see
-    // issue #31 for further details.
-    private static final String[] NOUGAT_APP_WHITELIST = {"org.jak_linux.dns66", "com.android.vending"};
 
     private final VpnService vpnService;
     private final Notify notify;
@@ -528,7 +525,7 @@ class AdVpnThread implements Runnable {
 
         // Work around DownloadManager bug on Nougat - It cannot resolve DNS
         // names while a VPN service is active.
-        for (String app : NOUGAT_APP_WHITELIST) {
+        for (String app : config.whitelist.items) {
             try {
                 Log.d(TAG, "configure: Disallowing " + app + " from using the DNS VPN");
                 builder.addDisallowedApplication(app);

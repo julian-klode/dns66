@@ -37,6 +37,9 @@
             android:label="@string/activity_edit"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".WhitelistActivity"
+            android:theme="@style/AppTheme.Dialog" />
 
         <service
             android:name=".vpn.AdVpnService"
