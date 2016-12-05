@@ -2,7 +2,7 @@
   "version": 1,
   "autoStart": true,
   "dnsServers": {
-    "enabled": true,
+    "enabled": false,
     "items": [
       {
         "title": "Chaos Computer Club (DE)",
