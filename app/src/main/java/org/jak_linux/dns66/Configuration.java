@@ -208,6 +208,12 @@ public class Configuration {
             }
         }
         reader.endObject();
+
+        if (whitelist == null) {
+            whitelist = new Whitelist();
+            whitelist.items.add("org.jak_linux.dns66");
+            whitelist.items.add("com.android.vending");
+        }
     }
 
     public static class Item {

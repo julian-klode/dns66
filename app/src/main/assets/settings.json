@@ -80,11 +80,5 @@
         "state": 0
       }
     ]
-  },
-  "whitelist": {
-    "items": [
-      "org.jak_linux.dns66",
-      "com.android.vending"
-    ]
   }
 }
