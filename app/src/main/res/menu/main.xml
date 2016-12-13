@@ -34,6 +34,11 @@
         android:title="@string/action_whitelist"
         app:showAsAction="never" />
     <item
+        android:id="@+id/setting_show_notification"
+        android:title="@string/show_notification"
+        android:orderInCategory="100"
+        android:checkable="true" />
+    <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_menu_info"
         android:orderInCategory="100"

@@ -68,4 +68,5 @@
     <string name="button_yes">Yes</string>
     <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
     <string name="action_whitelist">Whitelisted apps</string>
+    <string name="show_notification">Show Notification</string>
 </resources>

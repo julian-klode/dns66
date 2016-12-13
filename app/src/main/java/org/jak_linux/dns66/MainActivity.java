@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private AHBottomNavigation bottomNavigation;
     private ItemChangedListener itemChangedListener = null;
     private WelcomeHelper welcomeScreen;
+    private MenuItem showNotificationMenuItem = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        showNotificationMenuItem = menu.findItem(R.id.setting_show_notification);
+        showNotificationMenuItem.setChecked(config.showNotification);
         return true;
     }
 
@@ -144,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_whitelist:
                 startActivity(new Intent(this, WhitelistActivity.class));
+                break;
+            case R.id.setting_show_notification:
+                item.setChecked(!item.isChecked());
+                MainActivity.config.showNotification = item.isChecked();
+                FileHelper.writeSettings(this, MainActivity.config);
                 break;
             case R.id.action_about:
                 Intent infoIntent = new Intent(this, InfoActivity.class);
@@ -240,6 +248,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reload() {
+        if (showNotificationMenuItem != null)
+            showNotificationMenuItem.setChecked(config.showNotification);
         viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         viewPager.setCurrentItem(bottomNavigation.getCurrentItem());
     }

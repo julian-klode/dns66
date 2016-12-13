@@ -65,4 +65,5 @@
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
     <string name="action_whitelist">Ausgenommene Apps</string>
+    <string name="show_notification">Benachrichtigung anzeigen</string>
 </resources>
