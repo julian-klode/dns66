@@ -64,4 +64,5 @@
     <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
+    <string name="action_whitelist">Ausgenommene Apps</string>
 </resources>
