@@ -66,4 +66,5 @@
     <string name="button_no">Nein</string>
     <string name="action_whitelist">Ausgenommene Apps</string>
     <string name="show_notification">Benachrichtigung anzeigen</string>
+    <string name="could_not_configure_vpn_service">Konnte VPN Dienst nicht konfigurieren - Prüfen Sie, ob ein durchgehend aktives VPN (wie WiFi Assistant) aktiviert ist und deaktivieren sie es</string>
 </resources>

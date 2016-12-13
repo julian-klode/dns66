@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
@@ -32,6 +33,7 @@ import org.jak_linux.dns66.vpn.Command;
 
 import java.io.File;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class StartFragment extends Fragment {
@@ -51,7 +53,6 @@ public class StartFragment extends Fragment {
 
         TextView stateText = (TextView) rootView.findViewById(R.id.state_textview);
         stateText.setText(getString(AdVpnService.vpnStatusToTextId(AdVpnService.vpnStatus)));
-
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -136,6 +137,9 @@ public class StartFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult: Received result=" + resultCode + " for request=" + requestCode);
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_START_VPN && resultCode == RESULT_CANCELED) {
+            Toast.makeText(getContext(), R.string.could_not_configure_vpn_service, Toast.LENGTH_LONG).show();
+        }
         if (requestCode == REQUEST_START_VPN && resultCode == RESULT_OK) {
             Log.d("MainActivity", "onActivityResult: Starting service");
             Intent intent = new Intent(getContext(), AdVpnService.class);

@@ -69,4 +69,5 @@
     <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
     <string name="action_whitelist">Whitelisted apps</string>
     <string name="show_notification">Show Notification</string>
+    <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
 </resources>
