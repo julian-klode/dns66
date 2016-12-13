@@ -142,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivityForResult(exportIntent, REQUEST_FILE_STORE);
                 break;
+            case R.id.action_whitelist:
+                startActivity(new Intent(this, WhitelistActivity.class));
+                break;
             case R.id.action_about:
                 Intent infoIntent = new Intent(this, InfoActivity.class);
                 startActivity(infoIntent);
