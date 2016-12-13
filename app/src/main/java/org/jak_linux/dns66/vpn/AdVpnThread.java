@@ -30,7 +30,6 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
-import org.pcap4j.packet.IllegalRawDataException;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
@@ -325,6 +324,31 @@ class AdVpnThread implements Runnable {
         }
 
         UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
+
+
+        if (parsedUdp.getPayload() == null) {
+            Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
+
+            // Let's be nice to Firefox. Firefox uses an empty UDP packet to
+            // the gateway to reduce the RTT. For further details, please see
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
+            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
+            DatagramSocket dnsSocket = null;
+            try {
+                dnsSocket = new DatagramSocket();
+
+                vpnService.protect(dnsSocket);
+
+                dnsSocket.send(outPacket);
+            } catch (IOException e) {
+                Log.i(TAG, "handleDnsRequest: Could not forward empty UDP packet");
+            } finally {
+                FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
+            }
+
+            return;
+        }
+
         byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
         Message dnsMsg;
         try {
