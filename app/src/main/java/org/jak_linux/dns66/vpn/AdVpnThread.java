@@ -63,6 +63,8 @@ class AdVpnThread implements Runnable {
     private static final String TAG = "AdVpnThread";
     private static final int MIN_RETRY_TIME = 5;
     private static final int MAX_RETRY_TIME = 2 * 60;
+    /* If we had a successful connection for that long, reset retry timeout */
+    private static final long RETRY_RESET_SEC = 60;
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
@@ -157,7 +159,9 @@ class AdVpnThread implements Runnable {
         int retryTimeout = MIN_RETRY_TIME;
         // Try connecting the vpn continuously
         while (true) {
+            long connectTimeMillis = 0;
             try {
+                connectTimeMillis = System.currentTimeMillis();
                 // If the function returns, that means it was interrupted
                 runVpn();
 
@@ -177,6 +181,11 @@ class AdVpnThread implements Runnable {
                 //ExceptionHandler.saveException(e, Thread.currentThread(), null);
                 if (notify != null)
                     notify.run(AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR);
+            }
+
+            if (System.currentTimeMillis() - connectTimeMillis >= RETRY_RESET_SEC * 1000) {
+                Log.i(TAG, "Resetting timeout");
+                retryTimeout = MIN_RETRY_TIME;
             }
 
             // ...wait and try again
