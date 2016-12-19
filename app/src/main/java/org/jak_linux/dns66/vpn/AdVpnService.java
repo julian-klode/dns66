@@ -127,7 +127,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         int notificationTextId = vpnStatusToTextId(status);
         notificationBuilder.setContentText(getString(notificationTextId));
 
-        if (MainActivity.config.showNotification)
+        if (FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
             startForeground(10, notificationBuilder.build());
 
         Intent intent = new Intent(VPN_UPDATE_STATUS_INTENT);
