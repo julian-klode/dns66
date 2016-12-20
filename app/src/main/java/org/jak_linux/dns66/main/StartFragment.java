@@ -57,11 +57,7 @@ public class StartFragment extends Fragment {
             @Override
             public boolean onLongClick(View v) {
                 if (AdVpnService.vpnStatus != AdVpnService.VPN_STATUS_STOPPED) {
-                    Log.i(TAG, "Attempting to disconnect");
-
-                    Intent intent = new Intent(getActivity(), AdVpnService.class);
-                    intent.putExtra("COMMAND", org.jak_linux.dns66.vpn.Command.STOP.ordinal());
-                    getActivity().startService(intent);
+                    stopService();
                 } else {
                     checkHostsFilesAndStartService();
                 }
@@ -81,8 +77,8 @@ public class StartFragment extends Fragment {
         return rootView;
     }
 
-    private void checkHostsFilesAndStartService() {
-        if (!areHostsFilesExistant()) {
+    protected void checkHostsFilesAndStartService() {
+        if (!areHostsFilesExistent()) {
             new AlertDialog.Builder(getActivity())
                     .setIcon(R.drawable.ic_warning)
                     .setTitle(R.string.missing_hosts_files_title)
@@ -90,7 +86,7 @@ public class StartFragment extends Fragment {
                     .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /* Do nothing */
+                            onCancelStart();
                         }
                     })
                     .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
@@ -105,8 +101,16 @@ public class StartFragment extends Fragment {
         startService();
     }
 
+	/**
+     * Called when the start of the service was canceled after some host files were missing
+     */
+    protected void onCancelStart() {
+         /* Do nothing */
+    }
+
     private void startService() {
         Log.i(TAG, "Attempting to connect");
+
         Intent intent = VpnService.prepare(getContext());
         if (intent != null) {
             startActivityForResult(intent, REQUEST_START_VPN);
@@ -115,12 +119,20 @@ public class StartFragment extends Fragment {
         }
     }
 
+    protected void stopService() {
+        Log.i(TAG, "Attempting to disconnect");
+
+        Intent intent = new Intent(getActivity(), AdVpnService.class);
+        intent.putExtra("COMMAND", org.jak_linux.dns66.vpn.Command.STOP.ordinal());
+        getActivity().startService(intent);
+    }
+
     /**
      * Check if all configured hosts files exist.
      *
      * @return true if all host files exist or no host files were configured.
      */
-    private boolean areHostsFilesExistant() {
+    private boolean areHostsFilesExistent() {
         if (!MainActivity.config.hosts.enabled)
             return true;
         for (Configuration.Item item : MainActivity.config.hosts.items) {
