@@ -549,8 +549,12 @@ class AdVpnThread implements Runnable {
         for (InetAddress addr : dnsServers) {
             if (addr instanceof Inet4Address) {
                 Log.i(TAG, "configure: Adding DNS Server " + addr);
-                builder.addDnsServer(addr);
-                builder.addRoute(addr, 32);
+                try {
+                    builder.addDnsServer(addr);
+                    builder.addRoute(addr, 32);
+                } catch (Exception e) {
+                    Log.e(TAG, "configure: Cannot add server:", e)
+                }
             }
         }
 
