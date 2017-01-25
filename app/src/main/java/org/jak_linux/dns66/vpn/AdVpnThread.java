@@ -553,7 +553,7 @@ class AdVpnThread implements Runnable {
                     builder.addDnsServer(addr);
                     builder.addRoute(addr, 32);
                 } catch (Exception e) {
-                    Log.e(TAG, "configure: Cannot add server:", e)
+                    Log.e(TAG, "configure: Cannot add server:", e);
                 }
             }
         }
