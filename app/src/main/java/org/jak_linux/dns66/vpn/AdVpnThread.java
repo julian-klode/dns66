@@ -50,6 +50,7 @@ import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -68,6 +69,9 @@ class AdVpnThread implements Runnable {
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
+
+    /* Upstream DNS servers, indexed by our IP */
+    private ArrayList<InetAddress> upstreamDnsServers;
 
     private final VpnService vpnService;
     private final Notify notify;
@@ -332,6 +336,24 @@ class AdVpnThread implements Runnable {
             return;
         }
 
+        InetAddress destAddr;
+        if (upstreamDnsServers.size() > 0) {
+            byte[] addr = parsedPacket.getHeader().getDstAddr().getAddress();
+            int index = addr[addr.length-1] - 2;
+
+            try {
+                destAddr = upstreamDnsServers.get(index);
+            } catch (Exception e) {
+                Log.e(TAG, "handleDnsRequest: Cannot handle packets to" + parsedPacket.getHeader().getDstAddr().getHostAddress(), e);
+                return;
+            }
+            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s AKA %d AKA %s", parsedPacket.getHeader().getDstAddr().getHostAddress(), index, destAddr));
+        } else {
+            destAddr = parsedPacket.getHeader().getDstAddr();
+            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s - is upstream", parsedPacket.getHeader().getDstAddr().getHostAddress()));
+        }
+
+
         UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
 
 
@@ -341,7 +363,7 @@ class AdVpnThread implements Runnable {
             // Let's be nice to Firefox. Firefox uses an empty UDP packet to
             // the gateway to reduce the RTT. For further details, please see
             // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
-            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
+            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             DatagramSocket dnsSocket = null;
             try {
                 dnsSocket = new DatagramSocket();
@@ -371,10 +393,9 @@ class AdVpnThread implements Runnable {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-
         if (!blockedHosts.contains(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + parsedPacket.getHeader().getDstAddr());
-            DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, parsedPacket.getHeader().getDstAddr(), parsedUdp.getHeader().getDstPort().valueAsInt());
+            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
+            DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             DatagramSocket dnsSocket = null;
             try {
                 // Packets to be sent to the real DNS server will need to be protected from the VPN
@@ -519,6 +540,20 @@ class AdVpnThread implements Runnable {
         }
     }
 
+    private void newDNSServer(VpnService.Builder builder, String format, InetAddress addr) {
+        if (format == null) {
+            Log.i(TAG, "configure: Adding DNS Server " + addr);
+            builder.addDnsServer(addr);
+            builder.addRoute(addr, 32);
+        } else {
+            upstreamDnsServers.add(addr);
+            String alias = String.format(format, upstreamDnsServers.size() + 1);
+            Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + alias);
+            builder.addDnsServer(alias);
+            builder.addRoute(alias, 32);
+        }
+    }
+
     private ParcelFileDescriptor configure() throws VpnNetworkException {
         Log.i(TAG, "Configuring");
 
@@ -528,17 +563,36 @@ class AdVpnThread implements Runnable {
 
         // Configure a builder while parsing the parameters.
         VpnService.Builder builder = vpnService.new Builder();
-        builder.addAddress("192.168.50.1", 24);
+
+        String format = null;
+
+        // Determine a prefix we can use. These are all reserved prefixes for example
+        // use, so it's possible they might be blocked.
+        for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
+            try {
+                builder.addAddress(prefix + ".1", 24);
+            } catch(IllegalArgumentException e) {
+                continue;
+            }
+
+            format = prefix + ".%d";
+            break;
+        }
+
+        if (format == null) {
+            Log.w(TAG, "configure: Could not find a prefix to use, directly using DNS servers");
+            builder.addAddress("192.168.50.1", 24);
+        }
+
+        upstreamDnsServers = new ArrayList<InetAddress>();
 
         // Add configured DNS servers
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
         if (config.dnsServers.enabled) {
             for (Configuration.Item item : config.dnsServers.items) {
                 if (item.state == item.STATE_ALLOW) {
-                    Log.i(TAG, "configure: Adding DNS Server " + item.location);
                     try {
-                        builder.addDnsServer(item.location);
-                        builder.addRoute(item.location, 32);
+                        newDNSServer(builder, format, Inet4Address.getByName(item.location));
                     } catch (Exception e) {
                         Log.e(TAG, "configure: Cannot add custom DNS server", e);
                     }
@@ -548,10 +602,8 @@ class AdVpnThread implements Runnable {
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
             if (addr instanceof Inet4Address) {
-                Log.i(TAG, "configure: Adding DNS Server " + addr);
                 try {
-                    builder.addDnsServer(addr);
-                    builder.addRoute(addr, 32);
+                    newDNSServer(builder, format, addr);
                 } catch (Exception e) {
                     Log.e(TAG, "configure: Cannot add server:", e);
                 }
