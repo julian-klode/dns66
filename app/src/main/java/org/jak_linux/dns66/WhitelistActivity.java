@@ -8,9 +8,8 @@
 package org.jak_linux.dns66;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -57,7 +55,7 @@ public class WhitelistActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        if(appListGenerator != null && appListGenerator.getStatus() == AsyncTask.Status.RUNNING)
+        if (appListGenerator != null && appListGenerator.getStatus() == AsyncTask.Status.RUNNING)
             appListGenerator.cancel(true);
 
         FileHelper.writeSettings(this, MainActivity.config);
@@ -73,7 +71,7 @@ public class WhitelistActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, final ViewGroup parent) {
             // Check if an existing view is being reused, otherwise inflate the view
-            if(convertView == null)
+            if (convertView == null)
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.whitelist_row, parent, false);
 
             final ListEntry entry = getItem(position);
@@ -88,7 +86,7 @@ public class WhitelistActivity extends AppCompatActivity {
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(MainActivity.config.whitelist.items.contains(entry.getPackageName())) {
+                    if (MainActivity.config.whitelist.items.contains(entry.getPackageName())) {
                         MainActivity.config.whitelist.items.remove(entry.getPackageName());
                         checkBox.setChecked(false);
                     } else {
@@ -107,22 +105,15 @@ public class WhitelistActivity extends AppCompatActivity {
         protected AppListAdapter doInBackground(Void... params) {
             final PackageManager pm = getPackageManager();
 
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            List<ResolveInfo> info = pm.queryIntentActivities(intent, 0);
+            List<ApplicationInfo> info = pm.getInstalledApplications(0);
 
-            Collections.sort(info, new Comparator<ResolveInfo>() {
-                @Override
-                public int compare(ResolveInfo ai1, ResolveInfo ai2) {
-                    return ai1.activityInfo.loadLabel(pm).toString().compareTo(ai2.activityInfo.loadLabel(pm).toString());
-                }
-            });
+            Collections.sort(info, new ApplicationInfo.DisplayNameComparator(pm));
 
             final List<ListEntry> entries = new ArrayList<>();
-            for(ResolveInfo appInfo : info) {
-                if(!appInfo.activityInfo.applicationInfo.packageName.equals(BuildConfig.APPLICATION_ID))
+            for (ApplicationInfo appInfo : info) {
+                if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID))
                     entries.add(new ListEntry(
-                            appInfo.activityInfo.applicationInfo.packageName,
+                            appInfo.packageName,
                             appInfo.loadLabel(pm).toString()));
             }
 
