@@ -68,14 +68,7 @@ want to have automatic updates).
 
 Contributing
 ------------
-Contributions are welcome. Any code contribution will be considered to grant
-an implicit license under the GPL, version 3 or later, as stated below, or
-(on special exceptions) a different license explicitly included in the
-contribution that is compatible to the GPL 3.
-
-Icons are welcome too. Modifications of existing icons shall have the same
-license as the modified file. New icons may be contributed under the GPL,
-version 3 or later (as below), or the Apache license, version 2.
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 License
 -------
