@@ -69,10 +69,6 @@ class AdVpnThread implements Runnable {
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
-
-    /* Upstream DNS servers, indexed by our IP */
-    private ArrayList<InetAddress> upstreamDnsServers;
-
     private final VpnService vpnService;
     private final Notify notify;
     /* Data to be written to the device */
@@ -91,6 +87,8 @@ class AdVpnThread implements Runnable {
             return false;
         }
     };
+    /* Upstream DNS servers, indexed by our IP */
+    private ArrayList<InetAddress> upstreamDnsServers;
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -339,7 +337,7 @@ class AdVpnThread implements Runnable {
         InetAddress destAddr;
         if (upstreamDnsServers.size() > 0) {
             byte[] addr = parsedPacket.getHeader().getDstAddr().getAddress();
-            int index = addr[addr.length-1] - 2;
+            int index = addr[addr.length - 1] - 2;
 
             try {
                 destAddr = upstreamDnsServers.get(index);
@@ -571,7 +569,7 @@ class AdVpnThread implements Runnable {
         for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
             try {
                 builder.addAddress(prefix + ".1", 24);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 continue;
             }
 

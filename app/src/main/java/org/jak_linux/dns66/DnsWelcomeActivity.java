@@ -7,8 +7,6 @@
  */
 package org.jak_linux.dns66;
 
-import android.os.Bundle;
-
 import com.stephentuso.welcome.BasicPage;
 import com.stephentuso.welcome.TitlePage;
 import com.stephentuso.welcome.WelcomeActivity;
