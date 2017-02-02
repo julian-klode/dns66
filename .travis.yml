@@ -1,0 +1,18 @@
+language: android
+jdk: oraclejdk8
+
+android:
+  components:
+    - tools # repository-11
+    - tools # upgrade tools
+    - platform-tools
+    - build-tools-24.0.3
+    - android-24
+    - extra-android-support
+    - extra-google-m2repository
+    - extra-android-m2repository
+  licenses:
+    - '.+'
+
+script:
+    - ./gradlew clean assemble test
