@@ -21,7 +21,6 @@ Currently, there are some minor usability issues:
 
 * If you change a setting, you must manually restart the vpn service (issue #3)
 * IPv6 servers are not supported (issue #4)
-* Host files containing just host names are not yet supported (issue #5)
 
 There's also no validation of input, so DNS servers that are not valid IPv4
 addresses are not rejected, neither are URLs for DNS server entries (we intend
