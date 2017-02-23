@@ -37,7 +37,7 @@ dependencies {
     // Proxy stuff
     compile 'org.pcap4j:pcap4j-core:1.7.0'
     compile 'org.pcap4j:pcap4j-packetfactory-propertiesbased:1.7.0'
-    compile 'dnsjava:dnsjava:2.1.7'
+    compile 'dnsjava:dnsjava:2.1.8'
 
     testCompile 'junit:junit:4.12'
 }
