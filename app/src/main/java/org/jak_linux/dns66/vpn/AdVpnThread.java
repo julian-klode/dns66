@@ -33,6 +33,8 @@ import org.jak_linux.dns66.MainActivity;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
+import org.pcap4j.packet.factory.PacketFactoryPropertiesLoader;
+import org.pcap4j.util.PropertiesLoader;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Rcode;
@@ -45,6 +47,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
@@ -75,12 +78,20 @@ class AdVpnThread implements Runnable {
     private final Queue<byte[]> deviceWrites = new LinkedList<>();
     // HashMap that keeps an upper limit of packets
     private final WospList dnsIn = new WospList();
+    /**
+     * After how many iterations we should clear pcap4js packetfactory property cache
+     */
+    private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
     /* Upstream DNS servers, indexed by our IP */
     private ArrayList<InetAddress> upstreamDnsServers;
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
     private Set<String> blockedHosts = new HashSet<>();
+    /**
+     * Number of iterations since we last cleared the pcap4j cache
+     */
+    private int pcap4jFactoryClearCacheCounter = 0;
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -276,6 +287,23 @@ class AdVpnThread implements Runnable {
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
             readPacketFromDevice(inputStream, packet);
+        }
+
+        // pcap4j has some sort of properties cache in the packet factory. This cache leaks, so
+        // we need to clean it up.
+        if (++pcap4jFactoryClearCacheCounter % PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY == 0) {
+            try {
+                PacketFactoryPropertiesLoader l = PacketFactoryPropertiesLoader.getInstance();
+                Field field = l.getClass().getDeclaredField("loader");
+                field.setAccessible(true);
+                PropertiesLoader loader = (PropertiesLoader) field.get(l);
+                Log.d(TAG, "Cleaning cache");
+                loader.clearCache();
+            } catch (NoSuchFieldException e) {
+                Log.e(TAG, "Cannot find declared loader field", e);
+            } catch (IllegalAccessException e) {
+                Log.e(TAG, "Cannot get declared loader field", e);
+            }
         }
 
         return true;
