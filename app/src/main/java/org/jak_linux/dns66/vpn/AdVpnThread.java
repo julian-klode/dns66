@@ -83,11 +83,11 @@ class AdVpnThread implements Runnable {
      */
     private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
     /* Upstream DNS servers, indexed by our IP */
-    private ArrayList<InetAddress> upstreamDnsServers;
+    private final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
-    private Set<String> blockedHosts = new HashSet<>();
+    private final Set<String> blockedHosts = new HashSet<>();
     /**
      * Number of iterations since we last cleared the pcap4j cache
      */
@@ -478,7 +478,8 @@ class AdVpnThread implements Runnable {
     private void loadBlockedHosts() throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
 
-        blockedHosts = new HashSet<>();
+        blockedHosts.clear();
+        Runtime.getRuntime().gc();
 
         Log.i(TAG, "Loading block list");
 
@@ -574,7 +575,7 @@ class AdVpnThread implements Runnable {
     }
 
     private ParcelFileDescriptor configure() throws VpnNetworkException {
-        Log.i(TAG, "Configuring");
+        Log.i(TAG, "Configuring" + this);
 
         // Get the current DNS servers before starting the VPN
         Set<InetAddress> dnsServers = getDnsServers(vpnService);
@@ -603,7 +604,7 @@ class AdVpnThread implements Runnable {
             builder.addAddress("192.168.50.1", 24);
         }
 
-        upstreamDnsServers = new ArrayList<InetAddress>();
+        upstreamDnsServers.clear();
 
         // Add configured DNS servers
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
