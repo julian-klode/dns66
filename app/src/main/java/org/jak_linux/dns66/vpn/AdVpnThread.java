@@ -53,7 +53,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Queue;
@@ -74,19 +74,7 @@ class AdVpnThread implements Runnable {
     /* Data to be written to the device */
     private final Queue<byte[]> deviceWrites = new LinkedList<>();
     // HashMap that keeps an upper limit of packets
-    private final LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>> dnsIn = new LinkedHashMap<DatagramSocket, TimedValue<IpV4Packet>>() {
-        @Override
-        protected boolean removeEldestEntry(Entry<DatagramSocket, TimedValue<IpV4Packet>> eldest) {
-            boolean timeout = eldest.getValue().ageSeconds() > DNS_TIMEOUT_SEC;
-            boolean overflow = size() > DNS_MAXIMUM_WAITING;
-            if (timeout || overflow) {
-                Log.d(TAG, "removeEldestEntry: Removing entry due to reason timeout=" + timeout + ", overflow=" + overflow);
-                eldest.getKey().close();
-                return true;
-            }
-            return false;
-        }
-    };
+    private final WospList dnsIn = new WospList();
     /* Upstream DNS servers, indexed by our IP */
     private ArrayList<InetAddress> upstreamDnsServers;
     private Thread thread = null;
@@ -245,16 +233,17 @@ class AdVpnThread implements Runnable {
         if (!deviceWrites.isEmpty())
             deviceFd.events |= (short) OsConstants.POLLOUT;
 
-        DatagramSocket[] others = new DatagramSocket[dnsIn.size()];
-        dnsIn.keySet().toArray(others);
-
-        StructPollfd[] polls = new StructPollfd[2 + others.length];
+        StructPollfd[] polls = new StructPollfd[2 + dnsIn.size()];
         polls[0] = deviceFd;
         polls[1] = blockFd;
-        for (int i = 0; i < others.length; i++) {
-            StructPollfd pollFd = polls[2 + i] = new StructPollfd();
-            pollFd.fd = ParcelFileDescriptor.fromDatagramSocket(others[i]).getFileDescriptor();
-            pollFd.events = (short) OsConstants.POLLIN;
+        {
+            int i = -1;
+            for (WaitingOnSocketPacket wosp : dnsIn) {
+                i++;
+                StructPollfd pollFd = polls[2 + i] = new StructPollfd();
+                pollFd.fd = ParcelFileDescriptor.fromDatagramSocket(wosp.socket).getFileDescriptor();
+                pollFd.events = (short) OsConstants.POLLIN;
+            }
         }
 
         Log.d(TAG, "doOne: Polling " + polls.length + " file descriptors");
@@ -266,14 +255,18 @@ class AdVpnThread implements Runnable {
         // Need to do this before reading from the device, otherwise a new insertion there could
         // invalidate one of the sockets we want to read from either due to size or time out
         // constraints
-        for (int i = 0; i < others.length; i++) {
-            if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
-                DatagramSocket socket = others[i];
-                IpV4Packet parsedPacket = dnsIn.get(socket).get();
-                Log.d(TAG, "Read from DNS socket" + socket);
-                dnsIn.remove(socket);
-                handleRawDnsResponse(parsedPacket, socket);
-                socket.close();
+        {
+            int i = -1;
+            Iterator<WaitingOnSocketPacket> iter = dnsIn.iterator();
+            while (iter.hasNext()) {
+                i++;
+                WaitingOnSocketPacket wosp = iter.next();
+                if ((polls[i + 2].revents & OsConstants.POLLIN) != 0) {
+                    Log.d(TAG, "Read from DNS socket" + wosp.socket);
+                    iter.remove();
+                    handleRawDnsResponse(wosp.packet, wosp.socket);
+                    wosp.socket.close();
+                }
             }
         }
         if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
@@ -403,7 +396,7 @@ class AdVpnThread implements Runnable {
 
                 dnsSocket.send(outPacket);
 
-                dnsIn.put(dnsSocket, new TimedValue<>(parsedPacket));
+                dnsIn.add(new WaitingOnSocketPacket(dnsSocket, parsedPacket));
             } catch (IOException e) {
                 FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
                 if (e.getCause() instanceof ErrnoException) {
@@ -646,21 +639,53 @@ class AdVpnThread implements Runnable {
 
     }
 
-    private static class TimedValue<T> {
-        private final T value;
+    /**
+     * Helper class holding a socket, the packet we are waiting the answer for, and a time
+     */
+    private static class WaitingOnSocketPacket {
+        final DatagramSocket socket;
+        final IpV4Packet packet;
         private final long time;
 
-        public TimedValue(T value) {
-            this.value = value;
+        WaitingOnSocketPacket(DatagramSocket socket, IpV4Packet packet) {
+            this.socket = socket;
+            this.packet = packet;
             this.time = System.currentTimeMillis();
         }
 
-        public long ageSeconds() {
+        long ageSeconds() {
             return (System.currentTimeMillis() - time) / 1000;
         }
-
-        public T get() {
-            return value;
-        }
     }
+
+    /**
+     * Queue of WaitingOnSocketPacket, bound on time and space.
+     */
+    private static class WospList implements Iterable<WaitingOnSocketPacket> {
+        private final LinkedList<WaitingOnSocketPacket> list = new LinkedList<WaitingOnSocketPacket>();
+
+        void add(WaitingOnSocketPacket wosp) {
+            if (list.size() > DNS_MAXIMUM_WAITING) {
+                Log.d(TAG, "Dropping socket due to space constraints: " + list.element().socket);
+                list.element().socket.close();
+                list.remove();
+            }
+            while (!list.isEmpty() && list.element().ageSeconds() > DNS_TIMEOUT_SEC) {
+                Log.d(TAG, "Timeout on socket " + list.element().socket);
+                list.element().socket.close();
+                list.remove();
+            }
+            list.add(wosp);
+        }
+
+        public Iterator<WaitingOnSocketPacket> iterator() {
+            return list.iterator();
+        }
+
+        int size() {
+            return list.size();
+        }
+
+    }
+
 }
