@@ -40,27 +40,6 @@
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits" />
-    <string name="welcome_title">Welcome to DNS66</string>
-    <string name="welcome_title_start">Things (still) to look out for</string>
-    <string name="welcome_message_start">
-        We are not yet done with the user experience, therefore:
-        \n\nRestart the service manually after changing a setting in order to apply it.
-        \n\nRefresh the hosts file at least once before starting to have working filtering.
-    </string>
-    <string name="welcome_title_hosts">Host blocking</string>
-    <string name="welcome_message_hosts">
-        Define filters based on URL to a host file or the name of a host.
-        \n\nFilter with colors - Allow with green, deny with red, ignore with grey; change with a click.
-        \n\nChange the order of filters - The last item containing a host defines the action.
-    </string>
-    <string name="welcome_title_dns">Custom DNS servers</string>
-    <string name="welcome_message_dns">
-        Easily define custom DNS servers.
-        \n\nSet a server to ‘allow’ to use a server, anything else to ignore it.
-        \n\nChange the order of DNS servers - the preferred server is at the top.
-    </string>
-    <string name="welcome_button_done">Done</string>
-    <string name="welcome_button_skip">Skip</string>
     <string name="app_version_info">Version: %s</string>
     <string name="missing_hosts_files_message">Some of your configured (non-ignored) hosts files are missing.\n\nUse the ‘Refresh’ action to download hosts files.\n\nDo you still want to continue?</string>
     <string name="missing_hosts_files_title">Missing hosts file</string>
@@ -70,4 +49,6 @@
     <string name="action_whitelist">Whitelisted apps</string>
     <string name="show_notification">Show Notification</string>
     <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
+    <string name="dns_description">Green servers are enabled</string>
+    <string name="host_description">Red rules block, green rules allow</string>
 </resources>

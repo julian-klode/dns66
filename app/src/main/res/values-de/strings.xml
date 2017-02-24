@@ -38,27 +38,6 @@
     <string name="notification_title">DNS66</string>
     <string name="notification_waiting_for_net">Warte auf Netzwerk</string>
     <string name="translator_credits">Deutsche Übersetzung: Julian Andres Klode</string>
-    <string name="welcome_title">Willkommen bei DNS66</string>
-    <string name="welcome_title_start">(Noch) zu beachten</string>
-    <string name="welcome_message_start">
-        Wir sind noch nicht ganz fertig mit dem Nutzungserlebnis, daher:
-        \n\nStarte den Dienst nach dem Ändern von Einstellungen neu, damit diese aktiv werden.
-        \n\nAktualisiere die Filterlisten mindestens einmal vor dem ersten Start des Dienstes.
-    </string>
-    <string name="welcome_title_hosts">Hosts filtern</string>
-    <string name="welcome_message_hosts">
-        Definiere Filter anhand einer Filterlisten-URL oder dem Namen eines Hosts.
-        \n\nFilter nach Farben - Erlaube mit Grün, verbiete mit Rot, ignoriere mit Grau; wechsel per Klick.
-        \n\nÄndere die Reihenfolge - Für jeden Host gilt immer der letzte Filter, der für ihn definiert ist.
-    </string>
-    <string name="welcome_title_dns">DNS-Server konfigurieren</string>
-    <string name="welcome_message_dns">
-        Definiere einfach eigene DNS-Server.
-        \n\nWähle „erlaubt“, um einen Server zu nutzen oder einen anderen Wert, um ihn zu ignorieren.
-        \n\nÄndere die Reihenfolge - Der bevorzugte Server steht oben.
-    </string>
-    <string name="welcome_button_skip">Überspringen</string>
-    <string name="welcome_button_done">Fertig</string>
     <string name="app_version_info">Version: %s</string>
     <string name="missing_hosts_files_message">Eine oder mehrere der konfigurierten (nicht ignorierten) Filterlisten fehlen.\n\nVerwende die „Aktualisieren“-Aktion, um aktuelle Filterlisten herunterzuladen.\n\nTrotzdem fortfahren?</string>
     <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
@@ -67,4 +46,6 @@
     <string name="action_whitelist">Ausgenommene Apps</string>
     <string name="show_notification">Benachrichtigung anzeigen</string>
     <string name="could_not_configure_vpn_service">Konnte VPN Dienst nicht konfigurieren - Prüfen Sie, ob ein durchgehend aktives VPN (wie WiFi Assistant) aktiviert ist und deaktivieren sie es</string>
+    <string name="dns_description">Grüne Einträge werden genutzt</string>
+    <string name="host_description">Rote Regeln blockieren, Grüne erlauben</string>
 </resources>

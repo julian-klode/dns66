@@ -23,12 +23,6 @@
         <item name="android:paddingRight">@dimen/input_label_horizontal_spacing</item>
     </style>
 
-    <!-- Custom theme for our WelcomeScreenTheme, so we can override the button text. -->
-    <style name="WelcomeTheme" parent="WelcomeScreenTheme">
-        <item name="welcomeButtonSkipText">@string/welcome_button_skip</item>
-        <item name="welcomeButtonDoneText">@string/welcome_button_done</item>
-    </style>
-
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

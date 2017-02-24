@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.vpn.AdVpnService;
@@ -41,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_FILE_OPEN = 1;
     private static final int REQUEST_FILE_STORE = 2;
     private static final int REQUEST_ITEM_EDIT = 3;
-    private static final int REQUEST_SHOW_WELCOME_SCREEN = 5;
     public static Configuration config;
     private ViewPager viewPager;
     private final BroadcastReceiver vpnServiceBroadcastReceiver = new BroadcastReceiver() {
@@ -53,14 +51,11 @@ public class MainActivity extends AppCompatActivity {
     };
     private AHBottomNavigation bottomNavigation;
     private ItemChangedListener itemChangedListener = null;
-    private WelcomeHelper welcomeScreen;
     private MenuItem showNotificationMenuItem = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        welcomeScreen = new WelcomeHelper(this, DnsWelcomeActivity.class);
-        welcomeScreen.show(savedInstanceState, REQUEST_SHOW_WELCOME_SCREEN);
 
         if (savedInstanceState == null) {
             config = FileHelper.loadCurrentSettings(this);
@@ -98,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        welcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override
