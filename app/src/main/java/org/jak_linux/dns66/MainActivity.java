@@ -7,9 +7,11 @@
  */
 package org.jak_linux.dns66;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -143,9 +145,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, WhitelistActivity.class));
                 break;
             case R.id.setting_show_notification:
-                item.setChecked(!item.isChecked());
-                MainActivity.config.showNotification = item.isChecked();
-                FileHelper.writeSettings(this, MainActivity.config);
+                // If we are enabling notifications, we do not need to show a dialog.
+                if (!item.isChecked()) {
+                    item.setChecked(!item.isChecked());
+                    MainActivity.config.showNotification = item.isChecked();
+                    FileHelper.writeSettings(MainActivity.this, MainActivity.config);
+                    break;
+                }
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_warning)
+                        .setTitle(R.string.disable_notification_title)
+                        .setMessage(R.string.disable_notification_message)
+                        .setPositiveButton(R.string.disable_notification_ack, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                item.setChecked(!item.isChecked());
+                                MainActivity.config.showNotification = item.isChecked();
+                                FileHelper.writeSettings(MainActivity.this, MainActivity.config);
+                            }
+                        })
+                        .setNegativeButton(R.string.disable_notification_nak, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).show();
                 break;
             case R.id.action_about:
                 Intent infoIntent = new Intent(this, InfoActivity.class);
