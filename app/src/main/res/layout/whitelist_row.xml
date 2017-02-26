@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/entry"
-              android:layout_height="wrap_content"
-              android:layout_width="match_parent"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp"
-              android:paddingTop="8dp"
-              android:paddingBottom="8dp" >
+    android:id="@+id/entry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp">
 
     <ImageView
         android:id="@+id/app_icon"
@@ -20,20 +20,21 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/checkbox"
         android:layout_toEndOf="@+id/app_icon"
-        android:textSize="18sp"
+        android:layout_toStartOf="@+id/checkbox"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:ellipsize="end" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/app_icon"
         android:layout_below="@+id/name"
-        android:maxLines="1"
-        android:ellipsize="end" />
+        android:layout_toEndOf="@+id/app_icon"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
     <Switch
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"

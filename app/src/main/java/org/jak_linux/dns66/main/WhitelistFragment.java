@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +41,7 @@ import java.util.List;
  */
 public class WhitelistFragment extends Fragment {
 
+    private static final String TAG = "Whitelist";
     private AppListGenerator appListGenerator;
     private ListView appList;
     private SwipeRefreshLayout swipeRefresh;
@@ -85,8 +86,40 @@ public class WhitelistFragment extends Fragment {
 
             final ListEntry entry = getItem(position);
 
-            ImageView iconView = (ImageView) convertView.findViewById(R.id.app_icon);
-            iconView.setImageDrawable(entry.getIcon());
+            final ImageView iconView = (ImageView) convertView.findViewById(R.id.app_icon);
+
+            AsyncTask<ListEntry, Void, Drawable> task = (AsyncTask<ListEntry, Void, Drawable>) convertView.getTag();
+            if (task != null)
+                task.cancel(true);
+
+            task = null;
+            final Drawable icon = entry.getIcon();
+            if (icon != null) {
+                iconView.setImageDrawable(icon);
+                iconView.setVisibility(View.VISIBLE);
+                convertView.setTag(null);
+            } else {
+                iconView.setVisibility(View.INVISIBLE);
+
+                task = new AsyncTask<ListEntry, Void, Drawable>() {
+                    @Override
+                    protected Drawable doInBackground(ListEntry... entries) {
+                        return entries[0].loadIcon(getContext().getPackageManager());
+                    }
+
+                    @Override
+                    protected void onPostExecute(Drawable drawable) {
+                        if (!isCancelled()) {
+                            iconView.setImageDrawable(drawable);
+                            iconView.setVisibility(View.VISIBLE);
+                        }
+                        super.onPostExecute(drawable);
+                    }
+                };
+                convertView.setTag(task);
+
+                task.execute(entry);
+            }
 
             TextView textView = (TextView) convertView.findViewById(R.id.name);
             textView.setText(entry.getLabel());
@@ -118,9 +151,11 @@ public class WhitelistFragment extends Fragment {
     }
 
     private final class AppListGenerator extends AsyncTask<Void, Void, AppListAdapter> {
+        private PackageManager pm;
+
         @Override
         protected AppListAdapter doInBackground(Void... params) {
-            final PackageManager pm = getContext().getPackageManager();
+            pm = getContext().getPackageManager();
 
             List<ApplicationInfo> info = pm.getInstalledApplications(0);
 
@@ -130,10 +165,11 @@ public class WhitelistFragment extends Fragment {
             for (ApplicationInfo appInfo : info) {
                 if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID))
                     entries.add(new ListEntry(
-                            appInfo.loadIcon(pm),
+                            appInfo,
                             appInfo.packageName,
                             appInfo.loadLabel(pm).toString()));
             }
+
 
             return new AppListAdapter(getContext(), R.layout.whitelist_row, entries);
         }
@@ -146,12 +182,13 @@ public class WhitelistFragment extends Fragment {
     }
 
     private class ListEntry {
-        private Drawable icon;
+        private ApplicationInfo appInfo;
         private String packageName;
         private String label;
+        private WeakReference<Drawable> weakIcon;
 
-        private ListEntry(Drawable icon, String packageName, String label) {
-            this.icon = icon;
+        private ListEntry(ApplicationInfo appInfo, String packageName, String label) {
+            this.appInfo = appInfo;
             this.packageName = packageName;
             this.label = label;
         }
@@ -164,7 +201,20 @@ public class WhitelistFragment extends Fragment {
             return label;
         }
 
+        private ApplicationInfo getAppInfo() {
+            return appInfo;
+        }
+
         private Drawable getIcon() {
+            return weakIcon != null ? weakIcon.get() : null;
+        }
+
+        private Drawable loadIcon(PackageManager pm) {
+            Drawable icon = weakIcon != null ? weakIcon.get() : null;
+            if (icon == null) {
+                icon = appInfo.loadIcon(pm);
+                weakIcon = new WeakReference<>(icon);
+            }
             return icon;
         }
     }
