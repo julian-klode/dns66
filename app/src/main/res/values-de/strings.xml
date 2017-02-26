@@ -51,4 +51,5 @@
     <string name="disable_notification_message">Deaktivieren der Benachrichtigung kann dazu führen, dass DNS66 beendet wird.\n\nSoll die Benachrichtigung deaktiviert werden?</string>
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>
     <string name="disable_notification_nak">Abbrechen</string>
+    <string name="whitelist_description">Erlaube gestörten Apps, DNS66 zu umgehen</string>
 </resources>
