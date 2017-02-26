@@ -14,13 +14,14 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -41,8 +42,8 @@ import java.util.List;
 public class WhitelistFragment extends Fragment {
 
     private AppListGenerator appListGenerator;
-    private ProgressBar progressBar;
     private ListView appList;
+    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,8 +52,19 @@ public class WhitelistFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.activity_whitelist, container, false);
 
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         appList = (ListView) rootView.findViewById(R.id.list);
+
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+        swipeRefresh.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        appListGenerator = new AppListGenerator();
+                        appListGenerator.execute();
+                    }
+                }
+        );
+        swipeRefresh.setRefreshing(true);
 
         appListGenerator = new AppListGenerator();
         appListGenerator.execute();
@@ -128,8 +140,8 @@ public class WhitelistFragment extends Fragment {
 
         @Override
         protected void onPostExecute(AppListAdapter adapter) {
-            progressBar.setVisibility(View.GONE);
             appList.setAdapter(adapter);
+            swipeRefresh.setRefreshing(false);
         }
     }
 
