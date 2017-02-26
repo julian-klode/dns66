@@ -7,6 +7,6 @@
         android:icon="@drawable/ic_menu_hosts"
         android:title="@string/hosts_tab" />
     <item
-        android:icon="@drawable/ic_menu_dns"
+        android:icon="@drawable/ic_dns_black_24dp"
         android:title="@string/dns_tab" />
 </menu>
