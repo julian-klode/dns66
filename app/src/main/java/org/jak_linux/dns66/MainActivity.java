@@ -141,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivityForResult(exportIntent, REQUEST_FILE_STORE);
                 break;
-            case R.id.action_whitelist:
-                startActivity(new Intent(this, WhitelistActivity.class));
-                break;
             case R.id.setting_show_notification:
                 // If we are enabling notifications, we do not need to show a dialog.
                 if (!item.isChecked()) {

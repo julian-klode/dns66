@@ -34,11 +34,6 @@
             android:label="@string/activity_edit"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".WhitelistActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"/>
-
         <service
             android:name=".vpn.AdVpnService"
             android:permission="android.permission.BIND_VPN_SERVICE">

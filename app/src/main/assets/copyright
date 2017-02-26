@@ -28,7 +28,8 @@ Comment:
   https://github.com/dbrodie/AdBuster
 
 Files: app/src/main/res/drawable/ic_add.xml
-       app/src/main/res/drawable/ic_dns_black24dp.xml
+       app/src/main/res/drawable/ic_dns_black_24dp.xml
+       app/src/main/res/drawable/ic_apps_black_24dp.xml
        app/src/main/res/drawable/ic_menu_hosts*.xml
        app/src/main/res/drawable/ic_menu_info.xml
        app/src/main/res/drawable/ic_menu_start*.xml

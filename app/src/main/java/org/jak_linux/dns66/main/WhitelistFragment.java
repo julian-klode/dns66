@@ -5,7 +5,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  */
-package org.jak_linux.dns66;
+package org.jak_linux.dns66.main;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -13,17 +13,21 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import org.jak_linux.dns66.BuildConfig;
+import org.jak_linux.dns66.FileHelper;
+import org.jak_linux.dns66.MainActivity;
+import org.jak_linux.dns66.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,35 +38,26 @@ import java.util.List;
  *
  * @author Braden Farmer
  */
-public class WhitelistActivity extends AppCompatActivity {
+public class WhitelistFragment extends Fragment {
 
     private AppListGenerator appListGenerator;
     private ProgressBar progressBar;
     private ListView appList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_whitelist);
-        setFinishOnTouchOutside(false);
-        setTitle(getString(R.string.action_whitelist));
+        View rootView = inflater.inflate(R.layout.activity_whitelist, container, false);
 
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        appList = (ListView) findViewById(R.id.list);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        appList = (ListView) rootView.findViewById(R.id.list);
 
         appListGenerator = new AppListGenerator();
         appListGenerator.execute();
-    }
 
-    @Override
-    public void finish() {
-        if (appListGenerator != null && appListGenerator.getStatus() == AsyncTask.Status.RUNNING)
-            appListGenerator.cancel(true);
-
-        FileHelper.writeSettings(this, MainActivity.config);
-
-        super.finish();
+        return rootView;
     }
 
     private class AppListAdapter extends ArrayAdapter<ListEntry> {
@@ -102,6 +97,7 @@ public class WhitelistActivity extends AppCompatActivity {
                         MainActivity.config.whitelist.items.add(entry.getPackageName());
                         checkBox.setChecked(true);
                     }
+                    FileHelper.writeSettings(getActivity(), MainActivity.config);
                 }
             });
 
@@ -112,7 +108,7 @@ public class WhitelistActivity extends AppCompatActivity {
     private final class AppListGenerator extends AsyncTask<Void, Void, AppListAdapter> {
         @Override
         protected AppListAdapter doInBackground(Void... params) {
-            final PackageManager pm = getPackageManager();
+            final PackageManager pm = getContext().getPackageManager();
 
             List<ApplicationInfo> info = pm.getInstalledApplications(0);
 
@@ -127,14 +123,13 @@ public class WhitelistActivity extends AppCompatActivity {
                             appInfo.loadLabel(pm).toString()));
             }
 
-            return new AppListAdapter(WhitelistActivity.this, R.layout.whitelist_row, entries);
+            return new AppListAdapter(getContext(), R.layout.whitelist_row, entries);
         }
 
         @Override
         protected void onPostExecute(AppListAdapter adapter) {
             progressBar.setVisibility(View.GONE);
             appList.setAdapter(adapter);
-            setFinishOnTouchOutside(true);
         }
     }
 
