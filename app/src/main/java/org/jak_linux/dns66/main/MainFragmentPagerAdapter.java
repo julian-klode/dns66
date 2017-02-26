@@ -25,8 +25,8 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         fragments.add(new StartFragment());
         fragments.add(new HostsFragment());
-        fragments.add(new DNSFragment());
         fragments.add(new WhitelistFragment());
+        fragments.add(new DNSFragment());
     }
 
     @Override

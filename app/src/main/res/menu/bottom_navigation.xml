@@ -7,9 +7,10 @@
         android:icon="@drawable/ic_menu_hosts"
         android:title="@string/hosts_tab" />
     <item
+        android:icon="@drawable/ic_apps_black_24dp"
+        android:title="@string/whitelist_tab" />
+    <item
         android:icon="@drawable/ic_dns_black_24dp"
         android:title="@string/dns_tab" />
-    <item
-        android:icon="@drawable/ic_apps_black_24dp"
-        android:title="@string/action_whitelist" />
+
 </menu>
