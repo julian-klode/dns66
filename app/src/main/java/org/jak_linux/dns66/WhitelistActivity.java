@@ -10,6 +10,7 @@ package org.jak_linux.dns66;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,9 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -76,13 +78,20 @@ public class WhitelistActivity extends AppCompatActivity {
 
             final ListEntry entry = getItem(position);
 
+            ImageView iconView = (ImageView) convertView.findViewById(R.id.app_icon);
+            iconView.setImageDrawable(entry.getIcon());
+
             TextView textView = (TextView) convertView.findViewById(R.id.name);
             textView.setText(entry.getLabel());
 
-            final CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
+
+            TextView details = (TextView) convertView.findViewById(R.id.details);
+            details.setText(entry.getPackageName());
+
+            final Switch checkBox = (Switch) convertView.findViewById(R.id.checkbox);
             checkBox.setChecked(MainActivity.config.whitelist.items.contains(entry.getPackageName()));
 
-            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.entry);
+            View layout = convertView.findViewById(R.id.entry);
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -113,6 +122,7 @@ public class WhitelistActivity extends AppCompatActivity {
             for (ApplicationInfo appInfo : info) {
                 if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID))
                     entries.add(new ListEntry(
+                            appInfo.loadIcon(pm),
                             appInfo.packageName,
                             appInfo.loadLabel(pm).toString()));
             }
@@ -129,10 +139,12 @@ public class WhitelistActivity extends AppCompatActivity {
     }
 
     private class ListEntry {
+        private Drawable icon;
         private String packageName;
         private String label;
 
-        private ListEntry(String packageName, String label) {
+        private ListEntry(Drawable icon, String packageName, String label) {
+            this.icon = icon;
             this.packageName = packageName;
             this.label = label;
         }
@@ -143,6 +155,10 @@ public class WhitelistActivity extends AppCompatActivity {
 
         private String getLabel() {
             return label;
+        }
+
+        private Drawable getIcon() {
+            return icon;
         }
     }
 }
