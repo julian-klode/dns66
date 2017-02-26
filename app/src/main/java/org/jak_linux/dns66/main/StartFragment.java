@@ -9,11 +9,13 @@ package org.jak_linux.dns66.main;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,8 +53,6 @@ public class StartFragment extends Fragment {
 
         ImageView view = (ImageView) rootView.findViewById(R.id.start_button);
 
-        TextView stateText = (TextView) rootView.findViewById(R.id.state_textview);
-        stateText.setText(getString(AdVpnService.vpnStatusToTextId(AdVpnService.vpnStatus)));
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -69,6 +69,8 @@ public class StartFragment extends Fragment {
             }
         });
 
+        updateStatus(rootView, AdVpnService.vpnStatus);
+
         switchOnBoot.setChecked(MainActivity.config.autoStart);
         switchOnBoot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -79,6 +81,36 @@ public class StartFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public static void updateStatus(View rootView, int status) {
+        Context context = rootView.getContext();
+        TextView stateText = (TextView) rootView.findViewById(R.id.state_textview);
+        ImageView startButton = (ImageView) rootView.findViewById(R.id.start_button);
+
+        if (startButton == null || stateText == null)
+            return;
+
+        stateText.setText(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
+
+        startButton.getDrawable().setTintList(null);
+        switch(status) {
+            case AdVpnService.VPN_STATUS_RECONNECTING:
+            case AdVpnService.VPN_STATUS_STARTING:
+            case AdVpnService.VPN_STATUS_STOPPING:
+                startButton.setImageAlpha(128);
+                break;
+            case AdVpnService.VPN_STATUS_STOPPED:
+                startButton.setImageAlpha(64);
+                break;
+            case AdVpnService.VPN_STATUS_RUNNING:
+                startButton.setImageAlpha(255);
+                break;
+            case AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR:
+                startButton.setImageAlpha(255);
+                startButton.getDrawable().setTint(ContextCompat.getColor(context, R.color.stateError));
+                break;
+        }
     }
 
     private void checkHostsFilesAndStartService() {

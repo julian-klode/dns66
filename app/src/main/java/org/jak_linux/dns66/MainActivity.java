@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
+import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
 
 import java.io.File;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors);
 
         reload();
+        updateStatus(AdVpnService.vpnStatus);
 
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
@@ -243,9 +247,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateStatus(int status) {
         if (viewPager.getChildAt(0) == null)
             return;
-        TextView stateText = (TextView) viewPager.getChildAt(0).getRootView().findViewById(R.id.state_textview);
-        if (stateText != null)
-            stateText.setText(getString(AdVpnService.vpnStatusToTextId(status)));
+
+        StartFragment.updateStatus(viewPager.getChildAt(0).getRootView(), status);
     }
 
     @Override
@@ -267,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             showNotificationMenuItem.setChecked(config.showNotification);
         viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
         viewPager.setCurrentItem(bottomNavigation.getCurrentItem());
+        updateStatus(AdVpnService.vpnStatus);
     }
 
     /**
