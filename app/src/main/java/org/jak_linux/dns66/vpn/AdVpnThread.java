@@ -30,7 +30,11 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
+import org.pcap4j.packet.IllegalRawDataException;
+import org.pcap4j.packet.IpPacket;
+import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
+import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
 import org.pcap4j.packet.factory.PacketFactoryPropertiesLoader;
@@ -51,6 +55,7 @@ import java.lang.reflect.Field;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -84,10 +89,10 @@ class AdVpnThread implements Runnable {
     private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
     /* Upstream DNS servers, indexed by our IP */
     private final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
+    private final Set<String> blockedHosts = new HashSet<>();
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
-    private final Set<String> blockedHosts = new HashSet<>();
     /**
      * Number of iterations since we last cleared the pcap4j cache
      */
@@ -342,11 +347,11 @@ class AdVpnThread implements Runnable {
 
     private void handleDnsRequest(byte[] packet) throws VpnNetworkException {
 
-        IpV4Packet parsedPacket = null;
+        IpPacket parsedPacket = null;
         try {
-            parsedPacket = IpV4Packet.newPacket(packet, 0, packet.length);
+            parsedPacket = (IpPacket) IpSelector.newPacket(packet, 0, packet.length);
         } catch (Exception e) {
-            Log.i(TAG, "handleDnsRequest: Discarding invalid IPv4 packet", e);
+            Log.i(TAG, "handleDnsRequest: Discarding invalid IP packet", e);
             return;
         }
 
@@ -444,33 +449,46 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void handleRawDnsResponse(IpV4Packet parsedPacket, DatagramSocket dnsSocket) throws IOException {
+    private void handleRawDnsResponse(IpPacket parsedPacket, DatagramSocket dnsSocket) throws IOException {
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
         handleDnsResponse(parsedPacket, datagramData);
     }
 
-    private void handleDnsResponse(IpV4Packet parsedPacket, byte[] response) {
+    private void handleDnsResponse(IpPacket parsedPacket, byte[] response) {
         UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
-        IpV4Packet ipOutPacket = new IpV4Packet.Builder(parsedPacket)
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
+                .srcPort(udpOutPacket.getHeader().getDstPort())
+                .dstPort(udpOutPacket.getHeader().getSrcPort())
                 .srcAddr(parsedPacket.getHeader().getDstAddr())
                 .dstAddr(parsedPacket.getHeader().getSrcAddr())
                 .correctChecksumAtBuild(true)
                 .correctLengthAtBuild(true)
                 .payloadBuilder(
-                        new UdpPacket.Builder(udpOutPacket)
-                                .srcPort(udpOutPacket.getHeader().getDstPort())
-                                .dstPort(udpOutPacket.getHeader().getSrcPort())
-                                .srcAddr(parsedPacket.getHeader().getDstAddr())
-                                .dstAddr(parsedPacket.getHeader().getSrcAddr())
-                                .correctChecksumAtBuild(true)
-                                .correctLengthAtBuild(true)
-                                .payloadBuilder(
-                                        new UnknownPacket.Builder()
-                                                .rawData(response)
-                                )
-                ).build();
+                        new UnknownPacket.Builder()
+                                .rawData(response)
+                );
+
+
+        IpPacket ipOutPacket;
+        if (parsedPacket instanceof IpV4Packet) {
+            ipOutPacket = new IpV4Packet.Builder((IpV4Packet) parsedPacket)
+                    .srcAddr((Inet4Address) parsedPacket.getHeader().getDstAddr())
+                    .dstAddr((Inet4Address) parsedPacket.getHeader().getSrcAddr())
+                    .correctChecksumAtBuild(true)
+                    .correctLengthAtBuild(true)
+                    .payloadBuilder(payLoadBuilder)
+                    .build();
+
+        } else {
+            ipOutPacket = new IpV6Packet.Builder((IpV6Packet) parsedPacket)
+                    .srcAddr((Inet6Address) parsedPacket.getHeader().getDstAddr())
+                    .dstAddr((Inet6Address) parsedPacket.getHeader().getSrcAddr())
+                    .correctLengthAtBuild(true)
+                    .payloadBuilder(payLoadBuilder)
+                    .build();
+        }
 
         deviceWrites.add(ipOutPacket.getRawData());
     }
@@ -564,7 +582,7 @@ class AdVpnThread implements Runnable {
         if (format == null) {
             Log.i(TAG, "configure: Adding DNS Server " + addr);
             builder.addDnsServer(addr);
-            builder.addRoute(addr, 32);
+            builder.addRoute(addr, addr.getAddress().length * 8);
         } else {
             upstreamDnsServers.add(addr);
             String alias = String.format(format, upstreamDnsServers.size() + 1);
@@ -612,7 +630,7 @@ class AdVpnThread implements Runnable {
             for (Configuration.Item item : config.dnsServers.items) {
                 if (item.state == item.STATE_ALLOW) {
                     try {
-                        newDNSServer(builder, format, Inet4Address.getByName(item.location));
+                        newDNSServer(builder, format, InetAddress.getByName(item.location));
                     } catch (Exception e) {
                         Log.e(TAG, "configure: Cannot add custom DNS server", e);
                     }
@@ -621,12 +639,10 @@ class AdVpnThread implements Runnable {
         }
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
-            if (addr instanceof Inet4Address) {
-                try {
-                    newDNSServer(builder, format, addr);
-                } catch (Exception e) {
-                    Log.e(TAG, "configure: Cannot add server:", e);
-                }
+            try {
+                newDNSServer(builder, format, addr);
+            } catch (Exception e) {
+                Log.e(TAG, "configure: Cannot add server:", e);
             }
         }
 
@@ -673,10 +689,10 @@ class AdVpnThread implements Runnable {
      */
     private static class WaitingOnSocketPacket {
         final DatagramSocket socket;
-        final IpV4Packet packet;
+        final IpPacket packet;
         private final long time;
 
-        WaitingOnSocketPacket(DatagramSocket socket, IpV4Packet packet) {
+        WaitingOnSocketPacket(DatagramSocket socket, IpPacket packet) {
             this.socket = socket;
             this.packet = packet;
             this.time = System.currentTimeMillis();
