@@ -33,7 +33,24 @@ import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 
+import java.lang.ref.WeakReference;
+
 public class AdVpnService extends VpnService implements Handler.Callback {
+    /* The handler may only keep a weak reference around, otherwise it leaks */
+    private static class MyHandler extends Handler {
+        private final WeakReference<Handler.Callback> callback;
+        public MyHandler(Handler.Callback callback) {
+            this.callback = new WeakReference<Callback>(callback);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            Handler.Callback callback = this.callback.get();
+            if (callback != null) {
+                callback.handleMessage(msg);
+            }
+            super.handleMessage(msg);
+        }
+    }
     public static final int VPN_STATUS_STARTING = 0;
     public static final int VPN_STATUS_RUNNING = 1;
     public static final int VPN_STATUS_STOPPING = 2;
@@ -48,7 +65,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     private static final String TAG = "VpnService";
     // TODO: Temporary Hack til refactor is done
     public static int vpnStatus = VPN_STATUS_STOPPED;
-    private final Handler handler = new Handler(this);
+    private final Handler handler = new MyHandler(this);
     private final AdVpnThread vpnThread = new AdVpnThread(this, new AdVpnThread.Notify() {
         @Override
         public void run(int value) {
