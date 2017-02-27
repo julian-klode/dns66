@@ -33,6 +33,9 @@ public class Configuration {
 
         while (reader.hasNext()) {
             switch (reader.nextName()) {
+                case "showSystemApps":
+                    whitelist.showSystemApps = reader.nextBoolean();
+                    break;
                 case "items":
                     reader.beginArray();
                     while (reader.hasNext())
@@ -128,6 +131,7 @@ public class Configuration {
 
     private static void writeWhitelist(JsonWriter writer, Whitelist w) throws IOException {
         writer.beginObject();
+        writer.name("showSystemApps").value(w.showSystemApps);
         writer.name("items");
         writer.beginArray();
         for (String string : w.items) {
@@ -241,6 +245,7 @@ public class Configuration {
     }
 
     public static class Whitelist {
+        public boolean showSystemApps;
         public List<String> items = new ArrayList<>();
     }
 }

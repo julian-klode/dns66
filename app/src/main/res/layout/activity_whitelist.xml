@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="org.jak_linux.dns66.main.HostsFragment">
 
 
     <TextView
-        android:id="@+id/host_description"
+        android:id="@+id/whitelist_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@color/colorPrimaryLight"
         android:paddingBottom="16dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -22,6 +22,8 @@
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
+        android:layout_below="@+id/whitelist_description"
+        android:layout_above="@+id/switch_show_system_apps"
         android:layout_height="match_parent">
 
         <ListView
@@ -30,5 +32,17 @@
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <Switch
+        android:id="@+id/switch_show_system_apps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimaryLight"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:saveEnabled="false"
+        android:text="@string/switch_show_system_apps" />
 
-</LinearLayout>
+</RelativeLayout>

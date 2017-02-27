@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -66,6 +67,19 @@ public class WhitelistFragment extends Fragment {
                 }
         );
         swipeRefresh.setRefreshing(true);
+
+        Switch switchShowSystemApps = (Switch) rootView.findViewById(R.id.switch_show_system_apps);
+
+        switchShowSystemApps.setChecked(MainActivity.config.whitelist.showSystemApps);
+        switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.whitelist.showSystemApps = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+                appListGenerator = new AppListGenerator();
+                appListGenerator.execute();
+            }
+        });
 
         appListGenerator = new AppListGenerator();
         appListGenerator.execute();
@@ -163,7 +177,7 @@ public class WhitelistFragment extends Fragment {
 
             final List<ListEntry> entries = new ArrayList<>();
             for (ApplicationInfo appInfo : info) {
-                if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID))
+                if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID) && (MainActivity.config.whitelist.showSystemApps || (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0))
                     entries.add(new ListEntry(
                             appInfo,
                             appInfo.packageName,

@@ -52,4 +52,5 @@
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>
     <string name="disable_notification_nak">Abbrechen</string>
     <string name="whitelist_description">Erlaube gestörten Apps, DNS66 zu umgehen</string>
+    <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
 </resources>
