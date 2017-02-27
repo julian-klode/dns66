@@ -30,7 +30,6 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
-import org.pcap4j.packet.IllegalRawDataException;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
@@ -58,6 +57,7 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -578,17 +578,25 @@ class AdVpnThread implements Runnable {
         }
     }
 
-    private void newDNSServer(VpnService.Builder builder, String format, InetAddress addr) {
-        if (format == null) {
+    private void newDNSServer(VpnService.Builder builder, String format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
+        // Optimally we'd allow either one, but the forwarder checks if upstream size is empty, so
+        // we really need to acquire both an ipv6 and an ipv4 subnet.
+        if (ipv6Template == null || format == null) {
             Log.i(TAG, "configure: Adding DNS Server " + addr);
             builder.addDnsServer(addr);
             builder.addRoute(addr, addr.getAddress().length * 8);
-        } else {
+        } else if (addr instanceof Inet4Address) {
             upstreamDnsServers.add(addr);
             String alias = String.format(format, upstreamDnsServers.size() + 1);
             Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + alias);
             builder.addDnsServer(alias);
             builder.addRoute(alias, 32);
+        } else if (addr instanceof Inet6Address) {
+            upstreamDnsServers.add(addr);
+            ipv6Template[ipv6Template.length - 1] = (byte) (upstreamDnsServers.size() + 1);
+            InetAddress i6addr = Inet6Address.getByAddress(ipv6Template);
+            Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + i6addr);
+            builder.addDnsServer(i6addr);
         }
     }
 
@@ -617,6 +625,17 @@ class AdVpnThread implements Runnable {
             break;
         }
 
+        // For fancy reasons, this is the 2001:db8::/120 subnet of the /32 subnet reserved for
+        // documentation purposes. We should do this differently. Anyone have a free /120 subnet
+        // for us to use?
+        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        try {
+            builder.addAddress(Inet6Address.getByAddress(ipv6Template), 120);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ipv6Template = null;
+        }
+
         if (format == null) {
             Log.w(TAG, "configure: Could not find a prefix to use, directly using DNS servers");
             builder.addAddress("192.168.50.1", 24);
@@ -630,7 +649,7 @@ class AdVpnThread implements Runnable {
             for (Configuration.Item item : config.dnsServers.items) {
                 if (item.state == item.STATE_ALLOW) {
                     try {
-                        newDNSServer(builder, format, InetAddress.getByName(item.location));
+                        newDNSServer(builder, format, ipv6Template, InetAddress.getByName(item.location));
                     } catch (Exception e) {
                         Log.e(TAG, "configure: Cannot add custom DNS server", e);
                     }
@@ -640,7 +659,7 @@ class AdVpnThread implements Runnable {
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
             try {
-                newDNSServer(builder, format, addr);
+                newDNSServer(builder, format, ipv6Template, addr);
             } catch (Exception e) {
                 Log.e(TAG, "configure: Cannot add server:", e);
             }
