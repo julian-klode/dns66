@@ -149,12 +149,17 @@ public class WhitelistFragment extends Fragment {
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (MainActivity.config.whitelist.items.contains(entry.getPackageName())) {
-                        MainActivity.config.whitelist.items.remove(entry.getPackageName());
-                        checkBox.setChecked(false);
-                    } else {
+                    checkBox.setChecked(!checkBox.isChecked());
+                }
+            });
+
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                    if (checked) {
                         MainActivity.config.whitelist.items.add(entry.getPackageName());
-                        checkBox.setChecked(true);
+                    } else {
+                        MainActivity.config.whitelist.items.remove(entry.getPackageName());
                     }
                     FileHelper.writeSettings(getActivity(), MainActivity.config);
                 }
