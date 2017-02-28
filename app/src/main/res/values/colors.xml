@@ -7,4 +7,5 @@
     <color name="colorPrimaryDarkFriend2">#1976D2</color>
     <color name="colorPrimaryDarkFriend3">#0097A7</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="stateError">#F44336</color>
 </resources>

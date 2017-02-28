@@ -19,23 +19,28 @@ import java.util.ArrayList;
 
 public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private final ArrayList<Fragment> fragments = new ArrayList<>();
-
     public MainFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
-        fragments.add(new StartFragment());
-        fragments.add(new HostsFragment());
-        fragments.add(new DNSFragment());
     }
 
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        switch (position) {
+            case 0:
+                return new StartFragment();
+            case 1:
+                return new HostsFragment();
+            case 2:
+                return new WhitelistFragment();
+            case 3:
+                return new DNSFragment();
+        }
+        return null;
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return 4;
     }
 
 }

@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/entry"
-              android:layout_height="wrap_content"
-              android:layout_width="match_parent"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp"
-              android:paddingTop="4dp"
-              android:paddingBottom="4dp" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/entry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp">
 
-    <CheckBox
-        android:id="@+id/checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="16dp"
         android:clickable="false" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_gravity="center_vertical"
-        android:textSize="18sp"
+        android:layout_toEndOf="@+id/app_icon"
+        android:layout_toStartOf="@+id/checkbox"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:ellipsize="end" />
+        android:textSize="18sp" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:layout_toEndOf="@+id/app_icon"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <Switch
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:clickable="false" />
+
+</RelativeLayout>

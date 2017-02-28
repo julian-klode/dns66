@@ -45,7 +45,7 @@ public class DNSFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.dnsServers.items);
+        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.dnsServers.items, 2);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mAdapter));
@@ -57,7 +57,7 @@ public class DNSFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 MainActivity main = (MainActivity) getActivity();
-                main.editItem(null, new ItemChangedListener() {
+                main.editItem(2, null, new ItemChangedListener() {
                     @Override
                     public void onItemChanged(Configuration.Item item) {
                         MainActivity.config.dnsServers.items.add(item);

@@ -8,11 +8,11 @@
     <string name="custom_dns">Eigene DNS-Server verwenden</string>
     <string name="dns_tab">DNS-Server</string>
     <string name="enable_hosts">Filtern von Domänen aktivieren</string>
-    <string name="hosts_tab">Domänen-Filter</string>
+    <string name="hosts_tab">Hosts</string>
     <string name="info_app_license">"Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version. "</string>
     <string name="load_defaults">Standardeinstellungen laden</string>
     <string name="switch_onboot">Automatisch beim Systemstart aktivieren</string>
-    <string name="start_tab">Start / Stop</string>
+    <string name="start_tab">Start</string>
     <string name="start_description">Lange drücken um an- bzw. abzuschalten</string>
     <string name="activity_edit">Eintrag bearbeiten</string>
     <string name="action">Regel</string>
@@ -43,12 +43,16 @@
     <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
-    <string name="action_whitelist">Ausgenommene Apps</string>
+    <string name="whitelist_tab">Apps</string>
     <string name="show_notification">Benachrichtigung anzeigen</string>
     <string name="could_not_configure_vpn_service">Konnte VPN Dienst nicht konfigurieren - Prüfen Sie, ob ein durchgehend aktives VPN (wie WiFi Assistant) aktiviert ist und deaktivieren sie es</string>
-    <string name="dns_description">Grüne Einträge werden genutzt</string>
+    <string name="dns_description">Aktiviere deine bevorzugten DNS-Server</string>
     <string name="host_description">Rote Regeln blockieren, Grüne erlauben</string>
     <string name="disable_notification_message">Deaktivieren der Benachrichtigung kann dazu führen, dass DNS66 beendet wird.\n\nSoll die Benachrichtigung deaktiviert werden?</string>
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>
     <string name="disable_notification_nak">Abbrechen</string>
+    <string name="whitelist_description">Erlaube gestörten Apps, DNS66 zu umgehen</string>
+    <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
+    <string name="location_dns">IP-Adresse des DNS-Servers (IPv4 oder IPv6)</string>
+    <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
 </resources>

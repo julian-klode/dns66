@@ -43,7 +43,7 @@ public class HostsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.hosts.items);
+        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.hosts.items, 3);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mAdapter));
@@ -55,7 +55,7 @@ public class HostsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final MainActivity main = (MainActivity) getActivity();
-                main.editItem(null, new ItemChangedListener() {
+                main.editItem(3, null, new ItemChangedListener() {
                     @Override
                     public void onItemChanged(Configuration.Item item) {
                         MainActivity.config.hosts.items.add(item);
