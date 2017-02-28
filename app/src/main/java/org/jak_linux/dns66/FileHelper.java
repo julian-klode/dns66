@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for working with files.
@@ -103,12 +105,15 @@ public final class FileHelper {
             JsonWriter writer = new JsonWriter(new OutputStreamWriter(FileHelper.openWrite(context, "settings.json")));
             config.write(writer);
             writer.close();
+            // Need a copy here, as we could otherwise have a ConcurrentModificationException
+            // while freshing the hosts lists.
+            final List<Configuration.Item> items = new ArrayList<>(MainActivity.config.hosts.items);
             new AsyncTask<Void, Void, Void>() {
 
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        HostDatabase.getInstance().update(context, MainActivity.config.hosts.items);
+                        HostDatabase.getInstance().update(context, items);
                     } catch (Exception e) {
                         Log.e("HostsFragment", "An exception occured", e);
                     }

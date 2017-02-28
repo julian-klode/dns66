@@ -94,7 +94,11 @@ public class HostDatabase {
 
             // We must copy the here - we do not want to change items that are currently used.
             HostFile newFile = new HostFile();
-            newFile.item = item;
+            // Copy the item so others can modify further.
+            newFile.item = new Configuration.Item();
+            newFile.item.location = item.location;
+            newFile.item.state = item.state;
+            newFile.item.title = item.title;
             for (HostFile file : oldFiles) {
                 if (file.item.location.equals(item.location)) {
                     Log.d(TAG, "update: Considering cached file (lastModified=" + file.lastModified + " for " + item.location);
