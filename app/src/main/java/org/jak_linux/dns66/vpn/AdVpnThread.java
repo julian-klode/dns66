@@ -30,6 +30,7 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
+import org.jak_linux.dns66.database.HostDatabase;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
@@ -89,7 +90,6 @@ class AdVpnThread implements Runnable {
     private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
     /* Upstream DNS servers, indexed by our IP */
     private final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
-    private final Set<String> blockedHosts = new HashSet<>();
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -153,7 +153,9 @@ class AdVpnThread implements Runnable {
 
         // Load the block list
         try {
-            loadBlockedHosts();
+            Configuration config = FileHelper.loadCurrentSettings(vpnService);
+
+            HostDatabase.getInstance().update(vpnService, config.hosts.items);
         } catch (InterruptedException e) {
             return;
         }
@@ -417,7 +419,7 @@ class AdVpnThread implements Runnable {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-        if (!blockedHosts.contains(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
+        if (!HostDatabase.getInstance().contains(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             DatagramSocket dnsSocket = null;
@@ -491,91 +493,6 @@ class AdVpnThread implements Runnable {
         }
 
         deviceWrites.add(ipOutPacket.getRawData());
-    }
-
-    private void loadBlockedHosts() throws InterruptedException {
-        Configuration config = FileHelper.loadCurrentSettings(vpnService);
-
-        blockedHosts.clear();
-        Runtime.getRuntime().gc();
-
-        Log.i(TAG, "Loading block list");
-
-        if (!config.hosts.enabled) {
-            Log.d(TAG, "loadBlockedHosts: Not loading, disabled.");
-        }
-
-        for (Configuration.Item item : config.hosts.items) {
-            if (Thread.interrupted())
-                throw new InterruptedException("Interrupted");
-            File file = FileHelper.getItemFile(vpnService, item);
-
-            if (file == null && !item.location.contains("/")) {
-                // Single address to block
-                if (item.state == Configuration.Item.STATE_ALLOW) {
-                    blockedHosts.remove(item.location);
-                } else if (item.state == Configuration.Item.STATE_DENY) {
-                    blockedHosts.add(item.location);
-                }
-
-                continue;
-            }
-
-            FileReader reader;
-            if (file == null || item.state == Configuration.Item.STATE_IGNORE)
-                continue;
-            try {
-                reader = new FileReader(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                continue;
-            }
-
-            int count = 0;
-            try {
-                Log.d(TAG, "loadBlockedHosts: Reading: " + file.getAbsolutePath());
-                try (BufferedReader br = new BufferedReader(reader)) {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        if (Thread.interrupted())
-                            throw new InterruptedException("Interrupted");
-                        String s = line.trim();
-
-                        if (s.length() != 0) {
-                            String[] ss = s.split("#");
-                            s = ss.length > 0 ? ss[0].trim() : "";
-                        }
-                        if (s.length() != 0) {
-                            String[] split = s.split("[ \t]+");
-                            String host = null;
-                            if (split.length == 2 && (split[0].equals("127.0.0.1") || split[0].equals("0.0.0.0"))) {
-                                host = split[1].toLowerCase(Locale.ENGLISH);
-                            } else if (split.length == 1) {
-                                host = split[0].toLowerCase(Locale.ENGLISH);
-                            }
-                            if (host != null) {
-                                count += 1;
-                                if (item.state == 0)
-                                    blockedHosts.add(host);
-                                else if (item.state == 1)
-                                    blockedHosts.remove(host);
-                            }
-                        }
-
-                    }
-                }
-
-            } catch (IOException e) {
-                Log.e(TAG, "loadBlockedHosts: Error while reading files", e);
-            } finally {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
-        }
     }
 
     private void newDNSServer(VpnService.Builder builder, String format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
