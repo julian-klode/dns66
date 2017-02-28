@@ -49,7 +49,7 @@
     <string name="whitelist_tab">Apps</string>
     <string name="show_notification">Show Notification</string>
     <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
-    <string name="dns_description">Green servers are enabled</string>
+    <string name="dns_description">Enable your preferred DNS servers</string>
     <string name="host_description">Red rules block, green rules allow</string>
     <string name="disable_notification_title">Disabling Notification</string>
     <string name="disable_notification_message">Disabling the notification may cause DNS66 to be stopped under memory pressure.\n\nDo you want to disable the notification?</string>

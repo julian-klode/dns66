@@ -30,6 +30,8 @@ Comment:
 Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_dns_black_24dp.xml
        app/src/main/res/drawable/ic_apps_black_24dp.xml
+       app/src/main/res/drawable/ic_check_box_black_24dp.xml
+       app/src/main/res/drawable/ic_check_box_outline_blank_black_24dp.xml
        app/src/main/res/drawable/ic_menu_hosts*.xml
        app/src/main/res/drawable/ic_menu_info.xml
        app/src/main/res/drawable/ic_menu_start*.xml

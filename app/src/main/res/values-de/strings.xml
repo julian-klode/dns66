@@ -46,7 +46,7 @@
     <string name="whitelist_tab">Apps</string>
     <string name="show_notification">Benachrichtigung anzeigen</string>
     <string name="could_not_configure_vpn_service">Konnte VPN Dienst nicht konfigurieren - Prüfen Sie, ob ein durchgehend aktives VPN (wie WiFi Assistant) aktiviert ist und deaktivieren sie es</string>
-    <string name="dns_description">Grüne Einträge werden genutzt</string>
+    <string name="dns_description">Aktiviere deine bevorzugten DNS-Server</string>
     <string name="host_description">Rote Regeln blockieren, Grüne erlauben</string>
     <string name="disable_notification_message">Deaktivieren der Benachrichtigung kann dazu führen, dass DNS66 beendet wird.\n\nSoll die Benachrichtigung deaktiviert werden?</string>
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>

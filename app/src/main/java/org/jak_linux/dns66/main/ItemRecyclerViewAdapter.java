@@ -25,10 +25,12 @@ import java.util.List;
 
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
     public final List<Configuration.Item> items;
+    private final int stateChoices;
     private Context context;
 
-    public ItemRecyclerViewAdapter(List<Configuration.Item> items) {
+    public ItemRecyclerViewAdapter(List<Configuration.Item> items, int stateChoices) {
         this.items = items;
+        this.stateChoices = stateChoices;
     }
 
     // Create new views (invoked by the layout manager)
@@ -45,16 +47,29 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.item = items.get(position);
         holder.titleView.setText(items.get(position).title);
         holder.subtitleView.setText(items.get(position).location);
-        switch (items.get(position).state) {
-            case Configuration.Item.STATE_IGNORE:
-                holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));
-                break;
-            case Configuration.Item.STATE_DENY:
-                holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_deny));
-                break;
-            case Configuration.Item.STATE_ALLOW:
-                holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_allow));
-                break;
+
+        if (stateChoices == 2) {
+            switch (items.get(position).state) {
+                case Configuration.Item.STATE_IGNORE:
+                case Configuration.Item.STATE_DENY:
+                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
+                    break;
+                case Configuration.Item.STATE_ALLOW:
+                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_black_24dp));
+                    break;
+            }
+        } else {
+            switch (items.get(position).state) {
+                case Configuration.Item.STATE_IGNORE:
+                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));
+                    break;
+                case Configuration.Item.STATE_DENY:
+                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_deny));
+                    break;
+                case Configuration.Item.STATE_ALLOW:
+                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_allow));
+                    break;
+            }
         }
     }
 
@@ -85,7 +100,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         public void onClick(View v) {
             final int position = getAdapterPosition();
             if (v == iconView) {
-                item.state = (item.state + 1) % 3;
+                item.state = (item.state + 1) % stateChoices;
                 ItemRecyclerViewAdapter.this.notifyItemChanged(position);
                 FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
             } else if (v == view) {
