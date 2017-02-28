@@ -1,6 +1,7 @@
 package org.jak_linux.dns66;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
@@ -9,6 +10,8 @@ import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.jak_linux.dns66.database.HostDatabase;
 
 import java.io.Closeable;
 import java.io.File;
@@ -94,12 +97,24 @@ public final class FileHelper {
         }
     }
 
-    public static void writeSettings(Context context, Configuration config) {
+    public static void writeSettings(final Context context, Configuration config) {
         Log.d("FileHelper", "writeSettings: Writing the settings file");
         try {
             JsonWriter writer = new JsonWriter(new OutputStreamWriter(FileHelper.openWrite(context, "settings.json")));
             config.write(writer);
             writer.close();
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    try {
+                        HostDatabase.getInstance().update(context, MainActivity.config.hosts.items);
+                    } catch (Exception e) {
+                        Log.e("HostsFragment", "An exception occured", e);
+                    }
+                    return null;
+                }
+            }.execute();
         } catch (IOException e) {
             Toast.makeText(context, context.getString(R.string.cannot_write_config, e.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
         }
