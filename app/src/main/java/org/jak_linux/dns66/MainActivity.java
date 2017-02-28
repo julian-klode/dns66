@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
      * @param item     an item to edit, may be null
      * @param listener A listener that will be called once the editor returns
      */
-    public void editItem(Configuration.Item item, ItemChangedListener listener) {
+    public void editItem(int stateChoices, Configuration.Item item, ItemChangedListener listener) {
         Intent editIntent = new Intent(this, ItemActivity.class);
 
         this.itemChangedListener = listener;
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
             editIntent.putExtra("ITEM_LOCATION", item.location);
             editIntent.putExtra("ITEM_STATE", item.state);
         }
+        editIntent.putExtra("STATE_CHOICES", stateChoices);
         startActivityForResult(editIntent, REQUEST_ITEM_EDIT);
     }
 }

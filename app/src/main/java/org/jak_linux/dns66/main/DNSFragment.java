@@ -57,7 +57,7 @@ public class DNSFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 MainActivity main = (MainActivity) getActivity();
-                main.editItem(null, new ItemChangedListener() {
+                main.editItem(2, null, new ItemChangedListener() {
                     @Override
                     public void onItemChanged(Configuration.Item item) {
                         MainActivity.config.dnsServers.items.add(item);

@@ -19,9 +19,9 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/title"
             android:inputType="text"
-            android:maxLines="1"
-            android:hint="@string/title" />
+            android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -34,25 +34,18 @@
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:hint="@string/location" />
+            android:hint="@string/location_dns"
+            android:inputType="textUri" />
     </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/state_label"
-        style="@style/InputLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/location_layout"
-        android:text="@string/action" />
-
-    <Spinner
-        android:id="@+id/state_spinner"
+    <Switch
+        android:id="@+id/state_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/state_label"
-        android:entries="@array/item_states" />
+        android:layout_below="@+id/location_layout"
+        android:layout_marginTop="10dp"
+        android:checked="true"
+        android:text="@string/state_dns_enabled" />
 
 </RelativeLayout>

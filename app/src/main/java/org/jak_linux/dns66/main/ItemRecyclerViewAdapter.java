@@ -106,7 +106,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
             } else if (v == view) {
                 // Start edit activity
                 MainActivity main = (MainActivity) v.getContext();
-                main.editItem(item, new ItemChangedListener() {
+                main.editItem(stateChoices, item, new ItemChangedListener() {
                             @Override
                             public void onItemChanged(Configuration.Item changedItem) {
                                 items.set(position, changedItem);

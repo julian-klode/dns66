@@ -55,7 +55,7 @@ public class HostsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final MainActivity main = (MainActivity) getActivity();
-                main.editItem(null, new ItemChangedListener() {
+                main.editItem(3, null, new ItemChangedListener() {
                     @Override
                     public void onItemChanged(Configuration.Item item) {
                         MainActivity.config.hosts.items.add(item);

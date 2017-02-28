@@ -13,7 +13,9 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 public class ItemActivity extends AppCompatActivity {
 
@@ -21,25 +23,32 @@ public class ItemActivity extends AppCompatActivity {
     private TextInputEditText locationText;
     private TextInputEditText titleText;
     private Spinner stateSpinner;
+    private Switch stateSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        setContentView(R.layout.activity_item);
+        if (intent.getIntExtra("STATE_CHOICES", 3) == 2) {
+            setContentView(R.layout.activity_item_dns);
+        } else {
+            setContentView(R.layout.activity_item);
+        }
 
         titleText = (TextInputEditText) findViewById(R.id.title);
         locationText = (TextInputEditText) findViewById(R.id.location);
-        stateSpinner = (Spinner) findViewById(R.id.state);
-
+        stateSpinner = (Spinner) findViewById(R.id.state_spinner);
+        stateSwitch = (Switch) findViewById(R.id.state_switch);
 
         if (intent.hasExtra("ITEM_TITLE"))
             titleText.setText(intent.getStringExtra("ITEM_TITLE"));
         if (intent.hasExtra("ITEM_LOCATION"))
             locationText.setText(intent.getStringExtra("ITEM_LOCATION"));
-        if (intent.hasExtra("ITEM_STATE"))
+        if (intent.hasExtra("ITEM_STATE") && stateSpinner != null)
             stateSpinner.setSelection(intent.getIntExtra("ITEM_STATE", 0));
+        if (intent.hasExtra("ITEM_STATE") && stateSwitch != null)
+            stateSwitch.setChecked(intent.getIntExtra("ITEM_STATE", 0) % 2 != 0);
     }
 
     @Override
@@ -58,7 +67,10 @@ public class ItemActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("ITEM_TITLE", titleText.getText().toString());
                 intent.putExtra("ITEM_LOCATION", locationText.getText().toString());
-                intent.putExtra("ITEM_STATE", stateSpinner.getSelectedItemPosition());
+                if (stateSpinner != null)
+                    intent.putExtra("ITEM_STATE", stateSpinner.getSelectedItemPosition());
+                if (stateSwitch != null)
+                    intent.putExtra("ITEM_STATE", stateSwitch.isChecked() ? 1 : 0);
                 setResult(RESULT_OK, intent);
                 finish();
                 break;

@@ -53,4 +53,6 @@
     <string name="disable_notification_nak">Abbrechen</string>
     <string name="whitelist_description">Erlaube gestörten Apps, DNS66 zu umgehen</string>
     <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
+    <string name="location_dns">IP-Adresse des DNS-Servers (IPv4 oder IPv6)</string>
+    <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
 </resources>
