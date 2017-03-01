@@ -36,21 +36,6 @@ import org.jak_linux.dns66.R;
 import java.lang.ref.WeakReference;
 
 public class AdVpnService extends VpnService implements Handler.Callback {
-    /* The handler may only keep a weak reference around, otherwise it leaks */
-    private static class MyHandler extends Handler {
-        private final WeakReference<Handler.Callback> callback;
-        public MyHandler(Handler.Callback callback) {
-            this.callback = new WeakReference<Callback>(callback);
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            Handler.Callback callback = this.callback.get();
-            if (callback != null) {
-                callback.handleMessage(msg);
-            }
-            super.handleMessage(msg);
-        }
-    }
     public static final int VPN_STATUS_STARTING = 0;
     public static final int VPN_STATUS_RUNNING = 1;
     public static final int VPN_STATUS_STOPPING = 2;
@@ -132,7 +117,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
                 startVpn(intent == null ? null : (PendingIntent) intent.getParcelableExtra("NOTIFICATION_INTENT"));
                 break;
             case STOP:
-                stopVpn();
+                stopSelf();
                 break;
         }
 
@@ -152,6 +137,9 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+    public void onCreate() {
+        vpnThread.start();
+    }
 
     private void startVpn(PendingIntent notificationIntent) {
         notificationBuilder.setContentTitle(getString(R.string.notification_title));
@@ -161,45 +149,19 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
         registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        restartVpnThread();
-    }
-
-    private void restartVpnThread() {
-        vpnThread.stopThread();
-        vpnThread.startThread();
-    }
-
-
-    private void stopVpnThread() {
-        vpnThread.stopThread();
-    }
-
-    private void waitForNetVpn() {
-        stopVpnThread();
-        updateVpnStatus(VPN_STATUS_WAITING_FOR_NETWORK);
-    }
-
-    private void reconnect() {
-        updateVpnStatus(VPN_STATUS_RECONNECTING);
-        restartVpnThread();
-    }
-
-    private void stopVpn() {
-        Log.i(TAG, "Stopping Service");
-        stopVpnThread();
-        try {
-            unregisterReceiver(connectivityChangedReceiver);
-        } catch (IllegalArgumentException e) {
-            Log.i(TAG, "Ignoring exception on unregistering receiver");
-        }
-        updateVpnStatus(VPN_STATUS_STOPPED);
-        stopSelf();
+        vpnThread.sendCommand(AdVpnThread.COMMAND_RESUME);
     }
 
     @Override
     public void onDestroy() {
         Log.i(TAG, "Destroyed, shutting down");
-        stopVpn();
+        vpnThread.sendCommand(AdVpnThread.COMMAND_DESTROY);
+
+        try {
+            unregisterReceiver(connectivityChangedReceiver);
+        } catch (IllegalArgumentException e) {
+            Log.i(TAG, "Ignoring exception on unregistering receiver");
+        }
     }
 
     @Override
@@ -232,10 +194,30 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         }
         if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
             Log.i(TAG, "Connectivity changed to no connectivity, wait for a network");
-            waitForNetVpn();
+            vpnThread.sendCommand(AdVpnThread.COMMAND_PAUSE);
+            updateVpnStatus(VPN_STATUS_WAITING_FOR_NETWORK);
         } else {
             Log.i(TAG, "Network changed, try to reconnect");
-            reconnect();
+            updateVpnStatus(VPN_STATUS_RECONNECTING);
+            vpnThread.sendCommand(AdVpnThread.COMMAND_RESUME);
+        }
+    }
+
+    /* The handler may only keep a weak reference around, otherwise it leaks */
+    private static class MyHandler extends Handler {
+        private final WeakReference<Handler.Callback> callback;
+
+        public MyHandler(Handler.Callback callback) {
+            this.callback = new WeakReference<Callback>(callback);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Handler.Callback callback = this.callback.get();
+            if (callback != null) {
+                callback.handleMessage(msg);
+            }
+            super.handleMessage(msg);
         }
     }
 }
