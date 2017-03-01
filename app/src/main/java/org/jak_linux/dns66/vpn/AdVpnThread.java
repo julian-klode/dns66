@@ -85,6 +85,11 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
      * Number of iterations since we last cleared the pcap4j cache
      */
     private int pcap4jFactoryClearCacheCounter = 0;
+    /* Device stream */
+    private FileInputStream devInStream;
+    private FileOutputStream devOutStream;
+    /* Buffer for a single packet */
+    private byte[] packetBuffer = new byte[32767];
 
     public AdVpnThread(VpnService vpnService, Notify notify) {
         this.vpnService = vpnService;
@@ -200,8 +205,6 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     }
 
     private void runVpn() throws InterruptedException, ErrnoException, IOException, VpnNetworkException {
-        // Allocate the buffer for a single packet.
-        byte[] packet = new byte[32767];
 
         // A pipe we can interrupt the poll() call with by closing the interruptFd end
         FileDescriptor[] pipes = Os.pipe();
@@ -211,31 +214,31 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // Authenticate and configure the virtual network interface.
         try (ParcelFileDescriptor pfd = configure()) {
             // Read and write views of the tun device
-            FileInputStream inputStream = new FileInputStream(pfd.getFileDescriptor());
-            FileOutputStream outFd = new FileOutputStream(pfd.getFileDescriptor());
+            devInStream = new FileInputStream(pfd.getFileDescriptor());
+            devOutStream = new FileOutputStream(pfd.getFileDescriptor());
 
             // Now we are connected. Set the flag and show the message.
             if (notify != null)
                 notify.run(AdVpnService.VPN_STATUS_RUNNING);
 
             // We keep forwarding packets till something goes wrong.
-            while (doOne(inputStream, outFd, packet))
+            while (doOne())
                 ;
         } finally {
             mBlockFd = FileHelper.closeOrWarn(mBlockFd, TAG, "runVpn: Could not close blockFd");
         }
     }
 
-    private boolean doOne(FileInputStream inputStream, FileOutputStream outFd, byte[] packet) throws IOException, ErrnoException, InterruptedException, VpnNetworkException {
+    private boolean doOne() throws IOException, ErrnoException, InterruptedException, VpnNetworkException {
         StructPollfd blockFd = new StructPollfd();
         blockFd.fd = mBlockFd;
         blockFd.events = (short) (OsConstants.POLLHUP | OsConstants.POLLERR);
 
 
         StructPollfd deviceFd = null;
-        if (inputStream != null) {
+        if (devInStream != null) {
             deviceFd = new StructPollfd();
-            deviceFd.fd = inputStream.getFD();
+            deviceFd.fd = devInStream.getFD();
             deviceFd.events = (short) OsConstants.POLLIN;
             if (!deviceWrites.isEmpty())
                 deviceFd.events |= (short) OsConstants.POLLOUT;
@@ -280,11 +283,11 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
         if (deviceFd != null && (deviceFd.revents & OsConstants.POLLOUT) != 0) {
             Log.d(TAG, "Write to device");
-            writeToDevice(outFd);
+            writeToDevice(devOutStream);
         }
         if (deviceFd != null && (deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
-            readPacketFromDevice(inputStream, packet);
+            readPacketFromDevice(devInStream);
         }
 
         // pcap4j has some sort of properties cache in the packet factory. This cache leaks, so
@@ -307,21 +310,21 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         return true;
     }
 
-    private void writeToDevice(FileOutputStream outFd) throws VpnNetworkException {
+    private void writeToDevice(FileOutputStream devOutStream) throws VpnNetworkException {
         try {
-            outFd.write(deviceWrites.poll());
+            devOutStream.write(deviceWrites.poll());
         } catch (IOException e) {
             // TODO: Make this more specific, only for: "File descriptor closed"
             throw new VpnNetworkException("Outgoing VPN output stream closed");
         }
     }
 
-    private void readPacketFromDevice(FileInputStream inputStream, byte[] packet) throws VpnNetworkException, SocketException {
+    private void readPacketFromDevice(FileInputStream devInStream) throws VpnNetworkException, SocketException {
         // Read the outgoing packet from the input stream.
         int length;
 
         try {
-            length = inputStream.read(packet);
+            length = devInStream.read(packetBuffer);
         } catch (IOException e) {
             throw new VpnNetworkException("Cannot read from device", e);
         }
@@ -333,7 +336,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             return;
         }
 
-        final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
+        final byte[] readPacket = Arrays.copyOfRange(packetBuffer, 0, length);
 
         dnsPacketProxy.handleDnsRequest(readPacket);
     }
