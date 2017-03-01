@@ -51,7 +51,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     // TODO: Temporary Hack til refactor is done
     public static int vpnStatus = VPN_STATUS_STOPPED;
     private final Handler handler = new MyHandler(this);
-    private final AdVpnThread vpnThread = new AdVpnThread(this, new AdVpnThread.Notify() {
+    private AdVpnThread vpnThread = new AdVpnThread(this, new AdVpnThread.Notify() {
         @Override
         public void run(int value) {
             handler.sendMessage(handler.obtainMessage(VPN_MSG_STATUS_UPDATE, value, 0));
@@ -156,6 +156,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     public void onDestroy() {
         Log.i(TAG, "Destroyed, shutting down");
         vpnThread.sendCommand(AdVpnThread.COMMAND_DESTROY);
+        vpnThread = null;
 
         try {
             unregisterReceiver(connectivityChangedReceiver);
