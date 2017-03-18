@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "org.jak_linux.dns66"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 9
         versionName "0.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
