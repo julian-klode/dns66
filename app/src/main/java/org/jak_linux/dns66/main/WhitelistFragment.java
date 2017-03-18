@@ -143,7 +143,21 @@ public class WhitelistFragment extends Fragment {
             details.setText(entry.getPackageName());
 
             final Switch checkBox = (Switch) convertView.findViewById(R.id.checkbox);
-            checkBox.setChecked(MainActivity.config.whitelist.items.contains(entry.getPackageName()));
+
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                    /* No change, do nothing */
+                    if (checked == MainActivity.config.whitelist.items.contains(entry.getPackageName()))
+                        return;
+                    if (checked) {
+                        MainActivity.config.whitelist.items.add(entry.getPackageName());
+                    } else {
+                        MainActivity.config.whitelist.items.remove(entry.getPackageName());
+                    }
+                    FileHelper.writeSettings(getActivity(), MainActivity.config);
+                }
+            });
 
             View layout = convertView.findViewById(R.id.entry);
             layout.setOnClickListener(new View.OnClickListener() {
@@ -153,17 +167,7 @@ public class WhitelistFragment extends Fragment {
                 }
             });
 
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                    if (checked) {
-                        MainActivity.config.whitelist.items.add(entry.getPackageName());
-                    } else {
-                        MainActivity.config.whitelist.items.remove(entry.getPackageName());
-                    }
-                    FileHelper.writeSettings(getActivity(), MainActivity.config);
-                }
-            });
+            checkBox.setChecked(MainActivity.config.whitelist.items.contains(entry.getPackageName()));
 
             return convertView;
         }
