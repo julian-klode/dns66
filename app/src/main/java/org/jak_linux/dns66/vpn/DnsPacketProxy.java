@@ -42,7 +42,12 @@ public class DnsPacketProxy {
 
     private static final String TAG = "DnsPacketProxy";
     final RuleDatabase ruleDatabase = new RuleDatabase();
+    private final EventLoop eventLoop;
     private ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
+
+    public DnsPacketProxy(EventLoop eventLoop) {
+        this.eventLoop = eventLoop;
+    }
 
     /**
      * Initializes the rules database and the list of upstream servers.
@@ -62,9 +67,8 @@ public class DnsPacketProxy {
      *
      * @param requestPacket   The original request packet
      * @param responsePayload The payload of the response
-     * @param adVpnThread     The thread we are working with
      */
-    void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload, AdVpnThread adVpnThread) {
+    void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
         UdpPacket udpOutPacket = (UdpPacket) requestPacket.getPayload();
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
                 .srcPort(udpOutPacket.getHeader().getDstPort())
@@ -98,17 +102,16 @@ public class DnsPacketProxy {
                     .build();
         }
 
-        adVpnThread.queueDeviceWrite(ipOutPacket);
+        eventLoop.queueDeviceWrite(ipOutPacket);
     }
 
     /**
      * Handles a DNS request, by either blocking it or forwarding it to the remote location.
      *
-     * @param packetData  The packet data to read
-     * @param adVpnThread The thread we are working with
+     * @param packetData The packet data to read
      * @throws AdVpnThread.VpnNetworkException If some network error occurred
      */
-    void handleDnsRequest(byte[] packetData, AdVpnThread adVpnThread) throws AdVpnThread.VpnNetworkException {
+    void handleDnsRequest(byte[] packetData) throws AdVpnThread.VpnNetworkException {
 
         IpPacket parsedPacket = null;
         try {
@@ -151,7 +154,7 @@ public class DnsPacketProxy {
             // the gateway to reduce the RTT. For further details, please see
             // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
             DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            adVpnThread.forwardPacket(outPacket, null);
+            eventLoop.forwardPacket(outPacket, null);
             return;
         }
 
@@ -171,12 +174,34 @@ public class DnsPacketProxy {
         if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            adVpnThread.forwardPacket(outPacket, parsedPacket);
+            eventLoop.forwardPacket(outPacket, parsedPacket);
         } else {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
-            handleDnsResponse(parsedPacket, dnsMsg.toWire(), adVpnThread);
+            handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
+    }
+
+    /**
+     * Interface abstracting away {@link AdVpnThread}.
+     */
+    interface EventLoop {
+        /**
+         * Called to send a packet to a remote location
+         *
+         * @param packet        The packet to send
+         * @param requestPacket If specified, the event loop must wait for a response, and then
+         *                      call {@link #handleDnsResponse(IpPacket, byte[])} for the data
+         *                      of the response, with this packet as the first argument.
+         */
+        void forwardPacket(DatagramPacket packet, IpPacket requestPacket) throws AdVpnThread.VpnNetworkException;
+
+        /**
+         * Write an IP packet to the local TUN device
+         *
+         * @param packet The packet to write (a response to a DNS request)
+         */
+        void queueDeviceWrite(IpPacket packet);
     }
 }

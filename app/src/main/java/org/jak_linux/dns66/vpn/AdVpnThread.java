@@ -55,7 +55,7 @@ import java.util.Queue;
 import java.util.Set;
 
 
-class AdVpnThread implements Runnable {
+class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     private static final String TAG = "AdVpnThread";
     private static final int MIN_RETRY_TIME = 5;
     private static final int MAX_RETRY_TIME = 2 * 60;
@@ -71,7 +71,7 @@ class AdVpnThread implements Runnable {
     // HashMap that keeps an upper limit of packets
     private final WospList dnsIn = new WospList();
     // The object where we actually handle packets.
-    private final DnsPacketProxy dnsPacketProxy = new DnsPacketProxy();
+    private final DnsPacketProxy dnsPacketProxy = new DnsPacketProxy(this);
     /**
      * After how many iterations we should clear pcap4js packetfactory property cache
      */
@@ -330,7 +330,7 @@ class AdVpnThread implements Runnable {
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
 
-        dnsPacketProxy.handleDnsRequest(readPacket, this);
+        dnsPacketProxy.handleDnsRequest(readPacket);
     }
 
     public void forwardPacket(DatagramPacket outPacket, IpPacket parsedPacket) throws VpnNetworkException {
@@ -364,7 +364,7 @@ class AdVpnThread implements Runnable {
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
-        dnsPacketProxy.handleDnsResponse(parsedPacket, datagramData, this);
+        dnsPacketProxy.handleDnsResponse(parsedPacket, datagramData);
     }
 
     public void queueDeviceWrite(IpPacket ipOutPacket) {
