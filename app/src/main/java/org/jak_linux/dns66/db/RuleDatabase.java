@@ -32,7 +32,7 @@ import java.util.Set;
 public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
-    public final Set<String> blockedHosts = new HashSet<>();
+    private final Set<String> blockedHosts = new HashSet<>();
 
     /**
      * Parse a single line in a hosts file
