@@ -43,7 +43,7 @@ public class DnsPacketProxy {
     private static final String TAG = "DnsPacketProxy";
     final RuleDatabase ruleDatabase = new RuleDatabase();
     private final EventLoop eventLoop;
-    private ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
+    ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
 
     public DnsPacketProxy(EventLoop eventLoop) {
         this.eventLoop = eventLoop;
