@@ -33,10 +33,7 @@ import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.db.RuleDatabase;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
-import org.pcap4j.packet.IpV4Packet;
-import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.UdpPacket;
-import org.pcap4j.packet.UnknownPacket;
 import org.pcap4j.packet.factory.PacketFactoryPropertiesLoader;
 import org.pcap4j.util.PropertiesLoader;
 import org.xbill.DNS.Flags;
@@ -80,6 +77,8 @@ class AdVpnThread implements Runnable {
     private final Queue<byte[]> deviceWrites = new LinkedList<>();
     // HashMap that keeps an upper limit of packets
     private final WospList dnsIn = new WospList();
+    // The object where we actually handle packets.
+    private final PacketProxy packetProxy = new PacketProxy();
     /**
      * After how many iterations we should clear pcap4js packetfactory property cache
      */
@@ -284,7 +283,7 @@ class AdVpnThread implements Runnable {
         }
         if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
             Log.d(TAG, "Write to device");
-            writeToDevice(outFd);
+            queueDeviceWrite(outFd);
         }
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
@@ -311,7 +310,7 @@ class AdVpnThread implements Runnable {
         return true;
     }
 
-    private void writeToDevice(FileOutputStream outFd) throws VpnNetworkException {
+    private void queueDeviceWrite(FileOutputStream outFd) throws VpnNetworkException {
         try {
             outFd.write(deviceWrites.poll());
         } catch (IOException e) {
@@ -442,7 +441,7 @@ class AdVpnThread implements Runnable {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
-            handleDnsResponse(parsedPacket, dnsMsg.toWire());
+            packetProxy.handleDnsResponse(parsedPacket, dnsMsg.toWire(), this);
         }
     }
 
@@ -450,43 +449,10 @@ class AdVpnThread implements Runnable {
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
-        handleDnsResponse(parsedPacket, datagramData);
+        packetProxy.handleDnsResponse(parsedPacket, datagramData, this);
     }
 
-    private void handleDnsResponse(IpPacket parsedPacket, byte[] response) {
-        UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
-        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
-                .srcPort(udpOutPacket.getHeader().getDstPort())
-                .dstPort(udpOutPacket.getHeader().getSrcPort())
-                .srcAddr(parsedPacket.getHeader().getDstAddr())
-                .dstAddr(parsedPacket.getHeader().getSrcAddr())
-                .correctChecksumAtBuild(true)
-                .correctLengthAtBuild(true)
-                .payloadBuilder(
-                        new UnknownPacket.Builder()
-                                .rawData(response)
-                );
-
-
-        IpPacket ipOutPacket;
-        if (parsedPacket instanceof IpV4Packet) {
-            ipOutPacket = new IpV4Packet.Builder((IpV4Packet) parsedPacket)
-                    .srcAddr((Inet4Address) parsedPacket.getHeader().getDstAddr())
-                    .dstAddr((Inet4Address) parsedPacket.getHeader().getSrcAddr())
-                    .correctChecksumAtBuild(true)
-                    .correctLengthAtBuild(true)
-                    .payloadBuilder(payLoadBuilder)
-                    .build();
-
-        } else {
-            ipOutPacket = new IpV6Packet.Builder((IpV6Packet) parsedPacket)
-                    .srcAddr((Inet6Address) parsedPacket.getHeader().getDstAddr())
-                    .dstAddr((Inet6Address) parsedPacket.getHeader().getSrcAddr())
-                    .correctLengthAtBuild(true)
-                    .payloadBuilder(payLoadBuilder)
-                    .build();
-        }
-
+    public void queueDeviceWrite(IpPacket ipOutPacket) {
         deviceWrites.add(ipOutPacket.getRawData());
     }
 
