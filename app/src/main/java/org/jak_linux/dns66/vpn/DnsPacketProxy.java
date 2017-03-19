@@ -1,3 +1,15 @@
+/* Copyright (C) 2016 Julian Andres Klode <jak@jak-linux.org>
+ *
+ * Derived from AdBuster:
+ * Copyright (C) 2016 Daniel Brodie <dbrodie@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Contributions shall also be provided under any later versions of the
+ * GPL.
+ */
 package org.jak_linux.dns66.vpn;
 
 import android.content.Context;
@@ -23,49 +35,64 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- * Created by jak on 19/03/17.
+ * Creates and parses packets, and sends packets to a remote socket or the device using
+ * {@link AdVpnThread}.
  */
-
 public class DnsPacketProxy {
 
     private static final String TAG = "DnsPacketProxy";
     final RuleDatabase ruleDatabase = new RuleDatabase();
     private ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
 
+    /**
+     * Initializes the rules database and the list of upstream servers.
+     *
+     * @param context            The context we are operating in (for the database)
+     * @param upstreamDnsServers The upstream DNS servers to use; or an empty list if no
+     *                           rewriting of ip addresses takes place
+     * @throws InterruptedException If the database initialization was interrupted
+     */
     void initialize(Context context, ArrayList<InetAddress> upstreamDnsServers) throws InterruptedException {
         ruleDatabase.initialize(context);
         this.upstreamDnsServers = upstreamDnsServers;
     }
 
-    void handleDnsResponse(IpPacket parsedPacket, byte[] response, AdVpnThread adVpnThread) {
-        UdpPacket udpOutPacket = (UdpPacket) parsedPacket.getPayload();
+    /**
+     * Handles a responsePayload from an upstream DNS server
+     *
+     * @param requestPacket   The original request packet
+     * @param responsePayload The payload of the response
+     * @param adVpnThread     The thread we are working with
+     */
+    void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload, AdVpnThread adVpnThread) {
+        UdpPacket udpOutPacket = (UdpPacket) requestPacket.getPayload();
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
                 .srcPort(udpOutPacket.getHeader().getDstPort())
                 .dstPort(udpOutPacket.getHeader().getSrcPort())
-                .srcAddr(parsedPacket.getHeader().getDstAddr())
-                .dstAddr(parsedPacket.getHeader().getSrcAddr())
+                .srcAddr(requestPacket.getHeader().getDstAddr())
+                .dstAddr(requestPacket.getHeader().getSrcAddr())
                 .correctChecksumAtBuild(true)
                 .correctLengthAtBuild(true)
                 .payloadBuilder(
                         new UnknownPacket.Builder()
-                                .rawData(response)
+                                .rawData(responsePayload)
                 );
 
 
         IpPacket ipOutPacket;
-        if (parsedPacket instanceof IpV4Packet) {
-            ipOutPacket = new IpV4Packet.Builder((IpV4Packet) parsedPacket)
-                    .srcAddr((Inet4Address) parsedPacket.getHeader().getDstAddr())
-                    .dstAddr((Inet4Address) parsedPacket.getHeader().getSrcAddr())
+        if (requestPacket instanceof IpV4Packet) {
+            ipOutPacket = new IpV4Packet.Builder((IpV4Packet) requestPacket)
+                    .srcAddr((Inet4Address) requestPacket.getHeader().getDstAddr())
+                    .dstAddr((Inet4Address) requestPacket.getHeader().getSrcAddr())
                     .correctChecksumAtBuild(true)
                     .correctLengthAtBuild(true)
                     .payloadBuilder(payLoadBuilder)
                     .build();
 
         } else {
-            ipOutPacket = new IpV6Packet.Builder((IpV6Packet) parsedPacket)
-                    .srcAddr((Inet6Address) parsedPacket.getHeader().getDstAddr())
-                    .dstAddr((Inet6Address) parsedPacket.getHeader().getSrcAddr())
+            ipOutPacket = new IpV6Packet.Builder((IpV6Packet) requestPacket)
+                    .srcAddr((Inet6Address) requestPacket.getHeader().getDstAddr())
+                    .dstAddr((Inet6Address) requestPacket.getHeader().getSrcAddr())
                     .correctLengthAtBuild(true)
                     .payloadBuilder(payLoadBuilder)
                     .build();
@@ -74,11 +101,18 @@ public class DnsPacketProxy {
         adVpnThread.queueDeviceWrite(ipOutPacket);
     }
 
-    void handleDnsRequest(byte[] packet, AdVpnThread adVpnThread) throws AdVpnThread.VpnNetworkException {
+    /**
+     * Handles a DNS request, by either blocking it or forwarding it to the remote location.
+     *
+     * @param packetData  The packet data to read
+     * @param adVpnThread The thread we are working with
+     * @throws AdVpnThread.VpnNetworkException If some network error occurred
+     */
+    void handleDnsRequest(byte[] packetData, AdVpnThread adVpnThread) throws AdVpnThread.VpnNetworkException {
 
         IpPacket parsedPacket = null;
         try {
-            parsedPacket = (IpPacket) IpSelector.newPacket(packet, 0, packet.length);
+            parsedPacket = (IpPacket) IpSelector.newPacket(packetData, 0, packetData.length);
         } catch (Exception e) {
             Log.i(TAG, "handleDnsRequest: Discarding invalid IP packet", e);
             return;
