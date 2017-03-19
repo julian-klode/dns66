@@ -13,6 +13,7 @@ android:
     - extra-android-m2repository
   licenses:
     - '.+'
-
 script:
-    - ./gradlew clean assemble test
+  - ./gradlew clean assemble test jacocoTestReport
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
