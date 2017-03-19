@@ -30,15 +30,9 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
-import org.jak_linux.dns66.db.RuleDatabase;
 import org.pcap4j.packet.IpPacket;
-import org.pcap4j.packet.IpSelector;
-import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.factory.PacketFactoryPropertiesLoader;
 import org.pcap4j.util.PropertiesLoader;
-import org.xbill.DNS.Flags;
-import org.xbill.DNS.Message;
-import org.xbill.DNS.Rcode;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -57,7 +51,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 
@@ -78,14 +71,13 @@ class AdVpnThread implements Runnable {
     // HashMap that keeps an upper limit of packets
     private final WospList dnsIn = new WospList();
     // The object where we actually handle packets.
-    private final PacketProxy packetProxy = new PacketProxy();
+    private final DnsPacketProxy dnsPacketProxy = new DnsPacketProxy();
     /**
      * After how many iterations we should clear pcap4js packetfactory property cache
      */
     private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
     /* Upstream DNS servers, indexed by our IP */
     private final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
-    private final RuleDatabase ruleDatabase = new RuleDatabase();
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -149,7 +141,7 @@ class AdVpnThread implements Runnable {
 
         // Load the block list
         try {
-            ruleDatabase.initialize(vpnService);
+            dnsPacketProxy.initialize(vpnService, upstreamDnsServers);
         } catch (InterruptedException e) {
             return;
         }
@@ -338,82 +330,10 @@ class AdVpnThread implements Runnable {
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
 
-        handleDnsRequest(readPacket);
+        dnsPacketProxy.handleDnsRequest(readPacket, this);
     }
 
-    private void handleDnsRequest(byte[] packet) throws VpnNetworkException {
-
-        IpPacket parsedPacket = null;
-        try {
-            parsedPacket = (IpPacket) IpSelector.newPacket(packet, 0, packet.length);
-        } catch (Exception e) {
-            Log.i(TAG, "handleDnsRequest: Discarding invalid IP packet", e);
-            return;
-        }
-
-        if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
-            Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getPayload());
-            return;
-        }
-
-        InetAddress destAddr;
-        if (upstreamDnsServers.size() > 0) {
-            byte[] addr = parsedPacket.getHeader().getDstAddr().getAddress();
-            int index = addr[addr.length - 1] - 2;
-
-            try {
-                destAddr = upstreamDnsServers.get(index);
-            } catch (Exception e) {
-                Log.e(TAG, "handleDnsRequest: Cannot handle packets to" + parsedPacket.getHeader().getDstAddr().getHostAddress(), e);
-                return;
-            }
-            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s AKA %d AKA %s", parsedPacket.getHeader().getDstAddr().getHostAddress(), index, destAddr));
-        } else {
-            destAddr = parsedPacket.getHeader().getDstAddr();
-            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s - is upstream", parsedPacket.getHeader().getDstAddr().getHostAddress()));
-        }
-
-
-        UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
-
-
-        if (parsedUdp.getPayload() == null) {
-            Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
-
-            // Let's be nice to Firefox. Firefox uses an empty UDP packet to
-            // the gateway to reduce the RTT. For further details, please see
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
-            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            forwardPacket(outPacket, null);
-            return;
-        }
-
-        byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
-        Message dnsMsg;
-        try {
-            dnsMsg = new Message(dnsRawData);
-        } catch (IOException e) {
-            Log.i(TAG, "handleDnsRequest: Discarding non-DNS or invalid packet", e);
-            return;
-        }
-        if (dnsMsg.getQuestion() == null) {
-            Log.i(TAG, "handleDnsRequest: Discarding DNS packet with no query " + dnsMsg);
-            return;
-        }
-        String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-        if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
-            DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            forwardPacket(outPacket, parsedPacket);
-        } else {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
-            dnsMsg.getHeader().setFlag(Flags.QR);
-            dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
-            packetProxy.handleDnsResponse(parsedPacket, dnsMsg.toWire(), this);
-        }
-    }
-
-    private void forwardPacket( DatagramPacket outPacket, IpPacket parsedPacket) throws VpnNetworkException {
+    public void forwardPacket(DatagramPacket outPacket, IpPacket parsedPacket) throws VpnNetworkException {
         DatagramSocket dnsSocket = null;
         try {
             // Packets to be sent to the real DNS server will need to be protected from the VPN
@@ -444,7 +364,7 @@ class AdVpnThread implements Runnable {
         byte[] datagramData = new byte[1024];
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
-        packetProxy.handleDnsResponse(parsedPacket, datagramData, this);
+        dnsPacketProxy.handleDnsResponse(parsedPacket, datagramData, this);
     }
 
     public void queueDeviceWrite(IpPacket ipOutPacket) {
@@ -565,7 +485,7 @@ class AdVpnThread implements Runnable {
         void run(int value);
     }
 
-    private static class VpnNetworkException extends Exception {
+    static class VpnNetworkException extends Exception {
         VpnNetworkException(String s) {
             super(s);
         }
