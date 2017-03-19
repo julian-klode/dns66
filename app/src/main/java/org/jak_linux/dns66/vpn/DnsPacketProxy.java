@@ -41,12 +41,18 @@ import java.util.Locale;
 public class DnsPacketProxy {
 
     private static final String TAG = "DnsPacketProxy";
-    final RuleDatabase ruleDatabase = new RuleDatabase();
+    final RuleDatabase ruleDatabase;
     private final EventLoop eventLoop;
     ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
 
+
+    public DnsPacketProxy(EventLoop eventLoop, RuleDatabase database) {
+        this.eventLoop = eventLoop;
+        this.ruleDatabase = database;
+    }
     public DnsPacketProxy(EventLoop eventLoop) {
         this.eventLoop = eventLoop;
+        this.ruleDatabase = new RuleDatabase();
     }
 
     /**

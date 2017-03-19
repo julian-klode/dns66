@@ -1,5 +1,6 @@
 package org.jak_linux.dns66.vpn;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
@@ -7,10 +8,13 @@ import org.jak_linux.dns66.db.RuleDatabase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.pcap4j.packet.ArpPacket;
+import org.mockito.Mockito;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.IpV4Rfc791Tos;
+import org.pcap4j.packet.IpV6Packet;
+import org.pcap4j.packet.IpV6SimpleFlowLabel;
+import org.pcap4j.packet.IpV6SimpleTrafficClass;
 import org.pcap4j.packet.TcpPacket;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
@@ -21,16 +25,23 @@ import org.pcap4j.packet.namednumber.UdpPort;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.xbill.DNS.ARecord;
+import org.xbill.DNS.Message;
+import org.xbill.DNS.Name;
 
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static org.xbill.DNS.Rcode.NXDOMAIN;
 
 /**
  * Various tests for the core DNS packet proxying code.
  */
+// TODO: 19/03/17 Check for correct point of error
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Log.class)
 public class DnsPacketProxyTest {
@@ -46,7 +57,7 @@ public class DnsPacketProxyTest {
 
 
         Configuration.Item item = new Configuration.Item();
-        item.location = "example.com";
+        item.location = "blocked.example.com";
         item.state = Configuration.Item.STATE_DENY;
 
         ruleDatabase.addHost(item, item.location);
@@ -61,11 +72,18 @@ public class DnsPacketProxyTest {
     }
 
     @Test
+    public void testInitialize() throws Exception {
+        ArrayList<InetAddress> dnsServers = new ArrayList<>();
+        dnsPacketProxy = new DnsPacketProxy(mockEventLoop, Mockito.mock(RuleDatabase.class));
+        dnsPacketProxy.initialize(Mockito.mock(Context.class), dnsServers);
+        assertSame(dnsServers, dnsPacketProxy.upstreamDnsServers);
+    }
+
+    @Test
     public void testHandleDnsRequestNotIpPacket() throws Exception {
-        dnsPacketProxy.handleDnsRequest(new byte[] {'f', 'o', 'o'});
+        dnsPacketProxy.handleDnsRequest(new byte[]{'f', 'o', 'o'});
         assertNull(mockEventLoop.lastOutgoing);
         assertNull(mockEventLoop.lastResponse);
-        // TODO: 19/03/17 Check for correct point of error
     }
 
     @Test
@@ -96,8 +114,8 @@ public class DnsPacketProxyTest {
         dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
         assertNull(mockEventLoop.lastOutgoing);
         assertNull(mockEventLoop.lastResponse);
-        // TODO: 19/03/17 Check for correct point of error
     }
+
     @Test
     public void testHandleDnsRequestNotDnsPacket() throws Exception {
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
@@ -109,7 +127,7 @@ public class DnsPacketProxyTest {
                 .correctLengthAtBuild(true)
                 .payloadBuilder(
                         new UnknownPacket.Builder()
-                                .rawData(new byte[]{1,2,3,4,5})
+                                .rawData(new byte[]{1, 2, 3, 4, 5})
                 );
 
         IpPacket ipOutPacket = new IpV4Packet.Builder()
@@ -126,7 +144,6 @@ public class DnsPacketProxyTest {
         dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
         assertNull(mockEventLoop.lastOutgoing);
         assertNull(mockEventLoop.lastResponse);
-        // TODO: 19/03/17 Check for correct point of error
     }
 
     @Test
@@ -162,17 +179,181 @@ public class DnsPacketProxyTest {
 
         assertNull(mockEventLoop.lastResponse);
 
-        // Check the same thing with upstream DNS servers configured.
+        // Check the same thing with one upstream DNS server configured.
         tinySetUp();
-        for (byte i = 0; i < 9; i++)
+        dnsPacketProxy.upstreamDnsServers.add(Inet4Address.getByAddress(new byte[]{1, 1, 1, 2}));
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        assertNull(mockEventLoop.lastOutgoing);
+        assertNull(mockEventLoop.lastResponse);
+
+        // Check the same thing with enough upstream DNS servers configured.
+        tinySetUp();
+        for (byte i = 2; i < 9; i++)
             dnsPacketProxy.upstreamDnsServers.add(Inet4Address.getByAddress(new byte[]{1, 1, 1, i}));
         dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
 
         assertNotNull(mockEventLoop.lastOutgoing);
         assertEquals(0, mockEventLoop.lastOutgoing.getLength());
-        // We are using last byte - 2 as the offset into the table.
-        assertEquals(Inet4Address.getByAddress(new byte[]{1, 1, 1, 6}), mockEventLoop.lastOutgoing.getAddress());
+        assertEquals(Inet4Address.getByAddress(new byte[]{1, 1, 1, 8}), mockEventLoop.lastOutgoing.getAddress());
         assertNull(mockEventLoop.lastResponse);
+
+    }
+
+    @Test
+    public void testDnsQuery() throws Exception {
+        Message message = Message.newQuery(new ARecord(new Name("notblocked.example.com."),
+                0x01,
+                3600,
+                Inet4Address.getByAddress(new byte[]{0, 0, 0, 0})
+        ));
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr(InetAddress.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr(InetAddress.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV4Packet.Builder()
+                .version(IpVersion.IPV4)
+                .tos(IpV4Rfc791Tos.newInstance((byte) 0))
+                .protocol(IpNumber.UDP)
+                .srcAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        assertNull(mockEventLoop.lastResponse);
+        assertNotNull(mockEventLoop.lastOutgoing);
+        assertEquals(Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}), mockEventLoop.lastOutgoing.getAddress());
+    }
+
+    @Test
+    public void testNoQueryDnsQuery() throws Exception {
+        Message message = new Message();
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr(InetAddress.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr(InetAddress.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV4Packet.Builder()
+                .version(IpVersion.IPV4)
+                .tos(IpV4Rfc791Tos.newInstance((byte) 0))
+                .protocol(IpNumber.UDP)
+                .srcAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        assertNull(mockEventLoop.lastResponse);
+        assertNull(mockEventLoop.lastOutgoing);
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+    }
+
+    @Test
+    public void testBlockedDnsQuery() throws Exception {
+        Message message = Message.newQuery(new ARecord(new Name("blocked.example.com."),
+                0x01,
+                3600,
+                Inet4Address.getByAddress(new byte[]{0, 0, 0, 0})
+        ));
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr(InetAddress.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr(InetAddress.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV4Packet.Builder()
+                .version(IpVersion.IPV4)
+                .tos(IpV4Rfc791Tos.newInstance((byte) 0))
+                .protocol(IpNumber.UDP)
+                .srcAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        assertNotNull(mockEventLoop.lastResponse);
+        assertNull(mockEventLoop.lastOutgoing);
+        assertTrue(mockEventLoop.lastResponse instanceof IpPacket);
+        assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
+
+        Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
+        assertEquals(responseMsg.getHeader().getRcode(), NXDOMAIN);
+    }
+
+    @Test
+    public void testBlockedInet6DnsQuery() throws Exception {
+        Message message = Message.newQuery(new ARecord(new Name("blocked.example.com."),
+                0x01,
+                3600,
+                Inet4Address.getByAddress(new byte[]{0, 0, 0, 0})
+        ));
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr((Inet6Address) Inet6Address.getByName("::0"))
+                .dstAddr((Inet6Address) Inet6Address.getByName("::1"))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV6Packet.Builder()
+                .version(IpVersion.IPV6)
+                .trafficClass(IpV6SimpleTrafficClass.newInstance((byte) 0))
+                .flowLabel(IpV6SimpleFlowLabel.newInstance(0))
+                .nextHeader(IpNumber.UDP)
+                .srcAddr((Inet6Address) Inet6Address.getByName("::0"))
+                .dstAddr((Inet6Address) Inet6Address.getByName("::1"))
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        assertNotNull(mockEventLoop.lastResponse);
+        assertNull(mockEventLoop.lastOutgoing);
+        assertTrue(mockEventLoop.lastResponse instanceof IpPacket);
+        assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
+
+        Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
+        assertEquals(responseMsg.getHeader().getRcode(), NXDOMAIN);
     }
 
     private static class MockEventLoop implements DnsPacketProxy.EventLoop {
