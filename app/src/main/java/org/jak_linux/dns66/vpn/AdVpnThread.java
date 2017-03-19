@@ -384,19 +384,7 @@ class AdVpnThread implements Runnable {
             // the gateway to reduce the RTT. For further details, please see
             // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
             DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            DatagramSocket dnsSocket = null;
-            try {
-                dnsSocket = new DatagramSocket();
-
-                vpnService.protect(dnsSocket);
-
-                dnsSocket.send(outPacket);
-            } catch (IOException e) {
-                Log.i(TAG, "handleDnsRequest: Could not forward empty UDP packet");
-            } finally {
-                FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
-            }
-
+            forwardPacket(outPacket, null);
             return;
         }
 
@@ -416,32 +404,39 @@ class AdVpnThread implements Runnable {
         if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            DatagramSocket dnsSocket = null;
-            try {
-                // Packets to be sent to the real DNS server will need to be protected from the VPN
-                dnsSocket = new DatagramSocket();
-
-                vpnService.protect(dnsSocket);
-
-                dnsSocket.send(outPacket);
-
-                dnsIn.add(new WaitingOnSocketPacket(dnsSocket, parsedPacket));
-            } catch (IOException e) {
-                FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
-                if (e.getCause() instanceof ErrnoException) {
-                    ErrnoException errnoExc = (ErrnoException) e.getCause();
-                    if ((errnoExc.errno == OsConstants.ENETUNREACH) || (errnoExc.errno == OsConstants.EPERM)) {
-                        throw new VpnNetworkException("Cannot send message:", e);
-                    }
-                }
-                Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
-                return;
-            }
+            forwardPacket(outPacket, parsedPacket);
         } else {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
             packetProxy.handleDnsResponse(parsedPacket, dnsMsg.toWire(), this);
+        }
+    }
+
+    private void forwardPacket( DatagramPacket outPacket, IpPacket parsedPacket) throws VpnNetworkException {
+        DatagramSocket dnsSocket = null;
+        try {
+            // Packets to be sent to the real DNS server will need to be protected from the VPN
+            dnsSocket = new DatagramSocket();
+
+            vpnService.protect(dnsSocket);
+
+            dnsSocket.send(outPacket);
+
+            if (parsedPacket != null)
+                dnsIn.add(new WaitingOnSocketPacket(dnsSocket, parsedPacket));
+            else
+                FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
+        } catch (IOException e) {
+            FileHelper.closeOrWarn(dnsSocket, TAG, "handleDnsRequest: Cannot close socket in error");
+            if (e.getCause() instanceof ErrnoException) {
+                ErrnoException errnoExc = (ErrnoException) e.getCause();
+                if ((errnoExc.errno == OsConstants.ENETUNREACH) || (errnoExc.errno == OsConstants.EPERM)) {
+                    throw new VpnNetworkException("Cannot send message:", e);
+                }
+            }
+            Log.w(TAG, "handleDnsRequest: Could not send packet to upstream", e);
+            return;
         }
     }
 
