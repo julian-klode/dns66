@@ -45,11 +45,11 @@ public class DnsPacketProxy {
     private final EventLoop eventLoop;
     ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
 
-
     public DnsPacketProxy(EventLoop eventLoop, RuleDatabase database) {
         this.eventLoop = eventLoop;
         this.ruleDatabase = database;
     }
+
     public DnsPacketProxy(EventLoop eventLoop) {
         this.eventLoop = eventLoop;
         this.ruleDatabase = new RuleDatabase();
@@ -132,23 +132,9 @@ public class DnsPacketProxy {
             return;
         }
 
-        InetAddress destAddr;
-        if (upstreamDnsServers.size() > 0) {
-            byte[] addr = parsedPacket.getHeader().getDstAddr().getAddress();
-            int index = addr[addr.length - 1] - 2;
-
-            try {
-                destAddr = upstreamDnsServers.get(index);
-            } catch (Exception e) {
-                Log.e(TAG, "handleDnsRequest: Cannot handle packets to" + parsedPacket.getHeader().getDstAddr().getHostAddress(), e);
-                return;
-            }
-            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s AKA %d AKA %s", parsedPacket.getHeader().getDstAddr().getHostAddress(), index, destAddr));
-        } else {
-            destAddr = parsedPacket.getHeader().getDstAddr();
-            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s - is upstream", parsedPacket.getHeader().getDstAddr().getHostAddress()));
-        }
-
+        InetAddress destAddr = translateDestinationAdress(parsedPacket);
+        if (destAddr == null)
+            return;
 
         UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
 
@@ -187,6 +173,33 @@ public class DnsPacketProxy {
             dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
+    }
+
+    /**
+     * Translates the destination address in the packet to the real one. In
+     * case address translation is not used, this just returns the original one.
+     *
+     * @param parsedPacket Packet to get destination address for.
+     * @return The translated address or null on failure.
+     */
+    private InetAddress translateDestinationAdress(IpPacket parsedPacket) {
+        InetAddress destAddr = null;
+        if (upstreamDnsServers.size() > 0) {
+            byte[] addr = parsedPacket.getHeader().getDstAddr().getAddress();
+            int index = addr[addr.length - 1] - 2;
+
+            try {
+                destAddr = upstreamDnsServers.get(index);
+            } catch (Exception e) {
+                Log.e(TAG, "handleDnsRequest: Cannot handle packets to" + parsedPacket.getHeader().getDstAddr().getHostAddress(), e);
+                return null;
+            }
+            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s AKA %d AKA %s", parsedPacket.getHeader().getDstAddr().getHostAddress(), index, destAddr));
+        } else {
+            destAddr = parsedPacket.getHeader().getDstAddr();
+            Log.d(TAG, String.format("handleDnsRequest: Incoming packet to %s - is upstream", parsedPacket.getHeader().getDstAddr().getHostAddress()));
+        }
+        return destAddr;
     }
 
     /**
