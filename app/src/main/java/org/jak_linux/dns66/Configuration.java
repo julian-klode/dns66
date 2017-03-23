@@ -110,6 +110,9 @@ public class Configuration {
         reader.beginObject();
         while (reader.hasNext()) {
             switch (reader.nextName()) {
+                case "id":
+                    item.id = reader.nextLong();
+                    break;
                 case "title":
                     item.title = reader.nextString();
                     break;
@@ -167,6 +170,7 @@ public class Configuration {
 
     private static void writeItem(JsonWriter writer, Item i) throws IOException {
         writer.beginObject();
+        writer.name("id").value(i.id);
         writer.name("title").value(i.title);
         writer.name("location").value(i.location);
         writer.name("state").value(i.state);
@@ -174,6 +178,7 @@ public class Configuration {
     }
 
     public void write(JsonWriter writer) throws IOException {
+        writer.setIndent("    ");
         writer.beginObject();
         writer.name("version").value(VERSION);
         writer.name("autoStart").value(autoStart);
@@ -229,6 +234,7 @@ public class Configuration {
         public static final int STATE_IGNORE = 2;
         public static final int STATE_DENY = 0;
         public static final int STATE_ALLOW = 1;
+        public long id;
         public String title;
         public String location;
         public int state;

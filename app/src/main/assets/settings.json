@@ -41,41 +41,49 @@
     "enabled": true,
     "items": [
       {
+        "id": 0,
         "title": "Adaway hosts file",
         "location": "https://adaway.org/hosts.txt",
         "state": 0
       },
       {
+        "id": 1,
         "title": "Dan Pollock's hosts file",
         "location": "http://someonewhocares.org/hosts/hosts",
         "state": 0
       },
       {
+        "id": 2,
         "title": "hpHosts’s Ad and tracking servers",
         "location": "https://hosts-file.net/ad_servers.txt",
         "state": 2
       },
       {
+        "id": 3,
         "title": "Long-lived malware domains",
         "location": "https://mirror.cedia.org.ec/malwaredomains/immortal_domains.txt",
         "state": 2
       },
       {
+        "id": 4,
         "title": "Malware Domain List",
         "location": "https://www.malwaredomainlist.com/hostslist/hosts.txt",
         "state": 0
       },
       {
+        "id": 5,
         "title": "Malware domains.com",
         "location": "https://mirror.cedia.org.ec/malwaredomains/justdomains",
         "state": 2
       },
       {
+        "id": 6,
         "title": "MVPS HOSTS",
         "location": "http://winhelp2002.mvps.org/hosts.txt",
         "state": 0
       },
       {
+        "id": 7,
         "title": "Peter Lowe’s Ad server list",
         "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
         "state": 0
