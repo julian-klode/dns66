@@ -35,7 +35,7 @@ import java.util.Locale;
 public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
-    private SQLiteDatabase database = null;
+    SQLiteDatabase database = null;
     private RuleDatabaseHelper helper = null;
 
     private ContentValues hostsetValues = new ContentValues();
