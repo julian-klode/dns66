@@ -7,7 +7,12 @@
  */
 package org.jak_linux.dns66.db;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDoneException;
+import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -20,9 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * Represents hosts that are blocked.
@@ -32,7 +35,12 @@ import java.util.Set;
 public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
-    private final Set<String> blockedHosts = new HashSet<>();
+    private SQLiteDatabase database = null;
+    private RuleDatabaseHelper helper = null;
+
+    private ContentValues hostsetValues = new ContentValues();
+    private ContentValues hostValues = new ContentValues();
+    private SQLiteStatement lookupStatement = null;
 
     /**
      * Parse a single line in a hosts file
@@ -68,7 +76,17 @@ public class RuleDatabase {
      * @return true if the host is blocked, false otherwise.
      */
     public boolean isBlocked(String host) {
-        return blockedHosts.contains(host);
+        if (lookupStatement == null) {
+            lookupStatement = database.compileStatement("select action from fullrule where host = ?");
+        }
+
+        lookupStatement.bindString(1, host);
+
+        try {
+            return lookupStatement.simpleQueryForLong() == Configuration.Item.STATE_DENY;
+        } catch (SQLiteDoneException e) {
+            return false;
+        }
     }
 
     /**
@@ -77,7 +95,12 @@ public class RuleDatabase {
      * @return true if any hosts are blocked, false otherwise.
      */
     public boolean isEmpty() {
-        return blockedHosts.isEmpty();
+        Cursor c = database.query("fullrule", new String[]{"host"}, null, null, null, null, null, "1");
+
+        boolean result = c.moveToNext();
+
+        c.close();
+        return !result;
     }
 
     /**
@@ -90,7 +113,12 @@ public class RuleDatabase {
     public void initialize(Context context) throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(context);
 
-        blockedHosts.clear();
+        if (helper == null) {
+            helper = new RuleDatabaseHelper(context);
+            database = helper.getReadableDatabase();
+        }
+
+
         Runtime.getRuntime().gc();
 
         Log.i(TAG, "Loading block list");
@@ -98,12 +126,49 @@ public class RuleDatabase {
         if (!config.hosts.enabled) {
             Log.d(TAG, "loadBlockedHosts: Not loading, disabled.");
         }
+        if (!isEmpty()) {
+            Log.d(TAG, "initialize: Database is already initialized, not re-doing it");
+            return;
+        }
 
+        database = helper.getWritableDatabase();
+
+        int priority = 0;
         for (Configuration.Item item : config.hosts.items) {
             if (Thread.interrupted())
                 throw new InterruptedException("Interrupted");
-            loadItem(context, item);
+
+            database.beginTransaction();
+            if (createOrUpdateItem(item, priority++) && loadItem(context, item))
+                database.setTransactionSuccessful();
+            database.endTransaction();
         }
+    }
+
+    /**
+     * Set the database (used for testing)
+     *
+     * @param database Database to use.
+     */
+    void setDatabaseForTesting(SQLiteDatabase database) {
+        this.database = database;
+    }
+
+    /**
+     * Create or update an item.
+     *
+     * @param item     The item to update
+     * @param priority The priority of the item (index in list of items)
+     */
+    public boolean createOrUpdateItem(Configuration.Item item, long priority) {
+        hostsetValues.put("id", item.id);
+        hostsetValues.put("action", item.state);
+        hostsetValues.put("priority", priority);
+
+        boolean result = database.update("ruleset", hostsetValues, "id = ?", new String[]{Long.toString(item.id)}) > 0;
+        if (!result)
+            result = database.insertOrThrow("ruleset", null, hostsetValues) >= 0;
+        return result;
     }
 
     /**
@@ -113,16 +178,15 @@ public class RuleDatabase {
      * @param item    The item to load.
      * @throws InterruptedException If the thread was interrupted.
      */
-    public void loadItem(Context context, Configuration.Item item) throws InterruptedException {
+    public boolean loadItem(Context context, Configuration.Item item) throws InterruptedException {
         File file = FileHelper.getItemFile(context, item);
 
         if (item.state == Configuration.Item.STATE_IGNORE)
-            return;
+            return true;
 
         if (file == null && !item.location.contains("/")) {
             addHost(item, item.location);
-
-            return;
+            return true;
         }
 
         if (file != null) {
@@ -131,10 +195,13 @@ public class RuleDatabase {
                 reader = new FileReader(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return;
+                return false;
             }
-            loadReader(item, reader);
+
+            return loadReader(item, reader);
         }
+
+        return true;
     }
 
     /**
@@ -144,12 +211,9 @@ public class RuleDatabase {
      * @param host The host
      */
     public void addHost(Configuration.Item item, String host) {
-        // Single address to block
-        if (item.state == Configuration.Item.STATE_ALLOW) {
-            blockedHosts.remove(host);
-        } else if (item.state == Configuration.Item.STATE_DENY) {
-            blockedHosts.add(host);
-        }
+        hostValues.put("host", host);
+        hostValues.put("ruleset", item.id);
+        database.insert("rule", null, hostValues);
     }
 
     /**
@@ -159,8 +223,9 @@ public class RuleDatabase {
      * @param reader A reader to read lines from
      * @throws InterruptedException
      */
-    public void loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
+    public boolean loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
         int count = 0;
+
         try {
             Log.d(TAG, "loadBlockedHosts: Reading: " + item.location);
             try (BufferedReader br = new BufferedReader(reader)) {
@@ -175,9 +240,11 @@ public class RuleDatabase {
                     }
                 }
             }
-
+            Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
+            return true;
         } catch (IOException e) {
             Log.e(TAG, "loadBlockedHosts: Error while reading files", e);
+            return false;
         } finally {
             try {
                 reader.close();
@@ -185,6 +252,6 @@ public class RuleDatabase {
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
+
     }
 }
