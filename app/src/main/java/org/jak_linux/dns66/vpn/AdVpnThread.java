@@ -275,7 +275,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
         if ((deviceFd.revents & OsConstants.POLLOUT) != 0) {
             Log.d(TAG, "Write to device");
-            queueDeviceWrite(outFd);
+            writeToDevice(outFd);
         }
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
@@ -302,7 +302,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         return true;
     }
 
-    private void queueDeviceWrite(FileOutputStream outFd) throws VpnNetworkException {
+    private void writeToDevice(FileOutputStream outFd) throws VpnNetworkException {
         try {
             outFd.write(deviceWrites.poll());
         } catch (IOException e) {
