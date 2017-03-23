@@ -9,12 +9,16 @@ package org.jak_linux.dns66;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,6 +40,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 import org.jak_linux.dns66.db.DatabaseUpdateTask;
 import org.jak_linux.dns66.db.RuleDatabase;
 import org.jak_linux.dns66.db.RuleDatabaseHelper;
+import org.jak_linux.dns66.db.RuleDatabaseUpdateJobService;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
@@ -43,6 +48,7 @@ import org.jak_linux.dns66.vpn.AdVpnService;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_FILE_OPEN = 1;
@@ -97,6 +103,29 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+
+        JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(getPackageName(),
+                RuleDatabaseUpdateJobService.class.getName()));
+
+        //run job service after every 5 seconds
+        if (jobScheduler.getAllPendingJobs().isEmpty() || true) {
+            Log.i("Main", "refresh: Scheduling job every: " + TimeUnit.DAYS.toMillis(1));
+
+            builder.setPeriodic(TimeUnit.DAYS.toMillis(1));
+            builder.setPersisted(true);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
+            JobInfo info = builder.build();
+
+            if (jobScheduler.schedule(info) != JobScheduler.RESULT_SUCCESS) {
+                Log.w("Main", "refresh: Could not schedule job" + info);
+            } else {
+                Log.d("Main", "refresh: Scheduled " + info);
+            }
+        } else {
+            Log.d("Main", "refresh: Alreasdy scheduled, doing nothing");
+        }
     }
 
     @Override

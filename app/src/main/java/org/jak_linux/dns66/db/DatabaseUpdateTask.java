@@ -70,18 +70,21 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
 
-        progressDialog.setMessage("Updating " + values[0]);
+        if (progressDialog != null)
+            progressDialog.setMessage("Updating " + values[0]);
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        progressDialog.dismiss();
+        if (progressDialog != null)
+            progressDialog.dismiss();
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = ProgressDialog.show(context, "Updating host file", "Doing stuff. Please wait...", true);
+        if (context.getApplicationContext() != context)
+            progressDialog = ProgressDialog.show(context, "Updating host file", "Doing stuff. Please wait...", true);
     }
 }
