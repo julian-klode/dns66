@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco-android'
 
 android {
     compileSdkVersion 25
@@ -39,4 +40,13 @@ dependencies {
     compile 'dnsjava:dnsjava:2.1.8'
 
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile ('org.powermock:powermock-api-mockito:1.6.6') {
+        exclude module: 'hamcrest-core'
+        exclude module: 'objenesis'
+    }
+    testCompile ('org.powermock:powermock-module-junit4:1.6.6') {
+        exclude module: 'hamcrest-core'
+        exclude module: 'objenesis'
+    }
 }
