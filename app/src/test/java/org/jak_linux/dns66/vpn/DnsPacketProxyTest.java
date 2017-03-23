@@ -6,6 +6,7 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.db.RuleDatabase;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -36,6 +37,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
 import static org.xbill.DNS.Rcode.NXDOMAIN;
 
 /**
@@ -52,15 +54,14 @@ public class DnsPacketProxyTest {
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         mockEventLoop = new MockEventLoop();
-        dnsPacketProxy = new DnsPacketProxy(mockEventLoop);
-        ruleDatabase = (RuleDatabase) dnsPacketProxy.getClass().getDeclaredField("ruleDatabase").get(dnsPacketProxy);
-
+        ruleDatabase = Mockito.mock(RuleDatabase.class);
+        dnsPacketProxy = new DnsPacketProxy(mockEventLoop, ruleDatabase);
 
         Configuration.Item item = new Configuration.Item();
         item.location = "blocked.example.com";
         item.state = Configuration.Item.STATE_DENY;
 
-        ruleDatabase.addHost(item, item.location);
+        Mockito.when(ruleDatabase.isBlocked("blocked.example.com")).thenReturn(true);
 
         PowerMockito.mockStatic(Log.class);
     }
