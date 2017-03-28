@@ -22,9 +22,14 @@ import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
+import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;
+import org.xbill.DNS.Name;
 import org.xbill.DNS.Rcode;
+import org.xbill.DNS.SOARecord;
+import org.xbill.DNS.Section;
+import org.xbill.DNS.TextParseException;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -41,6 +46,22 @@ import java.util.Locale;
 public class DnsPacketProxy {
 
     private static final String TAG = "DnsPacketProxy";
+    // Choose a value that is smaller than the time needed to unblock a host.
+    private static final int NEGATIVE_CACHE_TTL_SECONDS = 5;
+    private static final SOARecord NEGATIVE_CACHE_SOA_RECORD;
+
+    static {
+        try {
+            // Let's use a guaranteed invalid hostname here, clients are not supposed to use
+            // our fake values, the whole thing just exists for negative caching.
+            Name name = new Name("dns66.dns66.invalid.");
+            NEGATIVE_CACHE_SOA_RECORD = new SOARecord(name, DClass.IN, NEGATIVE_CACHE_TTL_SECONDS,
+                    name, name, 0, 0, 0, 0, NEGATIVE_CACHE_TTL_SECONDS);
+        } catch (TextParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     final RuleDatabase ruleDatabase;
     private final EventLoop eventLoop;
     ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
@@ -171,6 +192,7 @@ public class DnsPacketProxy {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NOERROR);
+            dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
     }

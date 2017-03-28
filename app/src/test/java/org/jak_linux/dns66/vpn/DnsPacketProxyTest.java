@@ -30,6 +30,7 @@ import org.xbill.DNS.ARecord;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Record;
+import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.Section;
 
 import java.net.DatagramPacket;
@@ -317,6 +318,9 @@ public class DnsPacketProxyTest {
         Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
         assertEquals(NOERROR, responseMsg.getHeader().getRcode());
         assertArrayEquals(new Record[] {}, responseMsg.getSectionArray(Section.ANSWER));
+        assertNotEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0] instanceof SOARecord);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0].getTTL() > 0);
     }
 
     @Test
@@ -360,6 +364,9 @@ public class DnsPacketProxyTest {
         Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
         assertEquals(NOERROR, responseMsg.getHeader().getRcode());
         assertArrayEquals(new Record[] {}, responseMsg.getSectionArray(Section.ANSWER));
+        assertNotEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0] instanceof SOARecord);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0].getTTL() > 0);
     }
 
     private static class MockEventLoop implements DnsPacketProxy.EventLoop {
