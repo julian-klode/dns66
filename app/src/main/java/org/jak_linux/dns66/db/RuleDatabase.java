@@ -77,7 +77,7 @@ public class RuleDatabase {
      */
     public boolean isBlocked(String host) {
         if (lookupStatement == null) {
-            lookupStatement = database.compileStatement("select action from fullrule where host = ?");
+            lookupStatement = database.compileStatement("select action from host_action where host = ?");
         }
 
         lookupStatement.bindString(1, host);
@@ -95,7 +95,7 @@ public class RuleDatabase {
      * @return true if any hosts are blocked, false otherwise.
      */
     public boolean isEmpty() {
-        Cursor c = database.query("fullrule", new String[]{"host"}, null, null, null, null, null, "1");
+        Cursor c = database.query("host_action", new String[]{"action"}, null, null, null, null, null, "1");
 
         boolean result = c.moveToNext();
 
@@ -161,13 +161,18 @@ public class RuleDatabase {
      * @param priority The priority of the item (index in list of items)
      */
     public boolean createOrUpdateItem(Configuration.Item item, long priority) {
-        hostsetValues.put("id", item.id);
+        hostsetValues.put("title", item.title);
+        hostsetValues.put("location", item.location);
         hostsetValues.put("action", item.state);
         hostsetValues.put("priority", priority);
+        // TODO: Timeout handling
+        hostsetValues.put("last_seen_millis", 0);
+        hostsetValues.put("last_updated_millis", 0);
+        hostsetValues.put("last_modified_millis", 0);
 
-        boolean result = database.update("ruleset", hostsetValues, "id = ?", new String[]{Long.toString(item.id)}) > 0;
+        boolean result = database.update("hostfiles", hostsetValues, "location = ?", new String[]{item.location}) > 0;
         if (!result)
-            result = database.insertOrThrow("ruleset", null, hostsetValues) >= 0;
+            result = database.insertOrThrow("hostfiles", null, hostsetValues) >= 0;
         return result;
     }
 
@@ -211,9 +216,18 @@ public class RuleDatabase {
      * @param host The host
      */
     public void addHost(Configuration.Item item, String host) {
+        Cursor c = database.rawQuery("select hostfile_id from hostfiles WHERE location = ?", new String[]{item.location});
+        if (!c.moveToNext()) {
+            Log.w(TAG, "addHost: Could not find host file " + item.location);
+            c.close();
+            return;
+        }
+
+        long id = c.getLong(0);
+        c.close();
         hostValues.put("host", host);
-        hostValues.put("ruleset", item.id);
-        database.insert("rule", null, hostValues);
+        hostValues.put("hostfile_id", id);
+        database.insert("hosts", null, hostValues);
     }
 
     /**
