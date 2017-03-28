@@ -170,7 +170,7 @@ public class DnsPacketProxy {
         } else {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
-            dnsMsg.getHeader().setRcode(Rcode.NXDOMAIN);
+            dnsMsg.getHeader().setRcode(Rcode.NOERROR);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
     }
