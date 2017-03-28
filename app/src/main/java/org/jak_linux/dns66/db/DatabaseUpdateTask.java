@@ -1,7 +1,9 @@
 package org.jak_linux.dns66.db;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -9,8 +11,10 @@ import org.jak_linux.dns66.Configuration;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by jak on 23/03/17.
@@ -31,7 +35,13 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
     @Override
     protected Void doInBackground(Configuration... configurations) {
         long priority = -1;
+        long currentTime = System.currentTimeMillis();
+
+        database.markReachable(configurations[0], currentTime);
+
+        // Update entries
         for (Configuration.Item hostfile : configurations[0].hosts.items) {
+            Cursor rowCursor = null;
             priority++;
             publishProgress(hostfile.location);
 
@@ -40,16 +50,32 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
             database.database.beginTransactionNonExclusive();
 
             try {
-                database.database.delete("ruleset", "id = ?", new String[]{Long.toString(hostfile.id)});
+                ContentValues valuesToUpdate = new ContentValues();
+
+                valuesToUpdate.put("last_updated_millis", currentTime);
+                valuesToUpdate.put("last_seen_millis", currentTime);
+
+                database.database.delete("hostfiles", "location = ?", new String[]{hostfile.location});
                 if (!database.createOrUpdateItem(hostfile, priority))
                     throw new IOException("Cannot create hostfile");
+
+                rowCursor = database.database.rawQuery("select hostfile_id, last_seen_millis from hostfiles where location = ?", new String[]{hostfile.location});
+                if (!rowCursor.moveToNext())
+                    throw new RuntimeException("Could not find host file in database");
+
                 if (!hostfile.location.contains("/")) {
                     database.addHost(hostfile, hostfile.location);
                     database.database.setTransactionSuccessful();
                 } else {
 
                     URL url = new URL(hostfile.location);
-                    if (database.loadReader(hostfile, new InputStreamReader(url.openStream())))
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setIfModifiedSince(rowCursor.getLong(1));
+                    connection.connect();
+
+                    valuesToUpdate.put("last_modified_millis", connection.getLastModified());
+                    if (database.loadReader(hostfile, new InputStreamReader(connection.getInputStream())))
                         database.database.setTransactionSuccessful();
                 }
             } catch (MalformedURLException e) {
@@ -63,6 +89,9 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
                 database.database.endTransaction();
             }
         }
+
+        database.sweepUnreachable(configurations[0], currentTime);
+
         return null;
     }
 

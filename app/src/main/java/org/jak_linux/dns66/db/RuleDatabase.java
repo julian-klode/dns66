@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents hosts that are blocked.
@@ -101,6 +102,94 @@ public class RuleDatabase {
 
         c.close();
         return !result;
+    }
+
+
+
+    /**
+     * Marks all hostfiles in the configuration as reachable, by setting their last_seen_millis
+     * column to the value specified in currentTime.
+     *
+     * @param configuration The configuration we want to match eventually
+     * @param currentTime   The time of this update.
+     */
+    void markReachable(Configuration configuration, long currentTime) {
+        database.beginTransactionNonExclusive();
+        try {
+            for (Configuration.Item hostfile : configuration.hosts.items) {
+                ContentValues values = new ContentValues();
+                values.put("last_seen_millis", currentTime);
+
+                database.update("hostfiles", values, "location = ?", new String[]{hostfile.location});
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * Deletes all files no longer in the configuration older than some days. This compares
+     * the last_seen_millis against the currentTime, and deletes all host files older than 7
+     * days and marks all other files older than currentTime as ignored.
+     * <p>
+     * This delayed deletion allows you to temporarily delete an entry, without all hosts for
+     * that entry being deleted at once.
+     *
+     * @param configuration The configuration we want to match eventually
+     * @param currentTime   The time of this update.
+     */
+    void sweepUnreachable(Configuration configuration, long currentTime) {
+        assert configuration != null;
+        database.beginTransactionNonExclusive();
+        try {
+            // Collect really old host files
+            database.delete("hostfiles", "last_seen_millis < ?",
+                    new String[]{Long.toString(currentTime - TimeUnit.DAYS.toMillis(7))});
+
+            // Mark others from previous generations as ignored.
+            ContentValues values = new ContentValues();
+            values.put("action", Configuration.Item.STATE_IGNORE);
+            database.update("hostfiles", values, "last_seen_millis < ?",
+                    new String[]{Long.toString(currentTime)});
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * TODO: Implement
+     * @param hostfile
+     * @param currentTime
+     */
+    void updateHostFile(Configuration.Item hostfile, long currentTime, boolean forceUpdate) {
+        database.beginTransactionNonExclusive();
+        try {
+            ContentValues values = new ContentValues();
+            Cursor c = database.query("hostfiles", new String[]{"hostfile_id", "last_updated_millis", "last_seen_millis"}, "location = ?", new String[]{hostfile.location}, null, null, null);
+            if (!c.moveToNext()) {
+                Log.d(TAG, "updateHostFile: Could not update " + hostfile.location + ": No entry found");
+                return;
+            }
+            long id = c.getLong(0);
+            long lastUpdatedMillis = c.getLong(1);
+            long lastSeenMillis = c.getLong(2);
+
+            values.put("last_seen_millis", currentTime);
+            if (forceUpdate || currentTime - lastUpdatedMillis >= TimeUnit.DAYS.toMillis(1)) {
+                // Delete all hosts, we are refreshing
+                database.delete("hosts", "hostfile_id = ?", new String[]{Long.toString(id)});
+
+                values.put("last_updated_millis", currentTime);
+            }
+
+
+            // Mark the hostfile as updated.
+            database.update("hostfiles", values, "hostfile_id = ?", new String[]{Long.toString(id)});
+        } finally {
+            database.endTransaction();
+        }
     }
 
     /**
