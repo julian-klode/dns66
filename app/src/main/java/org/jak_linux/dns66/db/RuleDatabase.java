@@ -161,7 +161,7 @@ public class RuleDatabase {
      * @param priority The priority of the item (index in list of items)
      */
     public boolean createOrUpdateItem(Configuration.Item item, long priority) {
-        hostsetValues.put("title", item.title);
+        hostsetValues.put("title", item.title != null ? item.title : "<no title>");
         hostsetValues.put("location", item.location);
         hostsetValues.put("action", item.state);
         hostsetValues.put("priority", priority);
