@@ -41,27 +41,47 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
 
         // Update entries
         for (Configuration.Item hostfile : configurations[0].hosts.items) {
-            Cursor rowCursor = null;
             priority++;
             publishProgress(hostfile.location);
 
             if (hostfile.state == Configuration.Item.STATE_IGNORE)
                 continue;
+
+            Cursor lastUpdatedCursor = database.database.rawQuery("select hostfile_id, last_updated_millis from hostfiles where location = ?", new String[]{hostfile.location});
+            if (!lastUpdatedCursor.moveToNext())
+                throw new RuntimeException("Could not find host file in database");
+
+            /*
+            if (currentTime - lastUpdatedCursor.getLong(1) <= TimeUnit.HOURS.toMillis(1))
+                continue; */
+
+            lastUpdatedCursor.close();
+
             database.database.beginTransactionNonExclusive();
 
             try {
+                long hostFileId;
+                long lastModifiedMillis;
                 ContentValues valuesToUpdate = new ContentValues();
 
-                valuesToUpdate.put("last_updated_millis", currentTime);
+                valuesToUpdate.put("action", hostfile.state);
+                valuesToUpdate.put("title", hostfile.title);
+                valuesToUpdate.put("location", hostfile.location);
                 valuesToUpdate.put("last_seen_millis", currentTime);
+                valuesToUpdate.put("priority", priority);
 
-                database.database.delete("hostfiles", "location = ?", new String[]{hostfile.location});
-                if (!database.createOrUpdateItem(hostfile, priority))
-                    throw new IOException("Cannot create hostfile");
 
-                rowCursor = database.database.rawQuery("select hostfile_id, last_seen_millis from hostfiles where location = ?", new String[]{hostfile.location});
-                if (!rowCursor.moveToNext())
-                    throw new RuntimeException("Could not find host file in database");
+                {
+                    Cursor rowCursor = rowCursor = database.database.rawQuery("select hostfile_id, last_modified_millis from hostfiles where location = ?", new String[]{hostfile.location});
+                    if (rowCursor.moveToNext()) {
+                        hostFileId = rowCursor.getLong(0);
+                        lastModifiedMillis = rowCursor.getLong(1);
+                    } else {
+                        hostFileId = database.database.insertOrThrow("hostfiles", null, valuesToUpdate);
+                        lastModifiedMillis = 0;
+                    }
+                    rowCursor.close();
+                }
 
                 if (!hostfile.location.contains("/")) {
                     database.addHost(hostfile, hostfile.location);
@@ -70,13 +90,20 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
 
                     URL url = new URL(hostfile.location);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                    connection.setIfModifiedSince(rowCursor.getLong(1));
+                    database.database.delete("hostfiles", "location = ?", new String[]{hostfile.location});
+                    Log.d(TAG, "doInBackground: Trying update for " + hostfile.location);
+                    connection.setIfModifiedSince(lastModifiedMillis);
                     connection.connect();
-
-                    valuesToUpdate.put("last_modified_millis", connection.getLastModified());
-                    if (database.loadReader(hostfile, new InputStreamReader(connection.getInputStream())))
-                        database.database.setTransactionSuccessful();
+                    if (connection.getResponseCode() == 200) {
+                        valuesToUpdate.put("last_modified_millis", connection.getLastModified());
+                        database.database.delete("hosts", "hostfile_id = ?", new String[]{Long.toString(hostFileId)});
+                        if (database.loadReader(hostfile, new InputStreamReader(connection.getInputStream())))
+                            database.database.setTransactionSuccessful();
+                    } else if (connection.getResponseCode() == 304) {
+                        Log.d(TAG, "doInBackground: Nothing to update for " + hostfile.location);
+                        connection.getInputStream().close();
+                    }
+                    database.database.update("hostfiles", valuesToUpdate, "hostfile_id = ?", new String[]{Long.toString(hostFileId)});
                 }
             } catch (MalformedURLException e) {
                 Log.w(TAG, "doInBackground: Could not update", e);
@@ -108,6 +135,8 @@ public class DatabaseUpdateTask extends AsyncTask<Configuration, String, Void> {
         super.onPostExecute(aVoid);
         if (progressDialog != null)
             progressDialog.dismiss();
+
+        database.database.close();
     }
 
     @Override
