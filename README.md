@@ -2,9 +2,18 @@ DNS-Based Ad Blocking for Android
 =================================
 This is a DNS based ad blocker for Android.
 
+[![codecov](https://codecov.io/gh/julian-klode/dns66/branch/master/graph/badge.svg)](https://codecov.io/gh/julian-klode/dns66)
+[![Build Status](https://travis-ci.org/julian-klode/dns66.svg?branch=master)](https://travis-ci.org/julian-klode/dns66)
+
+Installing
+----------
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"
       height="80">](https://f-droid.org/app/org.jak_linux.dns66)
+
+You can either install it via F-Droid, using the official F-Droid repository, or you can use my personal repository at https://jak-linux.org/fdroid/repo which gets updates ASAP.
+
+You can also download apk files in GitHub's download section. Currently, these are the same files as in my personal F-Droid repository, but that might change in the future.
 
 Using it
 ---------
