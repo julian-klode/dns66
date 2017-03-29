@@ -29,6 +29,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.SOARecord;
+import org.xbill.DNS.Section;
 
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
@@ -38,6 +41,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
+import static org.xbill.DNS.Rcode.NOERROR;
 import static org.xbill.DNS.Rcode.NXDOMAIN;
 
 /**
@@ -312,7 +316,11 @@ public class DnsPacketProxyTest {
         assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
 
         Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
-        assertEquals(responseMsg.getHeader().getRcode(), NXDOMAIN);
+        assertEquals(NOERROR, responseMsg.getHeader().getRcode());
+        assertArrayEquals(new Record[] {}, responseMsg.getSectionArray(Section.ANSWER));
+        assertNotEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0] instanceof SOARecord);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0].getTTL() > 0);
     }
 
     @Test
@@ -354,7 +362,11 @@ public class DnsPacketProxyTest {
         assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
 
         Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
-        assertEquals(responseMsg.getHeader().getRcode(), NXDOMAIN);
+        assertEquals(NOERROR, responseMsg.getHeader().getRcode());
+        assertArrayEquals(new Record[] {}, responseMsg.getSectionArray(Section.ANSWER));
+        assertNotEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0] instanceof SOARecord);
+        assertTrue(responseMsg.getSectionArray(Section.AUTHORITY)[0].getTTL() > 0);
     }
 
     private static class MockEventLoop implements DnsPacketProxy.EventLoop {
