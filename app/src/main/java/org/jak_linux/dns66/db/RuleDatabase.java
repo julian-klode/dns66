@@ -41,7 +41,7 @@ public class RuleDatabase {
      * @return A host
      */
     @Nullable
-    public static String parseLine(String line) {
+    static String parseLine(String line) {
         String s = line.trim();
 
         if (s.length() != 0) {
@@ -76,7 +76,7 @@ public class RuleDatabase {
      *
      * @return true if any hosts are blocked, false otherwise.
      */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return blockedHosts.isEmpty();
     }
 
@@ -113,7 +113,7 @@ public class RuleDatabase {
      * @param item    The item to load.
      * @throws InterruptedException If the thread was interrupted.
      */
-    public void loadItem(Context context, Configuration.Item item) throws InterruptedException {
+    private void loadItem(Context context, Configuration.Item item) throws InterruptedException {
         File file = FileHelper.getItemFile(context, item);
 
         if (item.state == Configuration.Item.STATE_IGNORE)
@@ -143,7 +143,7 @@ public class RuleDatabase {
      * @param item The item the host belongs to
      * @param host The host
      */
-    public void addHost(Configuration.Item item, String host) {
+    private void addHost(Configuration.Item item, String host) {
         // Single address to block
         if (item.state == Configuration.Item.STATE_ALLOW) {
             blockedHosts.remove(host);
@@ -157,9 +157,9 @@ public class RuleDatabase {
      *
      * @param item   The configuration item referencing the file
      * @param reader A reader to read lines from
-     * @throws InterruptedException
+     * @throws InterruptedException If thread was interrupted
      */
-    public void loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
+    void loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
         int count = 0;
         try {
             Log.d(TAG, "loadBlockedHosts: Reading: " + item.location);
