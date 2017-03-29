@@ -181,11 +181,7 @@ public class RuleDatabase {
             Log.e(TAG, "loadBlockedHosts: Error while reading " + item.location + " after " + count + " items", e);
             return false;
         } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            FileHelper.closeOrWarn(reader, TAG, "loadBlockedHosts: Error closing " + item.location);
         }
     }
 }
