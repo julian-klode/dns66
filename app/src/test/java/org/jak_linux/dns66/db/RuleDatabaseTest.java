@@ -1,7 +1,8 @@
-package org.jak_linux.dns66;
+package org.jak_linux.dns66.db;
 
 import android.util.Log;
 
+import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.db.RuleDatabase;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Log.class)
-public class RuleDatabaseUnitTest {
+public class RuleDatabaseTest {
 
     @Before
     public void setUp() {
