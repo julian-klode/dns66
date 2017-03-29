@@ -159,7 +159,7 @@ public class RuleDatabase {
      * @param reader A reader to read lines from
      * @throws InterruptedException If thread was interrupted
      */
-    void loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
+    boolean loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
         int count = 0;
         try {
             Log.d(TAG, "loadBlockedHosts: Reading: " + item.location);
@@ -175,9 +175,11 @@ public class RuleDatabase {
                     }
                 }
             }
-
+            Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
+            return true;
         } catch (IOException e) {
-            Log.e(TAG, "loadBlockedHosts: Error while reading files", e);
+            Log.e(TAG, "loadBlockedHosts: Error while reading " + item.location + " after " + count + " items", e);
+            return false;
         } finally {
             try {
                 reader.close();
@@ -185,6 +187,5 @@ public class RuleDatabase {
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
     }
 }

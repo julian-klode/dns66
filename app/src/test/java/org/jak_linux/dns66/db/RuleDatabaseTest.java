@@ -62,19 +62,19 @@ public class RuleDatabaseTest {
         item.state = Configuration.Item.STATE_IGNORE;
 
         // Ignore. Does nothing
-        db.loadReader(item, new StringReader("example.com"));
+        assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertTrue(db.isEmpty());
         assertFalse(db.isBlocked("example.com"));
 
         // Deny, the host should be blocked now.
         item.state = Configuration.Item.STATE_DENY;
-        db.loadReader(item, new StringReader("example.com"));
+        assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertFalse(db.isEmpty());
         assertTrue(db.isBlocked("example.com"));
 
         // Reallow again, the entry should disappear.
         item.state = Configuration.Item.STATE_ALLOW;
-        db.loadReader(item, new StringReader("example.com"));
+        assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertTrue(db.isEmpty());
         assertFalse(db.isBlocked("example.com"));
 
@@ -82,7 +82,7 @@ public class RuleDatabaseTest {
         item.state = Configuration.Item.STATE_DENY;
         assertFalse(db.isBlocked("example.com"));
         assertFalse(db.isBlocked("foo.com"));
-        db.loadReader(item, new StringReader("example.com\n127.0.0.1 foo.com"));
+        assertTrue(db.loadReader(item, new StringReader("example.com\n127.0.0.1 foo.com")));
         assertFalse(db.isEmpty());
         assertTrue(db.isBlocked("example.com"));
         assertTrue(db.isBlocked("foo.com"));
@@ -98,26 +98,21 @@ public class RuleDatabaseTest {
 
         // Test with an invalid line before a valid one.
         item.state = Configuration.Item.STATE_DENY;
-        db.loadReader(item, new StringReader("invalid line\notherhost.com"));
+        assertTrue(db.loadReader(item, new StringReader("invalid line\notherhost.com")));
         assertTrue(db.isBlocked("otherhost.com"));
 
         // Allow again
         item.state = Configuration.Item.STATE_ALLOW;
-        db.loadReader(item, new StringReader("invalid line\notherhost.com"));
+        assertTrue(db.loadReader(item, new StringReader("invalid line\notherhost.com")));
         assertFalse(db.isBlocked("otherhost.com"));
 
-
+        // Reader can't read, we are aborting.
         Reader reader = Mockito.mock(Reader.class);
         doThrow(new IOException()).when(reader).read((char[]) any());
         doThrow(new IOException()).when(reader).read((char[]) any(), anyInt(), anyInt());
         doThrow(new IOException()).when(reader).read(any(CharBuffer.class));
-        when(Log.e(anyString(), anyString(), any(Throwable.class))).thenThrow(new FooException());
 
-        try {
-            db.loadReader(item, reader);
-            fail("No error logged when the file could not be read");
-        } catch (FooException e) {
-        }
+        assertFalse(db.loadReader(item, reader));
     }
 
 
