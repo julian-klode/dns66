@@ -42,23 +42,41 @@ public class RuleDatabase {
      */
     @Nullable
     static String parseLine(String line) {
-        String s = line.trim();
+        int endOfLine = line.indexOf('#');
 
-        if (s.length() != 0) {
-            String[] ss = s.split("#");
-            s = ss.length > 0 ? ss[0].trim() : "";
-        }
-        String host = null;
-        if (s.length() != 0) {
-            String[] split = s.split("[ \t]+");
+        if (endOfLine == -1)
+            endOfLine = line.length();
 
-            if (split.length == 2 && (split[0].equals("127.0.0.1") || split[0].equals("0.0.0.0"))) {
-                host = split[1].toLowerCase(Locale.ENGLISH);
-            } else if (split.length == 1) {
-                host = split[0].toLowerCase(Locale.ENGLISH);
-            }
+        // Trim spaces
+        while (endOfLine > 0 && Character.isWhitespace(line.charAt(endOfLine - 1)))
+            endOfLine--;
+
+        // The line is empty.
+        if (endOfLine <= 0)
+            return null;
+
+        // Find beginning of host field
+        int startOfHost = 0;
+
+        if (line.regionMatches(0, "127.0.0.1", 0, 9) && (endOfLine <= 9 || Character.isWhitespace(line.charAt(9))))
+            startOfHost += 10;
+        else if (line.regionMatches(0, "0.0.0.0", 0, 7) && (endOfLine <= 7 || Character.isWhitespace(line.charAt(7))))
+            startOfHost += 8;
+
+        // Trim of space at the beginning of the host.
+        while (startOfHost < endOfLine && Character.isWhitespace(line.charAt(startOfHost)))
+            startOfHost++;
+
+        // Reject lines containing a space
+        for (int i = startOfHost; i < endOfLine; i++) {
+            if (Character.isWhitespace(line.charAt(i)))
+                return null;
         }
-        return host;
+
+        if (startOfHost >= endOfLine)
+            return null;
+
+        return line.substring(startOfHost, endOfLine).toLowerCase(Locale.ENGLISH);
     }
 
     /**

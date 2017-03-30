@@ -45,11 +45,27 @@ public class RuleDatabaseTest {
         // Check lower casing
         assertEquals("example.com", RuleDatabase.parseLine("example.cOm"));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.cOm"));
+        // Space trimming
+        assertNull(RuleDatabase.parseLine(" 127.0.0.1 example.com"));
+        assertEquals("127.0.0.1.example.com", RuleDatabase.parseLine("127.0.0.1.example.com "));
+        assertEquals("0.0.0.0.example.com", RuleDatabase.parseLine("0.0.0.0.example.com "));
+        assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.com "));
+        assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.com\t"));
+        assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1   example.com "));
+        assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1\t example.com "));
+        // Space between values
         // Invalid lines
+        assertNull(RuleDatabase.parseLine("127.0.0.1 "));
+        assertNull(RuleDatabase.parseLine("127.0.0.1"));
+        assertNull(RuleDatabase.parseLine("0.0.0.0"));
+        assertNull(RuleDatabase.parseLine("0.0.0.0 "));
         assertNull(RuleDatabase.parseLine("invalid example.com"));
+        assertNull(RuleDatabase.parseLine("invalid\texample.com"));
         assertNull(RuleDatabase.parseLine("invalid long line"));
         assertNull(RuleDatabase.parseLine("# comment line"));
         assertNull(RuleDatabase.parseLine(""));
+        assertNull(RuleDatabase.parseLine("\t"));
+        assertNull(RuleDatabase.parseLine(" "));
     }
 
     @Test
