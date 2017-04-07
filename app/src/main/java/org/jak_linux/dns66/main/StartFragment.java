@@ -12,8 +12,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.net.VpnService;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -37,6 +42,7 @@ import java.io.File;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 public class StartFragment extends Fragment {
     public static final int REQUEST_START_VPN = 1;
@@ -135,6 +141,26 @@ public class StartFragment extends Fragment {
             return;
         }
         startService();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+
+            final SharedPreferences prefs = getContext().getSharedPreferences("preferences", MODE_PRIVATE);
+            if (!prefs.getBoolean("powerRequestShown", false) && !powerManager.isIgnoringBatteryOptimizations(getContext().getPackageName())) {
+                new AlertDialog.Builder(getContext()).setTitle("Power optimization").setMessage("On some devices, it is a good idea to exempt DNS66 from power optimizations, as DNS66 stops otherwise. Do you want to do so?").setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+
+                        intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+                        Log.d(TAG, "checkHostsFilesAndStartService: Starting intent " + intent);
+                        getContext().startActivity(intent);
+                    }
+                }).setNegativeButton(android.R.string.no, null).show();
+                prefs.edit().putBoolean("powerRequestShown", true).apply();
+            }
+        }
     }
 
     private void startService() {
