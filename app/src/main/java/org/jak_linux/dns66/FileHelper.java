@@ -140,6 +140,8 @@ public final class FileHelper {
             File file = getItemFile(context, item);
             if (file == null)
                 return  null;
+            if (item.isDownloadable())
+                return new InputStreamReader(new SingleWriterMultipleReaderFile(getItemFile(context, item)).openRead());
             return new FileReader(getItemFile(context, item));
         }
     }

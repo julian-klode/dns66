@@ -57,7 +57,15 @@
     <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
     <string name="host_update_error_item">Fehler %1$d: %2$s</string>
     <string name="update_incomplete">Aktualisierung unvollständig</string>
-    <string name="updating_hostfiles">Aktualisiere hostfiles</string>
+    <string name="updating_hostfiles">Aktualisiere Hostfiles</string>
     <string name="action_use_file">Datei verwenden</string>
     <string name="persistable_uri_permission_failed">Die gewählte Datei kann nicht verwendet werden: Dauerhafter Zugriff verweigert</string>
+    <string name="updating_n_host_files">Aktualisiere %1$s Hostfiles</string>
+    <string name="permission_denied">Zugriff verweigert</string>
+    <string name="invalid_url_s">Ungültige URL: %1$s</string>
+    <string name="could_not_update_all_hosts">Konnte nicht alle Hostfiles aktualisieren</string>
+    <string name="disable_notification_title">Benachrichtigung deaktivieren</string>
+    <string name="requested_timed_out">Zeitlimit für Anfrage überschritten</string>
+    <string name="file_not_found">Datei nicht gefunden</string>
+    <string name="unknown_error_s">Unerwarteter Fehler: %1$s</string>
 </resources>

@@ -64,4 +64,11 @@
     <string name="updating_hostfiles">Updating hostfiles</string>
     <string name="action_use_file">Use file</string>
     <string name="persistable_uri_permission_failed">Cannot use the requested file: Not permitted to persistently use requested file</string>
+    <string name="updating_n_host_files">Updating %1$d host files</string>
+    <string name="could_not_update_all_hosts">Could not update all hostfiles</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="invalid_url_s">Invalid URL: %1$s</string>
+    <string name="file_not_found">File not found</string>
+    <string name="unknown_error_s">Unexpected error: %1$s</string>
+    <string name="requested_timed_out">Request timed out</string>
 </resources>

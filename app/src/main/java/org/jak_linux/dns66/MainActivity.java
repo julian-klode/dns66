@@ -8,7 +8,6 @@
 package org.jak_linux.dns66;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,30 +15,35 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
+import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_FILE_OPEN = 1;
@@ -181,22 +185,49 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void refresh() {
-        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d("MainActivity", "onNewIntent: Wee");
 
-        for (Configuration.Item item : config.hosts.items) {
-            File file = FileHelper.getItemFile(this, item);
-
-            if (file != null && item.state != 2) {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.location));
-                Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
-                file.delete();
-                request.setDestinationUri(Uri.fromFile(file));
-                request.setTitle(item.title);
-                request.setVisibleInDownloadsUi(false);
-                dm.enqueue(request);
-            }
+        if (intent.getBooleanExtra("UPDATE", false)) {
+            refresh();
         }
+
+        List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
+        if (errors != null && !errors.isEmpty()) {
+            Log.d("MainActivity", "onNewIntent: It's an error");
+            new AlertDialog.Builder(this)
+                    .setAdapter(newAdapter(errors), null)
+                    .setTitle(R.string.update_incomplete)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
+        super.onNewIntent(intent);
+
+    }
+
+    @NonNull
+    private ArrayAdapter<String> newAdapter(final List<String> errors) {
+        return new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, errors) {
+            @NonNull
+            @Override
+            @SuppressWarnings("deprecation")
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                //noinspection deprecation
+                text1.setText(Html.fromHtml(errors.get(position)));
+                return view;
+            }
+        };
+    }
+
+
+    private void refresh() {
+        final RuleDatabaseUpdateTask task = new RuleDatabaseUpdateTask(getApplicationContext(), config, true);
+
+
+        task.execute();
     }
 
     @Override
@@ -260,6 +291,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
+        if (errors != null && !errors.isEmpty()) {
+            Log.d("MainActivity", "onNewIntent: It's an error");
+            new AlertDialog.Builder(this)
+                    .setAdapter(newAdapter(errors), null)
+                    .setTitle(R.string.update_incomplete)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
+
         updateStatus(AdVpnService.vpnStatus);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(vpnServiceBroadcastReceiver, new IntentFilter(AdVpnService.VPN_UPDATE_STATUS_INTENT));
