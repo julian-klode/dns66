@@ -59,4 +59,9 @@
     <string name="switch_show_system_apps">Show system apps</string>
     <string name="location_dns">IP address of DNS server (IPv4 oder IPv6)</string>
     <string name="state_dns_enabled">Enabled</string>
+    <string name="host_update_error_item">Error %1$d: %2$s</string>
+    <string name="update_incomplete">Update incomplete</string>
+    <string name="updating_hostfiles">Updating hostfiles</string>
+    <string name="action_use_file">Use file</string>
+    <string name="persistable_uri_permission_failed">Cannot use the requested file: Not permitted to persistently use requested file</string>
 </resources>

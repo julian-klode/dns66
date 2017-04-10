@@ -232,6 +232,10 @@ public class Configuration {
         public String title;
         public String location;
         public int state;
+
+        public boolean isDownloadable() {
+            return location.startsWith("https://") || location.startsWith("http://");
+        }
     }
 
     public static class Hosts {

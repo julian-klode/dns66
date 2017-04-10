@@ -15,10 +15,9 @@ import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Locale;
@@ -132,25 +131,21 @@ public class RuleDatabase {
      * @throws InterruptedException If the thread was interrupted.
      */
     private void loadItem(Context context, Configuration.Item item) throws InterruptedException {
-        File file = FileHelper.getItemFile(context, item);
-
         if (item.state == Configuration.Item.STATE_IGNORE)
             return;
 
-        if (file == null && !item.location.contains("/")) {
-            addHost(item, item.location);
-
+        InputStreamReader reader;
+        try {
+            reader = FileHelper.openItemFile(context, item);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "loadItem: File not found: " + item.location);
             return;
         }
 
-        if (file != null) {
-            FileReader reader;
-            try {
-                reader = new FileReader(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return;
-            }
+        if (reader == null) {
+            addHost(item, item.location);
+            return;
+        } else {
             loadReader(item, reader);
         }
     }

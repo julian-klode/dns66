@@ -55,4 +55,9 @@
     <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
     <string name="location_dns">IP-Adresse des DNS-Servers (IPv4 oder IPv6)</string>
     <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
+    <string name="host_update_error_item">Fehler %1$d: %2$s</string>
+    <string name="update_incomplete">Aktualisierung unvollständig</string>
+    <string name="updating_hostfiles">Aktualisiere hostfiles</string>
+    <string name="action_use_file">Datei verwenden</string>
+    <string name="persistable_uri_permission_failed">Die gewählte Datei kann nicht verwendet werden: Dauerhafter Zugriff verweigert</string>
 </resources>

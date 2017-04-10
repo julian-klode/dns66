@@ -33,7 +33,8 @@ import org.jak_linux.dns66.R;
 import org.jak_linux.dns66.vpn.AdVpnService;
 import org.jak_linux.dns66.vpn.Command;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -155,11 +156,18 @@ public class StartFragment extends Fragment {
     private boolean areHostsFilesExistant() {
         if (!MainActivity.config.hosts.enabled)
             return true;
+
         for (Configuration.Item item : MainActivity.config.hosts.items) {
-            File file = FileHelper.getItemFile(getContext(), item);
-            if (item.state != Configuration.Item.STATE_IGNORE && file != null) {
-                if (!file.exists())
+            if (item.state != Configuration.Item.STATE_IGNORE) {
+                try {
+                    InputStreamReader reader = FileHelper.openItemFile(getContext(), item);
+                    if (reader == null)
+                        continue;
+
+                    reader.close();
+                } catch (IOException e) {
                     return false;
+                }
             }
         }
         return true;
