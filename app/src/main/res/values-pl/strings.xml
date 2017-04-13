@@ -39,7 +39,7 @@
         <item>Ignoruj</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
-    <string name="translator_credits">Tłumaczyli: justmix4</string>
+    <string name="translator_credits" />
     <string name="app_version_info">Wersja: %s</string>
     <string name="missing_hosts_files_message">Niektóre z Twoich skonfigurowanych (nieignorowanych) plików hosts są brakujące.\n\nUżyj przycisku "Odśwież", aby pobrać pliki hosts.\n\nCzy nadal chcesz kontynuować?</string>
     <string name="missing_hosts_files_title">Brak plików hosts</string>
