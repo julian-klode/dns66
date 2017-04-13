@@ -1,1 +1,75 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">Blokowanie hostów i niestandardowe serwery DNS</string>
+    <string name="start_description">Przytrzymaj chwilę, aby włączyć lub wyłączyć</string>
+    <string name="custom_dns">Włącz własne serwery DNS</string>
+    <string name="enable_hosts">Włącz filtrowanie domen</string>
+    <string name="start_tab">Start</string>
+    <string name="hosts_tab">Pliki hosts</string>
+    <string name="dns_tab">Serwery DNS</string>
+    <string name="action_export">Eksportuj ustawienia</string>
+    <string name="action_import">Importuj ustawienia</string>
+    <string name="action_save">Zapisz</string>
+    <string name="load_defaults">Załaduj domyślne ustawienia</string>
+    <string name="action_about">O nas</string>
+    <string name="info_app_license">Ten program jest wolnym oprogramowaniem: możesz go redystrybuować i / lub modyfikować na zasadach licencji GNU General Public License publikowanej przez Free Software Foundation, w trzeciej wersji licencji, lub (dowolnie) dowolnej późniejszej wersji.</string>
+    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="switch_onboot">Automatycznie uruchamianie podczas rozruchu</string>
+    <string name="activity_edit">Edytuj element</string>
+    <string name="title">Tytuł</string>
+    <string name="location">Lokalizacja (adres URL lub host)</string>
+    <string name="action">Akcja</string>
+    <string name="cannot_restore_previous_config">Nie można przywrócić poprzedniej konfiguracji: %s</string>
+    <string name="cannot_read_config">Nie można odczytać konfiguracji: %s</string>
+    <string name="cannot_load_default_config">Nie można odczytać ustawień domyślnych: %s - To się nie powinno zdarzyć</string>
+    <string name="action_restore">Przywróć poprzednią konfigurację</string>
+    <string name="cannot_write_config">Nie można zapisać konfiguracji: %s</string>
+    <string name="action_refresh">Odśwież pliki hosta</string>
+    <string name="notification_starting">Startowanie</string>
+    <string name="notification_running">Działanie</string>
+    <string name="notification_stopping">Zatrzymywanie</string>
+    <string name="notification_waiting_for_net">Oczekiwanie na sieć</string>
+    <string name="notification_reconnecting">Ponowne łączenie</string>
+    <string name="notification_reconnecting_error">Błąd ponownego połączenia</string>
+    <string name="notification_stopped">Zatrzymany</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Odmów</item>
+        <item>Pozwól</item>
+        <item>Ignoruj</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Tłumaczyli: justmix4</string>
+    <string name="app_version_info">Wersja: %s</string>
+    <string name="missing_hosts_files_message">Niektóre z Twoich skonfigurowanych (nieignorowanych) plików hosts są brakujące.\n\nUżyj przycisku "Odśwież", aby pobrać pliki hosts.\n\nCzy nadal chcesz kontynuować?</string>
+    <string name="missing_hosts_files_title">Brak plików hosts</string>
+    <string name="button_no">Nie</string>
+    <string name="button_yes">Tak</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
+    <string name="whitelist_tab">Aplikacje</string>
+    <string name="show_notification">Pokaż powiadomienie</string>
+    <string name="could_not_configure_vpn_service">Nie można skonfigurować usługi VPN - Sprawdź, czy korzystasz zawsze z usługi VPN, np. WiFi Assistant i wyłącz ją</string>
+    <string name="dns_description">Włącz preferowane serwery DNS</string>
+    <string name="host_description">Czerwone reguły blokują, zielone reguły pozwalają</string>
+    <string name="disable_notification_title">Wyłączanie powiadomień</string>
+    <string name="disable_notification_message">Wyłączenie powiadomienia może spowodować, że DNS66 zostanie zatrzymany pod presją pamięci systemu.\n\nCzy na pewno chcesz wyłączyć powiadomienie?</string>
+    <string name="disable_notification_ack">Wyłącz powiadomienie</string>
+    <string name="disable_notification_nak">Przerwij</string>
+    <string name="whitelist_description">Wyłącz DNS66 dla wybranych aplikacji</string>
+    <string name="switch_show_system_apps">Pokaż aplikacje systemowe</string>
+    <string name="location_dns">Adres IP serwera DNS (IPv4 oder IPv6)</string>
+    <string name="state_dns_enabled">Włączone</string>
+    <string name="host_update_error_item">Błąd %1$d: %2$s</string>
+    <string name="update_incomplete">Aktualizacja niekompletna</string>
+    <string name="updating_hostfiles">Aktualizowanie plików hostów</string>
+    <string name="action_use_file">Użyj pliku</string>
+    <string name="persistable_uri_permission_failed">Nie można użyć żądanego pliku: Nie wolno ciągle używać żądanego pliku</string>
+    <string name="updating_n_host_files">Aktualizowanie %1$d plików hosts</string>
+    <string name="could_not_update_all_hosts">Nie można zaktualizować wszystkich plików hosts</string>
+    <string name="permission_denied">Zezwolenie zostało odrzucone</string>
+    <string name="invalid_url_s">Nieprawidłowy URL: %1$s</string>
+    <string name="file_not_found">Nie znaleziono pliku</string>
+    <string name="unknown_error_s">Nieoczekiwany błąd: %1$s</string>
+    <string name="requested_timed_out">Upłynął limit czasu żądania</string>
+</resources>
 
