@@ -23,7 +23,7 @@ class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
     private final ItemRecyclerViewAdapter mAdapter;
 
     public ItemTouchHelperCallback(ItemRecyclerViewAdapter mAdapter) {
-        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
         this.mAdapter = mAdapter;
     }
 
@@ -40,8 +40,6 @@ class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-        mAdapter.items.remove(viewHolder.getAdapterPosition());
-        mAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
     }
 
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
