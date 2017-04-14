@@ -109,8 +109,13 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 main.editItem(stateChoices, item, new ItemChangedListener() {
                             @Override
                             public void onItemChanged(Configuration.Item changedItem) {
-                                items.set(position, changedItem);
-                                ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                                if (changedItem == null) {
+                                    items.remove(position);
+                                    notifyItemRemoved(position);
+                                } else {
+                                    items.set(position, changedItem);
+                                    ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                                }
                                 FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
                             }
                         }

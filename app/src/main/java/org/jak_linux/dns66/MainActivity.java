@@ -268,6 +268,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_ITEM_EDIT && resultCode == RESULT_OK) {
             Configuration.Item item = new Configuration.Item();
             Log.d("FOOOO", "onActivityResult: item title = " + data.getStringExtra("ITEM_TITLE"));
+            if (!getIntent().hasExtra("ITEM_LOCATION")) {
+                this.itemChangedListener.onItemChanged(null);
+                return;
+            }
             item.title = data.getStringExtra("ITEM_TITLE");
             item.location = data.getStringExtra("ITEM_LOCATION");
             item.state = data.getIntExtra("ITEM_STATE", 0);

@@ -93,6 +93,11 @@ public class ItemActivity extends AppCompatActivity {
         if (getIntent().getIntExtra("STATE_CHOICES", 3) == 2) {
             menu.findItem(R.id.action_use_file).setVisible(false);
         }
+        // We are creating an item
+        if (!getIntent().hasExtra("ITEM_LOCATION")) {
+            menu.findItem(R.id.action_delete).setVisible(false);
+        }
+
         return true;
     }
 
@@ -101,6 +106,12 @@ public class ItemActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_delete:
+                Intent deleteIntent = new Intent();
+                deleteIntent.putExtra("DELETE", true);
+                setResult(RESULT_OK, deleteIntent);
+                finish();
+                break;
             case R.id.action_save:
                 Intent intent = new Intent();
                 intent.putExtra("ITEM_TITLE", titleText.getText().toString());
