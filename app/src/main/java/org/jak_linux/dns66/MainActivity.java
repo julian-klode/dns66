@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -76,13 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-
-        int[] tabColors = {R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary,};
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
         AHBottomNavigationAdapter navigationAdapter = new AHBottomNavigationAdapter(this, R.menu.bottom_navigation);
 
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-        navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors);
+        navigationAdapter.setupWithBottomNavigation(bottomNavigation);
+        bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
         reload();
         updateStatus(AdVpnService.vpnStatus);
