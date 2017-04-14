@@ -32,7 +32,6 @@ dependencies {
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.aurelhubert:ahbottomnavigation:2.0.5'
 
     // Proxy stuff
     compile 'org.pcap4j:pcap4j-core:1.7.0'

@@ -17,7 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +33,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
 import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             updateStatus(str_id);
         }
     };
-    private AHBottomNavigation bottomNavigation;
+
     private ItemChangedListener itemChangedListener = null;
     private MenuItem showNotificationMenuItem = null;
 
@@ -77,27 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
-        AHBottomNavigationAdapter navigationAdapter = new AHBottomNavigationAdapter(this, R.menu.bottom_navigation);
-
-        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-        navigationAdapter.setupWithBottomNavigation(bottomNavigation);
-        bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        TabLayout tabLayout = (TabLayout)  findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
         reload();
         updateStatus(AdVpnService.vpnStatus);
-
-        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
-            @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
-                if (wasSelected) {
-                    return true;
-                }
-
-                viewPager.setCurrentItem(position, false);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -308,8 +289,10 @@ public class MainActivity extends AppCompatActivity {
     private void reload() {
         if (showNotificationMenuItem != null)
             showNotificationMenuItem.setChecked(config.showNotification);
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(bottomNavigation.getCurrentItem());
+
+        int currentItem = viewPager.getCurrentItem();
+        viewPager.setAdapter(new MainFragmentPagerAdapter(this, getSupportFragmentManager()));
+        viewPager.setCurrentItem(currentItem);
         updateStatus(AdVpnService.vpnStatus);
     }
 
