@@ -13,6 +13,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/start_button"
+        android:focusable="true"
+        android:clickable="true"
         app:srcCompat="@drawable/ic_menu_start" />
 
     <TextView
