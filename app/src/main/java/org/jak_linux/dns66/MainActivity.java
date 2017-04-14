@@ -120,11 +120,6 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_restore:
-                config = FileHelper.loadPreviousSettings(this);
-                FileHelper.writeSettings(this, MainActivity.config);
-                reload();
-                break;
             case R.id.action_refresh:
                 refresh();
                 break;

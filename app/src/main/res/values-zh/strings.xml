@@ -20,7 +20,6 @@
         <item>允许</item>
         <item>忽略</item>
     </string-array>
-    <string name="action_restore">恢复之前设置</string>
     <string name="cannot_read_config">无法读取设置: %s</string>
     <string name="cannot_restore_previous_config">无法还原之前设置: %s</string>
     <string name="cannot_write_config">无法写入设置: %s</string>
