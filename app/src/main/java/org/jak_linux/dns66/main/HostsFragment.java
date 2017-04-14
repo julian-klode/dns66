@@ -25,7 +25,9 @@ import org.jak_linux.dns66.ItemChangedListener;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 
-public class HostsFragment extends Fragment {
+public class HostsFragment extends Fragment implements FloatingActionButtonFragment {
+
+    private ItemRecyclerViewAdapter mAdapter;
 
     public HostsFragment() {
     }
@@ -43,14 +45,26 @@ public class HostsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.hosts.items, 3);
+        mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.hosts.items, 3);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mAdapter));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+        Switch hostEnabled = (Switch) rootView.findViewById(R.id.host_enabled);
+        hostEnabled.setChecked(MainActivity.config.hosts.enabled);
+        hostEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.hosts.enabled = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.host_add);
+        return rootView;
+    }
+
+    public void setupFloatingActionButton(FloatingActionButton fab) {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,18 +79,6 @@ public class HostsFragment extends Fragment {
                 });
             }
         });
-
-        Switch hostEnabled = (Switch) rootView.findViewById(R.id.host_enabled);
-        hostEnabled.setChecked(MainActivity.config.hosts.enabled);
-        hostEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.config.hosts.enabled = isChecked;
-                FileHelper.writeSettings(getContext(), MainActivity.config);
-            }
-        });
-
-        return rootView;
     }
 
 }

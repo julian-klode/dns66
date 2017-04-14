@@ -31,17 +31,6 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:text="@string/dns_description" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/dns_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        app:fabSize="auto"
-        app:srcCompat="@drawable/ic_add" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/dns_entries"
         android:layout_width="match_parent"

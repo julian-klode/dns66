@@ -17,7 +17,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
+import org.jak_linux.dns66.main.FloatingActionButtonFragment;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        TabLayout tabLayout = (TabLayout)  findViewById(R.id.tab_layout);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
         reload();
@@ -291,8 +294,27 @@ public class MainActivity extends AppCompatActivity {
             showNotificationMenuItem.setChecked(config.showNotification);
 
         int currentItem = viewPager.getCurrentItem();
-        viewPager.setAdapter(new MainFragmentPagerAdapter(this, getSupportFragmentManager()));
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_action_button);
+        final MainFragmentPagerAdapter adapter = new MainFragmentPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+
+        ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
+                if (fragment instanceof FloatingActionButtonFragment) {
+                    ((FloatingActionButtonFragment) fragment).setupFloatingActionButton(fab);
+                    fab.show();
+                } else {
+                    fab.hide();
+                }
+            }
+        };
+        viewPager.addOnPageChangeListener(listener);
         viewPager.setCurrentItem(currentItem);
+        listener.onPageSelected(viewPager.getCurrentItem());
+
         updateStatus(AdVpnService.vpnStatus);
     }
 
