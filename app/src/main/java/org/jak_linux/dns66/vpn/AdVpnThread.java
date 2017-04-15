@@ -72,6 +72,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     private final WospList dnsIn = new WospList();
     // The object where we actually handle packets.
     private final DnsPacketProxy dnsPacketProxy = new DnsPacketProxy(this);
+    // Watch dog that checks our connection is alive.
+    private final VpnWatchdog vpnWatchDog = new VpnWatchdog();
     /**
      * After how many iterations we should clear pcap4js packetfactory property cache
      */
@@ -142,6 +144,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // Load the block list
         try {
             dnsPacketProxy.initialize(vpnService, upstreamDnsServers);
+            vpnWatchDog.initialize(FileHelper.loadCurrentSettings(vpnService).watchDog);
         } catch (InterruptedException e) {
             return;
         }
@@ -251,7 +254,11 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
 
         Log.d(TAG, "doOne: Polling " + polls.length + " file descriptors");
-        int result = FileHelper.poll(polls, -1);
+        int result = FileHelper.poll(polls, vpnWatchDog.getPollTimeout());
+        if (result == 0) {
+            vpnWatchDog.handleTimeout();
+            return true;
+        }
         if (blockFd.revents != 0) {
             Log.i(TAG, "Told to stop VPN");
             return false;
@@ -330,6 +337,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
 
         final byte[] readPacket = Arrays.copyOfRange(packet, 0, length);
 
+        vpnWatchDog.handlePacket(readPacket);
         dnsPacketProxy.handleDnsRequest(readPacket);
     }
 
@@ -377,6 +385,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         if (ipv6Template == null || format == null) {
             Log.i(TAG, "configure: Adding DNS Server " + addr);
             builder.addDnsServer(addr);
+            vpnWatchDog.setTarget(addr);
             builder.addRoute(addr, addr.getAddress().length * 8);
         } else if (addr instanceof Inet4Address) {
             upstreamDnsServers.add(addr);
@@ -384,12 +393,14 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + alias);
             builder.addDnsServer(alias);
             builder.addRoute(alias, 32);
+            vpnWatchDog.setTarget(InetAddress.getByName(alias));
         } else if (addr instanceof Inet6Address) {
             upstreamDnsServers.add(addr);
             ipv6Template[ipv6Template.length - 1] = (byte) (upstreamDnsServers.size() + 1);
             InetAddress i6addr = Inet6Address.getByAddress(ipv6Template);
             Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + i6addr);
             builder.addDnsServer(i6addr);
+            vpnWatchDog.setTarget(i6addr);
         }
     }
 
@@ -464,6 +475,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // names while a VPN service is active.
         for (String app : config.whitelist.items) {
             try {
+                if (app.equals("org.jak_linux.dns66"))
+                    continue;
                 Log.d(TAG, "configure: Disallowing " + app + " from using the DNS VPN");
                 builder.addDisallowedApplication(app);
             } catch (Exception e) {

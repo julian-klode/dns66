@@ -79,4 +79,6 @@
     <string name="action_start">Start</string>
     <string name="automatic_refresh">Refresh daily</string>
     <string name="automatic_refresh_description">Daily updates occur when charging, idle, and on an unmetered network.</string>
+    <string name="watchdog">Watch connection</string>
+    <string name="watchdog_description">Check the connection in increasingly longer intervals and reconnect if it stopped working</string>
 </resources>

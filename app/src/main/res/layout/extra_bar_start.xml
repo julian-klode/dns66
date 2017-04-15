@@ -45,5 +45,21 @@
             android:paddingBottom="8dp"
             android:saveEnabled="false"
             android:text="@string/switch_onboot"/>
+
+        <Switch
+            android:id="@+id/watchdog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/watchdog"/>
+
+        <TextView
+            android:id="@+id/watchdog_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/watchdog_description"/>
     </LinearLayout>
 </LinearLayout>

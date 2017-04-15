@@ -3,6 +3,7 @@
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
+  "watchDog": true,
   "dnsServers": {
     "enabled": false,
     "items": [

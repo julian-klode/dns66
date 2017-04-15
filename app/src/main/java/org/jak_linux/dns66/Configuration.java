@@ -27,6 +27,7 @@ public class Configuration {
     public Whitelist whitelist;
     public boolean showNotification = true;
     public boolean nightMode;
+    public boolean watchDog = true;
 
     private static Whitelist readWhitelist(JsonReader reader) throws IOException {
         Whitelist whitelist = new Whitelist();
@@ -184,6 +185,7 @@ public class Configuration {
         writer.name("autoStart").value(autoStart);
         writer.name("showNotification").value(showNotification);
         writer.name("nightMode").value(nightMode);
+        writer.name("watchDog").value(watchDog);
         writer.name("hosts");
         writeHosts(writer, hosts);
         writer.name("dnsServers");
@@ -210,6 +212,9 @@ public class Configuration {
                     break;
                 case "nightMode":
                     nightMode = reader.nextBoolean();
+                    break;
+                case "watchDog":
+                    watchDog = reader.nextBoolean();
                     break;
                 case "hosts":
                     hosts = readHosts(reader);

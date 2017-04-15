@@ -82,6 +82,16 @@ public class StartFragment extends Fragment {
             }
         });
 
+        Switch watchDog = (Switch) rootView.findViewById(R.id.watchdog);
+        watchDog.setChecked(MainActivity.config.watchDog);
+        watchDog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.watchDog = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
 
         return rootView;
