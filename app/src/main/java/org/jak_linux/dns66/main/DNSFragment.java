@@ -25,7 +25,9 @@ import org.jak_linux.dns66.ItemChangedListener;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
 
-public class DNSFragment extends Fragment {
+public class DNSFragment extends Fragment implements FloatingActionButtonFragment {
+
+    private ItemRecyclerViewAdapter mAdapter;
 
     public DNSFragment() {
     }
@@ -45,14 +47,27 @@ public class DNSFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        final ItemRecyclerViewAdapter mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.dnsServers.items, 2);
+        mAdapter = new ItemRecyclerViewAdapter(MainActivity.config.dnsServers.items, 2);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mAdapter));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+        Switch dnsEnabled = (Switch) rootView.findViewById(R.id.dns_enabled);
+        dnsEnabled.setChecked(MainActivity.config.dnsServers.enabled);
+        dnsEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.dnsServers.enabled = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
+        return rootView;
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.dns_add);
+    @Override
+    public void setupFloatingActionButton(FloatingActionButton fab) {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,16 +82,5 @@ public class DNSFragment extends Fragment {
                 });
             }
         });
-
-        Switch dnsEnabled = (Switch) rootView.findViewById(R.id.dns_enabled);
-        dnsEnabled.setChecked(MainActivity.config.dnsServers.enabled);
-        dnsEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.config.dnsServers.enabled = isChecked;
-                FileHelper.writeSettings(getContext(), MainActivity.config);
-            }
-        });
-        return rootView;
     }
 }

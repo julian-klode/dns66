@@ -17,9 +17,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.JsonReader;
@@ -33,10 +37,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
-
 import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
+import org.jak_linux.dns66.main.FloatingActionButtonFragment;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
@@ -58,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
             updateStatus(str_id);
         }
     };
-    private AHBottomNavigation bottomNavigation;
+
     private ItemChangedListener itemChangedListener = null;
-    private MenuItem showNotificationMenuItem = null;
+    private MainFragmentPagerAdapter fragmentPagerAdapter;
+    private FloatingActionButton floatingActionButton;
+    private ViewPager.SimpleOnPageChangeListener pageChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             config = FileHelper.loadCurrentSettings(this);
         }
+
+        if (config.nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,28 +87,27 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
+        fragmentPagerAdapter = new MainFragmentPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(fragmentPagerAdapter);
 
-        int[] tabColors = {R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary,};
-        bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
-        AHBottomNavigationAdapter navigationAdapter = new AHBottomNavigationAdapter(this, R.menu.bottom_navigation);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
-        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-        navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors);
-
-        reload();
-        updateStatus(AdVpnService.vpnStatus);
-
-        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+        // Add a page change listener that sets the floating action button per tab.
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_action_button);
+        pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
-                if (wasSelected) {
-                    return true;
+            public void onPageSelected(int position) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + fragmentPagerAdapter.getItemId(position));
+                if (fragment instanceof FloatingActionButtonFragment) {
+                    ((FloatingActionButtonFragment) fragment).setupFloatingActionButton(floatingActionButton);
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
                 }
-
-                viewPager.setCurrentItem(position, false);
-                return true;
             }
-        });
+        };
+        viewPager.addOnPageChangeListener(pageChangeListener);
     }
 
     @Override
@@ -107,10 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        showNotificationMenuItem = menu.findItem(R.id.setting_show_notification);
-        showNotificationMenuItem.setChecked(config.showNotification);
+        menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
+        menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
         return true;
     }
 
@@ -120,18 +129,13 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_restore:
-                config = FileHelper.loadPreviousSettings(this);
-                FileHelper.writeSettings(this, MainActivity.config);
-                reload();
-                break;
             case R.id.action_refresh:
                 refresh();
                 break;
             case R.id.action_load_defaults:
                 config = FileHelper.loadDefaultSettings(this);
-                reload();
                 FileHelper.writeSettings(this, MainActivity.config);
+                recreate();
                 break;
             case R.id.action_import:
                 Intent intent = new Intent()
@@ -148,6 +152,12 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra(Intent.EXTRA_TITLE, "dns66.json");
 
                 startActivityForResult(exportIntent, REQUEST_FILE_STORE);
+                break;
+            case R.id.setting_night_mode:
+                item.setChecked(!item.isChecked());
+                MainActivity.config.nightMode = item.isChecked();
+                FileHelper.writeSettings(MainActivity.this, MainActivity.config);
+                recreate();
                 break;
             case R.id.setting_show_notification:
                 // If we are enabling notifications, we do not need to show a dialog.
@@ -244,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Toast.makeText(this, "Cannot read file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            reload();
+            recreate();
             FileHelper.writeSettings(this, MainActivity.config);
         }
         if (requestCode == REQUEST_FILE_STORE && resultCode == RESULT_OK) {
@@ -263,11 +273,15 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-            reload();
+            recreate();
         }
         if (requestCode == REQUEST_ITEM_EDIT && resultCode == RESULT_OK) {
             Configuration.Item item = new Configuration.Item();
             Log.d("FOOOO", "onActivityResult: item title = " + data.getStringExtra("ITEM_TITLE"));
+            if (data.hasExtra("DELETE")) {
+                this.itemChangedListener.onItemChanged(null);
+                return;
+            }
             item.title = data.getStringExtra("ITEM_TITLE");
             item.location = data.getStringExtra("ITEM_LOCATION");
             item.state = data.getIntExtra("ITEM_STATE", 0);
@@ -300,18 +314,10 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }
-
+        pageChangeListener.onPageSelected(viewPager.getCurrentItem());
         updateStatus(AdVpnService.vpnStatus);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(vpnServiceBroadcastReceiver, new IntentFilter(AdVpnService.VPN_UPDATE_STATUS_INTENT));
-    }
-
-    private void reload() {
-        if (showNotificationMenuItem != null)
-            showNotificationMenuItem.setChecked(config.showNotification);
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(bottomNavigation.getCurrentItem());
-        updateStatus(AdVpnService.vpnStatus);
     }
 
     /**

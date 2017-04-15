@@ -6,14 +6,13 @@
     <string name="action_save">Speichern</string>
     <string name="app_shortdesc">Hosts sperren und DNS-Server anpassen</string>
     <string name="custom_dns">Eigene DNS-Server verwenden</string>
-    <string name="dns_tab">DNS-Server</string>
+    <string name="dns_tab">DNS</string>
     <string name="enable_hosts">Filtern von Domänen aktivieren</string>
     <string name="hosts_tab">Hosts</string>
     <string name="info_app_license">"Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version. "</string>
     <string name="load_defaults">Standardeinstellungen laden</string>
     <string name="switch_onboot">Automatisch beim Systemstart aktivieren</string>
     <string name="start_tab">Start</string>
-    <string name="start_description">Lange drücken um an- bzw. abzuschalten</string>
     <string name="activity_edit">Eintrag bearbeiten</string>
     <string name="action">Regel</string>
     <string name="location">Ort (URL oder Host)</string>
@@ -24,7 +23,6 @@
         <item>Ignorieren</item>
     </string-array>
     <string name="action_refresh">Filterlisten aktualisieren</string>
-    <string name="action_restore">Vorherige Einstellungen wiederherstellen</string>
     <string name="cannot_load_default_config">Standardeinstellungen konnten nicht gelesen werden: %s - Das sollte nicht passieren!</string>
     <string name="cannot_read_config">Kann Einstellungen nicht lesen: %s</string>
     <string name="cannot_restore_previous_config">Kann vorherige Einstellungen nicht wiederherstellen: %s</string>
@@ -68,4 +66,12 @@
     <string name="requested_timed_out">Zeitlimit für Anfrage überschritten</string>
     <string name="file_not_found">Datei nicht gefunden</string>
     <string name="unknown_error_s">Unerwarteter Fehler: %1$s</string>
+    <string name="action_delete">Löschen</string>
+    <string name="night_mode">Dunkles Design</string>
+    <string name="expand_bar_closed">Geschlossen</string>
+    <string name="expand_bar_expanded">Offen</string>
+    <string name="expand_bar_toggle_close">Schließe Detailsleiste</string>
+    <string name="expand_bar_toggle_expand">Öffne Detailsleiste</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
 </resources>

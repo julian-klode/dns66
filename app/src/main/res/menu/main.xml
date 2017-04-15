@@ -8,12 +8,6 @@
         android:title="@string/action_refresh"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_restore"
-        android:icon="@drawable/ic_restore"
-        android:orderInCategory="100"
-        android:title="@string/action_restore"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_load_defaults"
         android:orderInCategory="100"
         android:title="@string/load_defaults"
@@ -28,6 +22,11 @@
         android:orderInCategory="100"
         android:title="@string/action_export"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/setting_night_mode"
+        android:title="@string/night_mode"
+        android:orderInCategory="100"
+        android:checkable="true" />
     <item
         android:id="@+id/setting_show_notification"
         android:title="@string/show_notification"

@@ -2,6 +2,7 @@
   "version": 1,
   "autoStart": true,
   "showNotification": true,
+  "nightMode": false,
   "dnsServers": {
     "enabled": false,
     "items": [
