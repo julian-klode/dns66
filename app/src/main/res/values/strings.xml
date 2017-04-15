@@ -5,7 +5,7 @@
     <string name="enable_hosts">Enable Domain Filtering</string>
     <string name="start_tab">Start</string>
     <string name="hosts_tab">Hosts</string>
-    <string name="dns_tab">DNS Servers</string>
+    <string name="dns_tab">DNS</string>
     <string name="action_export">Export settings</string>
     <string name="action_import">Import settings</string>
     <string name="action_save">Save</string>
@@ -24,7 +24,7 @@
     <string name="cannot_write_config">Cannot write configuration: %s</string>
     <string name="action_refresh">Refresh host files</string>
     <string name="notification_starting">Starting</string>
-    <string name="notification_running">Running</string>
+    <string name="notification_running">Active</string>
     <string name="notification_stopping">Stopping</string>
     <string name="notification_waiting_for_net">Waiting for network</string>
     <string name="notification_reconnecting">Reconnecting</string>
@@ -55,7 +55,7 @@
     <string name="disable_notification_nak">Abort</string>
     <string name="whitelist_description">Bypass DNS66 for marked apps</string>
     <string name="switch_show_system_apps">Show system apps</string>
-    <string name="location_dns">IP address of DNS server (IPv4 oder IPv6)</string>
+    <string name="location_dns">IP address of DNS server (IPv4 or IPv6)</string>
     <string name="state_dns_enabled">Enabled</string>
     <string name="host_update_error_item">Error %1$d: %2$s</string>
     <string name="update_incomplete">Update incomplete</string>

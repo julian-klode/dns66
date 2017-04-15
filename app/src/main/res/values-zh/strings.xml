@@ -6,7 +6,7 @@
     <string name="action_save">保存</string>
     <string name="app_shortdesc">屏蔽广告和DNS服务器</string>
     <string name="custom_dns">自定义DNS服务器</string>
-    <string name="dns_tab">DNS 服务器</string>
+    <string name="dns_tab">DNS</string>
     <string name="enable_hosts">启用域名过滤</string>
     <string name="switch_onboot">开机时自动运行</string>
     <string name="start_tab">启动/停止</string>
