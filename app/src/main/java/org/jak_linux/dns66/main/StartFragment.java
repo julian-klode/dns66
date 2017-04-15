@@ -100,7 +100,6 @@ public class StartFragment extends Fragment {
 
         stateText.setText(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
 
-        startButton.getDrawable().setTintList(null);
         switch(status) {
             case AdVpnService.VPN_STATUS_RECONNECTING:
             case AdVpnService.VPN_STATUS_STARTING:
@@ -115,7 +114,6 @@ public class StartFragment extends Fragment {
                 break;
             case AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR:
                 startButton.setImageAlpha(255);
-                startButton.getDrawable().setTint(ContextCompat.getColor(context, R.color.stateError));
                 break;
         }
     }

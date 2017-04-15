@@ -59,6 +59,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                     break;
             }
         } else {
+            holder.iconView.setImageTintList(null);
             switch (items.get(position).state) {
                 case Configuration.Item.STATE_IGNORE:
                     holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));

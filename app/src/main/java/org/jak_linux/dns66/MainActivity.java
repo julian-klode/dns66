@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.JsonReader;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ItemChangedListener itemChangedListener = null;
     private MenuItem showNotificationMenuItem = null;
+    private MenuItem nightModeMenuItem = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         showNotificationMenuItem = menu.findItem(R.id.setting_show_notification);
         showNotificationMenuItem.setChecked(config.showNotification);
+        nightModeMenuItem = menu.findItem(R.id.setting_night_mode);
+        nightModeMenuItem.setChecked(config.nightMode);
         return true;
     }
 
@@ -127,6 +131,12 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra(Intent.EXTRA_TITLE, "dns66.json");
 
                 startActivityForResult(exportIntent, REQUEST_FILE_STORE);
+                break;
+            case R.id.setting_night_mode:
+                item.setChecked(!item.isChecked());
+                MainActivity.config.nightMode = item.isChecked();
+                FileHelper.writeSettings(MainActivity.this, MainActivity.config);
+                recreate();
                 break;
             case R.id.setting_show_notification:
                 // If we are enabling notifications, we do not need to show a dialog.
@@ -290,8 +300,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reload() {
-        if (showNotificationMenuItem != null)
+        if (showNotificationMenuItem != null) {
             showNotificationMenuItem.setChecked(config.showNotification);
+            nightModeMenuItem.setChecked(config.nightMode);
+        }
+        if (config.nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
 
         int currentItem = viewPager.getCurrentItem();
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_action_button);

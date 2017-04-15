@@ -68,4 +68,5 @@
     <string name="file_not_found">Datei nicht gefunden</string>
     <string name="unknown_error_s">Unerwarteter Fehler: %1$s</string>
     <string name="action_delete">Löschen</string>
+    <string name="night_mode">Dunkles Design</string>
 </resources>

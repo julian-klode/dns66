@@ -15,6 +15,7 @@
         android:id="@+id/start_button"
         android:focusable="true"
         android:clickable="true"
+        android:tint="?android:attr/textColorPrimary"
         app:srcCompat="@drawable/ic_menu_start" />
 
     <TextView
