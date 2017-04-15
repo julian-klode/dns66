@@ -21,17 +21,36 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Represents hosts that are blocked.
  * <p>
- * This is a very basic set of hosts.
+ * This is a very basic set of hosts. But it supports lock-free
+ * readers with writers active at the same time, only the writers
+ * having to take a lock.
  */
 public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
-    private final Set<String> blockedHosts = new HashSet<>();
+    private static final RuleDatabase instance = new RuleDatabase();
+    final AtomicReference<HashSet<String>> blockedHosts = new AtomicReference<>(new HashSet<String>());
+    HashSet<String> nextBlockedHosts = null;
+
+    /**
+     * Package-private constructor for instance and unit tests.
+     */
+    RuleDatabase() {
+
+    }
+
+
+    /**
+     * Returns the instance of the rule database.
+     */
+    public static RuleDatabase getInstance() {
+        return instance;
+    }
 
     /**
      * Parse a single line in a hosts file
@@ -85,7 +104,7 @@ public class RuleDatabase {
      * @return true if the host is blocked, false otherwise.
      */
     public boolean isBlocked(String host) {
-        return blockedHosts.contains(host);
+        return blockedHosts.get().contains(host);
     }
 
     /**
@@ -94,7 +113,7 @@ public class RuleDatabase {
      * @return true if any hosts are blocked, false otherwise.
      */
     boolean isEmpty() {
-        return blockedHosts.isEmpty();
+        return blockedHosts.get().isEmpty();
     }
 
     /**
@@ -104,11 +123,10 @@ public class RuleDatabase {
      * @throws InterruptedException Thrown if the thread was interrupted, so we don't waste time
      *                              reading more host files than needed.
      */
-    public void initialize(Context context) throws InterruptedException {
+    public synchronized void initialize(Context context) throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(context);
 
-        blockedHosts.clear();
-        Runtime.getRuntime().gc();
+        nextBlockedHosts = new HashSet<>(blockedHosts.get().size());
 
         Log.i(TAG, "Loading block list");
 
@@ -121,6 +139,9 @@ public class RuleDatabase {
                 throw new InterruptedException("Interrupted");
             loadItem(context, item);
         }
+
+        blockedHosts.set(nextBlockedHosts);
+        Runtime.getRuntime().gc();
     }
 
     /**
@@ -159,9 +180,9 @@ public class RuleDatabase {
     private void addHost(Configuration.Item item, String host) {
         // Single address to block
         if (item.state == Configuration.Item.STATE_ALLOW) {
-            blockedHosts.remove(host);
+            nextBlockedHosts.remove(host);
         } else if (item.state == Configuration.Item.STATE_DENY) {
-            blockedHosts.add(host);
+            nextBlockedHosts.add(host);
         }
     }
 

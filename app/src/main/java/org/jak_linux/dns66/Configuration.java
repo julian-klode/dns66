@@ -62,6 +62,9 @@ public class Configuration {
                 case "enabled":
                     hosts.enabled = reader.nextBoolean();
                     break;
+                case "automaticRefresh":
+                    hosts.automaticRefresh = reader.nextBoolean();
+                    break;
                 case "items":
                     hosts.items = readItemList(reader);
                     break;
@@ -145,6 +148,7 @@ public class Configuration {
     private static void writeHosts(JsonWriter writer, Hosts h) throws IOException {
         writer.beginObject();
         writer.name("enabled").value(h.enabled);
+        writer.name("automaticRefresh").value(h.automaticRefresh);
         writer.name("items");
         writeItemList(writer, h.items);
         writer.endObject();
@@ -245,6 +249,7 @@ public class Configuration {
 
     public static class Hosts {
         public boolean enabled;
+        public boolean automaticRefresh = false;
         public List<Item> items = new ArrayList<>();
     }
 

@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 
 import org.jak_linux.dns66.Configuration;
@@ -25,6 +24,7 @@ import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.ItemChangedListener;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
+import org.jak_linux.dns66.db.RuleDatabaseUpdateJobService;
 
 public class HostsFragment extends Fragment implements FloatingActionButtonFragment {
 
@@ -61,6 +61,18 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
+
+        Switch automaticRefresh = (Switch) rootView.findViewById(R.id.automatic_refresh);
+        automaticRefresh.setChecked(MainActivity.config.hosts.automaticRefresh);
+        automaticRefresh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.hosts.automaticRefresh = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+                RuleDatabaseUpdateJobService.scheduleOrCancel(getContext(), MainActivity.config);
+            }
+        });
+
 
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
 

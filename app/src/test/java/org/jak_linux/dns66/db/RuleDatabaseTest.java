@@ -39,6 +39,15 @@ public class RuleDatabaseTest {
     }
 
     @Test
+    public void testGetInstance() throws Exception {
+        RuleDatabase instance = RuleDatabase.getInstance();
+
+        assertNotNull(instance);
+        assertTrue(instance.isEmpty());
+        assertFalse(instance.isBlocked("example.com"));
+    }
+
+    @Test
     public void testParseLine() throws Exception {
         // Standard format lines
         assertEquals("example.com", RuleDatabase.parseLine("0.0.0.0 example.com"));
@@ -76,6 +85,7 @@ public class RuleDatabaseTest {
     @Test
     public void testLoadReader() throws Exception {
         RuleDatabase db = new RuleDatabase();
+        db.nextBlockedHosts = db.blockedHosts.get();
 
         Configuration.Item item = new Configuration.Item();
 

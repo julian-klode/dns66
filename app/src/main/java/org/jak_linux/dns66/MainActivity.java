@@ -37,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jak_linux.dns66.db.RuleDatabaseUpdateJobService;
 import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
 import org.jak_linux.dns66.main.FloatingActionButtonFragment;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         viewPager.addOnPageChangeListener(pageChangeListener);
+
+        RuleDatabaseUpdateJobService.scheduleOrCancel(this, config);
     }
 
     @Override

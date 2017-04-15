@@ -74,4 +74,6 @@
     <string name="expand_bar_toggle_expand">Öffne Detailsleiste</string>
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
+    <string name="automatic_refresh">Täglich aktualisieren</string>
+    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, in Ruhe ist, und die Verbindung gebührenfrei ist.</string>
 </resources>

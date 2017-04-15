@@ -132,6 +132,11 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
      */
     private synchronized void postExecute() {
         Log.d(TAG, "postExecute: Sending notification");
+        try {
+            RuleDatabase.getInstance().initialize(context);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (notificationBuilder != null) {
             if (errors.isEmpty()) {
                 notificationManager.cancel(UPDATE_NOTIFICATION_ID);
@@ -186,5 +191,9 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
     synchronized void addBegin(Configuration.Item item) {
         pending.add(item.title);
         updateProgressNotification();
+    }
+
+    synchronized long pendingCount() {
+        return pending.size();
     }
 }
