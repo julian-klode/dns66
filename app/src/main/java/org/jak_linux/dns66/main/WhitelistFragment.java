@@ -7,11 +7,9 @@
  */
 package org.jak_linux.dns66.main;
 
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,6 +92,9 @@ public class WhitelistFragment extends Fragment {
 
         appListGenerator = new AppListGenerator();
         appListGenerator.execute();
+
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
 
         return rootView;
     }

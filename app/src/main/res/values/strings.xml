@@ -72,4 +72,8 @@
     <string name="requested_timed_out">Request timed out</string>
     <string name="action_delete">Delete</string>
     <string name="night_mode">Dark Theme</string>
+    <string name="expand_bar_toggle_expand">Open details panel</string>
+    <string name="expand_bar_toggle_close">Close details panel</string>
+    <string name="expand_bar_expanded">Opened</string>
+    <string name="expand_bar_closed">Closed</string>
 </resources>

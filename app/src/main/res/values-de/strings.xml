@@ -69,4 +69,8 @@
     <string name="unknown_error_s">Unerwarteter Fehler: %1$s</string>
     <string name="action_delete">Löschen</string>
     <string name="night_mode">Dunkles Design</string>
+    <string name="expand_bar_closed">Geschlossen</string>
+    <string name="expand_bar_expanded">Offen</string>
+    <string name="expand_bar_toggle_close">Schließe Detailsleiste</string>
+    <string name="expand_bar_toggle_expand">Öffne Detailsleiste</string>
 </resources>

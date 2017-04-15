@@ -87,6 +87,8 @@ public class StartFragment extends Fragment {
             }
         });
 
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
+
         return rootView;
     }
 

@@ -62,6 +62,7 @@ public class DNSFragment extends Fragment implements FloatingActionButtonFragmen
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
         return rootView;
     }
 

@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 
 import org.jak_linux.dns66.Configuration;
@@ -60,6 +61,8 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
 
         return rootView;
     }
