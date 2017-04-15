@@ -187,4 +187,8 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
         pending.add(item.title);
         updateProgressNotification();
     }
+
+    synchronized long pendingCount() {
+        return pending.size();
+    }
 }

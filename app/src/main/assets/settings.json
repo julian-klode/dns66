@@ -40,6 +40,7 @@
   },
   "hosts": {
     "enabled": true,
+    "automaticRefresh": false,
     "items": [
       {
         "title": "Adaway hosts file",

@@ -43,5 +43,21 @@
             android:layout_width="match_parent"
             android:layout_height="27dp"
             android:text="@string/host_description"/>
+
+        <Switch
+            android:id="@+id/automatic_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/automatic_refresh"/>
+
+        <TextView
+            android:id="@+id/automatic_refresh_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/automatic_refresh_description"/>
     </LinearLayout>
 </LinearLayout>
