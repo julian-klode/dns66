@@ -132,6 +132,11 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
      */
     private synchronized void postExecute() {
         Log.d(TAG, "postExecute: Sending notification");
+        try {
+            RuleDatabase.getInstance().initialize(context);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (notificationBuilder != null) {
             if (errors.isEmpty()) {
                 notificationManager.cancel(UPDATE_NOTIFICATION_ID);
