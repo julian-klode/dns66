@@ -62,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private ItemChangedListener itemChangedListener = null;
-    private MenuItem showNotificationMenuItem = null;
-    private MenuItem nightModeMenuItem = null;
+    private MainFragmentPagerAdapter fragmentPagerAdapter;
+    private FloatingActionButton floatingActionButton;
+    private ViewPager.SimpleOnPageChangeListener pageChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             config = FileHelper.loadCurrentSettings(this);
         }
+
+        if (config.nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,11 +87,27 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
+        fragmentPagerAdapter = new MainFragmentPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(fragmentPagerAdapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
-        reload();
-        updateStatus(AdVpnService.vpnStatus);
+        // Add a page change listener that sets the floating action button per tab.
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_action_button);
+        pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + fragmentPagerAdapter.getItemId(position));
+                if (fragment instanceof FloatingActionButtonFragment) {
+                    ((FloatingActionButtonFragment) fragment).setupFloatingActionButton(floatingActionButton);
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
+                }
+            }
+        };
+        viewPager.addOnPageChangeListener(pageChangeListener);
     }
 
     @Override
@@ -93,12 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        showNotificationMenuItem = menu.findItem(R.id.setting_show_notification);
-        showNotificationMenuItem.setChecked(config.showNotification);
-        nightModeMenuItem = menu.findItem(R.id.setting_night_mode);
-        nightModeMenuItem.setChecked(config.nightMode);
+        menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
+        menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
         return true;
     }
 
@@ -113,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_load_defaults:
                 config = FileHelper.loadDefaultSettings(this);
-                reload();
                 FileHelper.writeSettings(this, MainActivity.config);
+                recreate();
                 break;
             case R.id.action_import:
                 Intent intent = new Intent()
@@ -233,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Toast.makeText(this, "Cannot read file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            reload();
+            recreate();
             FileHelper.writeSettings(this, MainActivity.config);
         }
         if (requestCode == REQUEST_FILE_STORE && resultCode == RESULT_OK) {
@@ -252,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-            reload();
+            recreate();
         }
         if (requestCode == REQUEST_ITEM_EDIT && resultCode == RESULT_OK) {
             Configuration.Item item = new Configuration.Item();
@@ -293,46 +314,10 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }
-
+        pageChangeListener.onPageSelected(viewPager.getCurrentItem());
         updateStatus(AdVpnService.vpnStatus);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(vpnServiceBroadcastReceiver, new IntentFilter(AdVpnService.VPN_UPDATE_STATUS_INTENT));
-    }
-
-    private void reload() {
-        if (showNotificationMenuItem != null) {
-            showNotificationMenuItem.setChecked(config.showNotification);
-            nightModeMenuItem.setChecked(config.nightMode);
-        }
-        if (config.nightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-
-        int currentItem = viewPager.getCurrentItem();
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_action_button);
-        final MainFragmentPagerAdapter adapter = new MainFragmentPagerAdapter(this, getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-
-        ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(position));
-                if (fragment instanceof FloatingActionButtonFragment) {
-                    ((FloatingActionButtonFragment) fragment).setupFloatingActionButton(fab);
-                    fab.show();
-                } else {
-                    fab.hide();
-                }
-            }
-        };
-        viewPager.addOnPageChangeListener(listener);
-        viewPager.setCurrentItem(currentItem);
-        listener.onPageSelected(viewPager.getCurrentItem());
-
-        updateStatus(AdVpnService.vpnStatus);
     }
 
     /**
