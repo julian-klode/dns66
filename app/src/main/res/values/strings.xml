@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">DNS66</string>
     <string name="app_shortdesc">Host blocking and custom DNS servers</string>
-    <string name="start_description">Long press to turn on or off</string>
     <string name="custom_dns">Enable custom DNS servers</string>
     <string name="enable_hosts">Enable Domain Filtering</string>
     <string name="start_tab">Start</string>
@@ -76,4 +75,6 @@
     <string name="expand_bar_toggle_close">Close details panel</string>
     <string name="expand_bar_expanded">Opened</string>
     <string name="expand_bar_closed">Closed</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_start">Start</string>
 </resources>

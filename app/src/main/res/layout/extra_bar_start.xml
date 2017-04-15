@@ -20,11 +20,12 @@
             layout="@layout/button_extra_bar_toggle"/>
 
         <TextView
+            android:id="@+id/state_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
             android:paddingTop="16dp"
-            android:text="@string/start_description"/>
+            android:text="@string/notification_stopped"/>
 
     </LinearLayout>
 

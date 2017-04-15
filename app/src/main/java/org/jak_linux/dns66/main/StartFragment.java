@@ -7,24 +7,21 @@
  */
 package org.jak_linux.dns66.main;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.PorterDuff;
 import android.net.VpnService;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.AtomicFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -38,7 +35,6 @@ import org.jak_linux.dns66.R;
 import org.jak_linux.dns66.vpn.AdVpnService;
 import org.jak_linux.dns66.vpn.Command;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -58,21 +54,20 @@ public class StartFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_start, container, false);
         Switch switchOnBoot = (Switch) rootView.findViewById(R.id.switch_onboot);
 
-        ImageView view = (ImageView) rootView.findViewById(R.id.start_button);
+        ImageView view = (ImageView) rootView.findViewById(R.id.state_image);
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (AdVpnService.vpnStatus != AdVpnService.VPN_STATUS_STOPPED) {
-                    Log.i(TAG, "Attempting to disconnect");
+                return startStopService();
+            }
+        });
 
-                    Intent intent = new Intent(getActivity(), AdVpnService.class);
-                    intent.putExtra("COMMAND", org.jak_linux.dns66.vpn.Command.STOP.ordinal());
-                    getActivity().startService(intent);
-                } else {
-                    checkHostsFilesAndStartService();
-                }
-                return true;
+        Button startButton = (Button) rootView.findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStopService();
             }
         });
 
@@ -92,30 +87,52 @@ public class StartFragment extends Fragment {
         return rootView;
     }
 
+    private boolean startStopService() {
+        if (AdVpnService.vpnStatus != AdVpnService.VPN_STATUS_STOPPED) {
+            Log.i(TAG, "Attempting to disconnect");
+
+            Intent intent = new Intent(getActivity(), AdVpnService.class);
+            intent.putExtra("COMMAND", Command.STOP.ordinal());
+            getActivity().startService(intent);
+        } else {
+            checkHostsFilesAndStartService();
+        }
+        return true;
+    }
+
     public static void updateStatus(View rootView, int status) {
         Context context = rootView.getContext();
         TextView stateText = (TextView) rootView.findViewById(R.id.state_textview);
-        ImageView startButton = (ImageView) rootView.findViewById(R.id.start_button);
+        ImageView stateImage = (ImageView) rootView.findViewById(R.id.state_image);
+        Button startButton = (Button) rootView.findViewById(R.id.start_button);
 
-        if (startButton == null || stateText == null)
+        if (stateImage == null || stateText == null)
             return;
 
         stateText.setText(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
-
+        stateImage.setContentDescription(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
+        stateImage.setImageAlpha(255);
+        stateImage.setImageTintList(ContextCompat.getColorStateList(context, R.color.colorStateImage));
         switch(status) {
             case AdVpnService.VPN_STATUS_RECONNECTING:
             case AdVpnService.VPN_STATUS_STARTING:
             case AdVpnService.VPN_STATUS_STOPPING:
-                startButton.setImageAlpha(128);
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_settings_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
             case AdVpnService.VPN_STATUS_STOPPED:
-                startButton.setImageAlpha(64);
+                stateImage.setImageDrawable(context.getDrawable(R.mipmap.app_icon_large));
+                stateImage.setImageAlpha(32);
+                stateImage.setImageTintList(null);
+                startButton.setText(R.string.action_start);
                 break;
             case AdVpnService.VPN_STATUS_RUNNING:
-                startButton.setImageAlpha(255);
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_verified_user_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
             case AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR:
-                startButton.setImageAlpha(255);
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_error_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
         }
     }

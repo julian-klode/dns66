@@ -13,7 +13,6 @@
     <string name="load_defaults">Standardeinstellungen laden</string>
     <string name="switch_onboot">Automatisch beim Systemstart aktivieren</string>
     <string name="start_tab">Start</string>
-    <string name="start_description">Lange drücken um an- bzw. abzuschalten</string>
     <string name="activity_edit">Eintrag bearbeiten</string>
     <string name="action">Regel</string>
     <string name="location">Ort (URL oder Host)</string>
@@ -73,4 +72,6 @@
     <string name="expand_bar_expanded">Offen</string>
     <string name="expand_bar_toggle_close">Schließe Detailsleiste</string>
     <string name="expand_bar_toggle_expand">Öffne Detailsleiste</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
 </resources>
