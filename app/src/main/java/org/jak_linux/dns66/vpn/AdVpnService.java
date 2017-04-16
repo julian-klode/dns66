@@ -109,6 +109,9 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         if (config == null || !config.autoStart) {
             return;
         }
+        if (!context.getSharedPreferences("state", MODE_PRIVATE).getBoolean("isActive", false)) {
+            return;
+        }
 
         if (VpnService.prepare(context) != null) {
             Log.i("BOOT", "VPN preparation not confirmed by user, changing enabled to false");
@@ -129,9 +132,11 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         Log.i(TAG, "onStartCommand");
         switch (intent == null ? Command.START : Command.values()[intent.getIntExtra("COMMAND", Command.START.ordinal())]) {
             case START:
+                getSharedPreferences("state", MODE_PRIVATE).edit().putBoolean("isActive", true).apply();
                 startVpn(intent == null ? null : (PendingIntent) intent.getParcelableExtra("NOTIFICATION_INTENT"));
                 break;
             case STOP:
+                getSharedPreferences("state", MODE_PRIVATE).edit().putBoolean("isActive", false).apply();
                 stopVpn();
                 break;
         }

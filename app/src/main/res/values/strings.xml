@@ -13,7 +13,7 @@
     <string name="action_about">About</string>
     <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
-    <string name="switch_onboot">Automatically start on boot</string>
+    <string name="switch_onboot">Resume on system start-up</string>
     <string name="activity_edit">Edit Item</string>
     <string name="title">Title</string>
     <string name="location">Location (URL or host)</string>
@@ -87,4 +87,5 @@
     <string name="legend_host_deny">Deny access to hosts in this entry</string>
     <string name="do_not_use_dns_server">Off</string>
     <string name="use_dns_server">On</string>
+    <string name="switch_onboot_description">Start DNS66 when the device is turned on if it was active when the device was turned off.</string>
 </resources>
