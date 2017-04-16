@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/name"
         android:layout_toEndOf="@+id/app_icon"
+        android:layout_toStartOf="@+id/checkbox"
         android:ellipsize="end"
         android:maxLines="1" />
 
