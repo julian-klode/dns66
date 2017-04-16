@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/extra_bar"
     android:layout_width="match_parent"
@@ -38,11 +39,71 @@
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:visibility="gone">
 
+
         <TextView
-            android:id="@+id/host_description"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/legend_host_intro"/>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="27dp"
-            android:text="@string/host_description"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:alpha="0.6"
+                android:tint="?android:attr/textColorPrimary"
+                app:srcCompat="@drawable/ic_state_ignore"/>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/legend_host_ignore"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:alpha="0.6"
+                android:tint="?android:attr/textColorPrimary"
+                app:srcCompat="@drawable/ic_state_allow"/>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/legend_host_allow"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:alpha="0.6"
+                android:tint="?android:attr/textColorPrimary"
+                app:srcCompat="@drawable/ic_state_deny"/>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/legend_host_deny"/>
+
+        </LinearLayout>
 
         <Switch
             android:id="@+id/automatic_refresh"

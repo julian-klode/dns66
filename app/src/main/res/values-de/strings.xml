@@ -78,4 +78,8 @@
     <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, in Ruhe ist, und die Verbindung gebührenfrei ist.</string>
     <string name="watchdog">Überwache Verbindung</string>
     <string name="watchdog_description">Prüfe die Verbindung in ansteigenden Abständen und verbinde erneut, falls sie nicht mehr funktioniert.</string>
+    <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen Host, so wird der letzte Angewandt. Die Aktionen sind:</string>
+    <string name="legend_host_ignore">Ignoriere diesen Eintrag</string>
+    <string name="legend_host_deny">Verweigere Zugriff auf Hosts in diesem Eintrag</string>
+    <string name="legend_host_allow">Erlaube Zugriff auf Hosts in diesem Eintrag</string>
 </resources>

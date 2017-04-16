@@ -34,8 +34,9 @@
 
     <ImageView
         android:id="@+id/item_enabled"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:alpha="0.6"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
