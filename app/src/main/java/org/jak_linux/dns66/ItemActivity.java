@@ -22,6 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -34,6 +36,7 @@ public class ItemActivity extends AppCompatActivity {
     private TextInputEditText titleText;
     private Spinner stateSpinner;
     private Switch stateSwitch;
+    private ImageView imageView;
 
     public void performFileSearch() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -74,14 +77,17 @@ public class ItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getIntExtra("STATE_CHOICES", 3) == 2) {
             setContentView(R.layout.activity_item_dns);
+            setTitle(R.string.activity_edit_dns_server);
         } else {
             setContentView(R.layout.activity_item);
+            setTitle(R.string.activity_edit_filter);
         }
 
         titleText = (TextInputEditText) findViewById(R.id.title);
         locationText = (TextInputEditText) findViewById(R.id.location);
         stateSpinner = (Spinner) findViewById(R.id.state_spinner);
         stateSwitch = (Switch) findViewById(R.id.state_switch);
+        imageView = (ImageView) findViewById(R.id.image_view);
 
         if (intent.hasExtra("ITEM_TITLE"))
             titleText.setText(intent.getStringExtra("ITEM_TITLE"));
@@ -91,6 +97,30 @@ public class ItemActivity extends AppCompatActivity {
             stateSpinner.setSelection(intent.getIntExtra("ITEM_STATE", 0));
         if (intent.hasExtra("ITEM_STATE") && stateSwitch != null)
             stateSwitch.setChecked(intent.getIntExtra("ITEM_STATE", 0) % 2 != 0);
+
+        if (stateSpinner != null) {
+            stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position) {
+                        case Configuration.Item.STATE_ALLOW:
+                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_allow));
+                            break;
+                        case Configuration.Item.STATE_DENY:
+                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_deny));
+                            break;
+                        case Configuration.Item.STATE_IGNORE:
+                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_ignore));
+                            break;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
 
         // We have an attachment icon for host files
         if (intent.getIntExtra("STATE_CHOICES", 3) == 3) {

@@ -85,4 +85,6 @@
     <string name="use_dns_server">An</string>
     <string name="do_not_use_dns_server">Aus</string>
     <string name="switch_onboot_description">Starte DNS66 beim Einschalten des Gerätes, falls es beim Ausschalten aktiv war.</string>
+    <string name="activity_edit_dns_server">DNS Server bearbeiten</string>
+    <string name="activity_edit_filter">Filter bearbeiten</string>
 </resources>

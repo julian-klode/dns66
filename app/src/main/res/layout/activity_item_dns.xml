@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.jak_linux.dns66.ItemActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="org.jak_linux.dns66.ItemActivity">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/title_layout"
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/title"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -35,17 +36,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/location_dns"
-            android:inputType="textUri" />
+            android:inputType="textUri"/>
     </android.support.design.widget.TextInputLayout>
 
     <Switch
         android:id="@+id/state_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/location_layout"
         android:layout_marginTop="10dp"
         android:checked="true"
-        android:text="@string/state_dns_enabled" />
+        android:text="@string/state_dns_enabled"/>
 
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/state_switch"
+        android:layout_marginTop="10dp"
+        android:alpha="0.38"
+        android:checked="true"
+        android:tint="?android:attr/textColorPrimary"
+        app:srcCompat="@drawable/ic_dns_black_24dp"/>
 </RelativeLayout>
