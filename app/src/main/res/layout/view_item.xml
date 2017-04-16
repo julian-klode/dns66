@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:paddingBottom="10dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
     android:paddingTop="10dp">
 
     <TextView
@@ -18,8 +19,7 @@
         android:layout_toEndOf="@+id/item_enabled"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textAppearance="?android:attr/textAppearanceListItem"/>
 
     <TextView
         android:id="@+id/item_subtitle"
@@ -28,19 +28,20 @@
         android:layout_below="@id/item_title"
         android:layout_toEndOf="@+id/item_enabled"
         android:ellipsize="end"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceListItemSecondary"
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <ImageView
         android:id="@+id/item_enabled"
         android:layout_width="38dp"
         android:layout_height="38dp"
-        android:alpha="0.6"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="10dp"
-        android:focusable="true"
         android:clickable="true"
+        android:focusable="true"
         android:tint="?android:attr/textColorPrimary"
-        app:srcCompat="@drawable/ic_state_ignore" />
+        app:srcCompat="@drawable/ic_state_ignore"/>
 
 </RelativeLayout>

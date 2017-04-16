@@ -75,6 +75,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         }
 
         void updateState() {
+            iconView.setImageAlpha(255 * 87 / 100);
             if (stateChoices == 2) {
                 switch (item.state) {
                     case Configuration.Item.STATE_IGNORE:
@@ -91,6 +92,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 switch (item.state) {
                     case Configuration.Item.STATE_IGNORE:
                         iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));
+                        iconView.setImageAlpha(255 * 38 / 100);
                         break;
                     case Configuration.Item.STATE_DENY:
                         iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_deny));
