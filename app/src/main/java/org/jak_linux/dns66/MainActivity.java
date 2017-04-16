@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null || config == null) {
             config = FileHelper.loadCurrentSettings(this);
         }
 
