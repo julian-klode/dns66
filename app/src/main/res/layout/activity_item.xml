@@ -64,7 +64,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/state_spinner"
         android:layout_marginTop="10dp"
-        android:alpha="0.38"
+        android:alpha="0.1"
         android:checked="true"
         android:tint="?android:attr/textColorPrimary"
         app:srcCompat="@drawable/ic_state_deny"/>
