@@ -8,7 +8,7 @@
     <string name="dns_tab">DNS</string>
     <string name="action_export">Export settings</string>
     <string name="action_import">Import settings</string>
-    <string name="action_save">Save</string>
+    <string name="action_save">Done</string>
     <string name="load_defaults">Load default settings</string>
     <string name="action_about">About</string>
     <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>

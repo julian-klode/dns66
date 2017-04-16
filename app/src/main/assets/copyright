@@ -32,6 +32,8 @@ Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_apps_black_24dp.xml
        app/src/main/res/drawable/ic_check_box_black_24dp.xml
        app/src/main/res/drawable/ic_check_box_outline_blank_black_24dp.xml
+       app/src/main/res/drawable/ic_delete_forever_white_24dp.xml
+       app/src/main/res/drawable/ic_done_white_24dp.xml
        app/src/main/res/drawable/ic_error_black_24dp.xml
        app/src/main/res/drawable/ic_expand_less_black_24dp.xml
        app/src/main/res/drawable/ic_expand_more_black_24dp.xml
