@@ -74,7 +74,7 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
         });
 
 
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "hosts");
 
         return rootView;
     }

@@ -94,7 +94,7 @@ public class WhitelistFragment extends Fragment {
         appListGenerator.execute();
 
 
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "whitelist");
 
         return rootView;
     }

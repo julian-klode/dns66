@@ -92,7 +92,7 @@ public class StartFragment extends Fragment {
             }
         });
 
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar));
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "start");
 
         return rootView;
     }
