@@ -40,6 +40,8 @@ Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_menu_start*.xml
        app/src/main/res/drawable/ic_refresh.xml
        app/src/main/res/drawable/ic_settings_black_24dp.xml
+       app/src/main/res/drawable/ic_state_deny.xml
+       app/src/main/res/drawable/ic_state_ignore.xml
        app/src/main/res/drawable/ic_verified_user_black_24dp.xml
        app/src/main/res/drawable/ic_warning.xml
 Copyright: 2014-2016 Google
