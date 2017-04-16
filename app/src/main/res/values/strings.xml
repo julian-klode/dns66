@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">DNS66</string>
     <string name="app_shortdesc">Host blocking and custom DNS servers</string>
-    <string name="custom_dns">Enable custom DNS servers</string>
-    <string name="enable_hosts">Enable Domain Filtering</string>
+    <string name="custom_dns">Custom DNS servers</string>
+    <string name="enable_hosts">Filter hosts</string>
     <string name="start_tab">Start</string>
     <string name="hosts_tab">Hosts</string>
     <string name="dns_tab">DNS</string>

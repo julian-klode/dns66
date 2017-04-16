@@ -7,7 +7,7 @@
     <string name="app_shortdesc">Hosts sperren und DNS-Server anpassen</string>
     <string name="custom_dns">Eigene DNS-Server verwenden</string>
     <string name="dns_tab">DNS</string>
-    <string name="enable_hosts">Filtern von Domänen aktivieren</string>
+    <string name="enable_hosts">Hosts filtern</string>
     <string name="hosts_tab">Hosts</string>
     <string name="info_app_license">"Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren Version. "</string>
     <string name="load_defaults">Standardeinstellungen laden</string>
