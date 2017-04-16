@@ -14,10 +14,4 @@
         android:title="@string/action_save"
         android:icon="@drawable/ic_done_white_24dp"
         app:showAsAction="ifRoom|withText" />
-
-    <item
-        android:id="@+id/action_use_file"
-        android:orderInCategory="100"
-        android:title="@string/action_use_file"
-        app:showAsAction="never" />
 </menu>

@@ -10,12 +10,18 @@ package org.jak_linux.dns66;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -23,6 +29,7 @@ public class ItemActivity extends AppCompatActivity {
 
 
     private static final int READ_REQUEST_CODE = 1;
+    private static final String TAG = "ItemActivity";
     private TextInputEditText locationText;
     private TextInputEditText titleText;
     private Spinner stateSpinner;
@@ -84,15 +91,41 @@ public class ItemActivity extends AppCompatActivity {
             stateSpinner.setSelection(intent.getIntExtra("ITEM_STATE", 0));
         if (intent.hasExtra("ITEM_STATE") && stateSwitch != null)
             stateSwitch.setChecked(intent.getIntExtra("ITEM_STATE", 0) % 2 != 0);
+
+        // We have an attachment icon for host files
+        if (intent.getIntExtra("STATE_CHOICES", 3) == 3) {
+            locationText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (event.getRawX() >= locationText.getRight() - locationText.getTotalPaddingRight()) {
+                            performFileSearch();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            // Tint the attachment icon, if any.
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+
+            Drawable[] compoundDrawables = locationText.getCompoundDrawablesRelative();
+            for (Drawable drawable : compoundDrawables) {
+                if (drawable != null) {
+                    drawable.setTint(ContextCompat.getColor(this, typedValue.resourceId));
+                    Log.d(TAG, "onCreate: Setting tint");
+                }
+            }
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.item, menu);
-        if (getIntent().getIntExtra("STATE_CHOICES", 3) == 2) {
-            menu.findItem(R.id.action_use_file).setVisible(false);
-        }
         // We are creating an item
         if (!getIntent().hasExtra("ITEM_LOCATION")) {
             menu.findItem(R.id.action_delete).setVisible(false);
@@ -122,9 +155,6 @@ public class ItemActivity extends AppCompatActivity {
                     intent.putExtra("ITEM_STATE", stateSwitch.isChecked() ? 1 : 0);
                 setResult(RESULT_OK, intent);
                 finish();
-                break;
-            case R.id.action_use_file:
-                performFileSearch();
                 break;
         }
 
