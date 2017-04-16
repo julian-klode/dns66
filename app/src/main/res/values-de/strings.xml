@@ -82,4 +82,6 @@
     <string name="legend_host_ignore">Ignoriere diesen Eintrag</string>
     <string name="legend_host_deny">Verweigere Zugriff auf Hosts in diesem Eintrag</string>
     <string name="legend_host_allow">Erlaube Zugriff auf Hosts in diesem Eintrag</string>
+    <string name="use_dns_server">An</string>
+    <string name="do_not_use_dns_server">Aus</string>
 </resources>

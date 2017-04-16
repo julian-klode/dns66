@@ -85,4 +85,6 @@
     <string name="legend_host_ignore">Ignore this entry</string>
     <string name="legend_host_allow">Allow access to hosts in this entry</string>
     <string name="legend_host_deny">Deny access to hosts in this entry</string>
+    <string name="do_not_use_dns_server">Off</string>
+    <string name="use_dns_server">On</string>
 </resources>
