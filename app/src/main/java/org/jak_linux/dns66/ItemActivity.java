@@ -128,10 +128,17 @@ public class ItemActivity extends AppCompatActivity {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
-                        if (event.getRawX() >= locationText.getRight() - locationText.getTotalPaddingRight()) {
+                        boolean isAttachIcon;
+                        if (locationText.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR)
+                            isAttachIcon = event.getRawX() >= locationText.getRight() - locationText.getTotalPaddingRight();
+                        else
+                            isAttachIcon = event.getRawX() <= locationText.getTotalPaddingLeft() - locationText.getLeft();
+
+                        if (isAttachIcon) {
                             performFileSearch();
                             return true;
                         }
+
                     }
                     return false;
                 }
