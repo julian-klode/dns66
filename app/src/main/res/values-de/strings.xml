@@ -87,4 +87,7 @@
     <string name="switch_onboot_description">Starte DNS66 beim Einschalten des Gerätes, falls es beim Ausschalten aktiv war.</string>
     <string name="activity_edit_dns_server">DNS Server bearbeiten</string>
     <string name="activity_edit_filter">Filter bearbeiten</string>
+    <string name="notification_paused_text">Zum Fortsetzen tippen.</string>
+    <string name="notification_paused_title">DNS66 unterbrochen</string>
+    <string name="notification_action_pause">Unterbrechen</string>
 </resources>

@@ -13,6 +13,7 @@
 package org.jak_linux.dns66.vpn;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -23,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.VpnService;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,6 +38,11 @@ import org.jak_linux.dns66.R;
 import java.lang.ref.WeakReference;
 
 public class AdVpnService extends VpnService implements Handler.Callback {
+
+    public static final int NOTIFICATION_ID_STATE = 10;
+    public static final int REQUEST_CODE_START = 43;
+    public static final int REQUEST_CODE_PAUSE = 42;
+
     /* The handler may only keep a weak reference around, otherwise it leaks */
     private static class MyHandler extends Handler {
         private final WeakReference<Handler.Callback> callback;
@@ -79,7 +86,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         }
     };
     private final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-            .setSmallIcon(R.drawable.ic_menu_info) // TODO: Notification icon
+            .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
             .setPriority(Notification.PRIORITY_MIN);
 
     public static int vpnStatusToTextId(int status) {
@@ -103,6 +110,15 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         }
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        notificationBuilder.addAction(R.drawable.ic_pause_black_24dp, getString(R.string.notification_action_pause),
+                PendingIntent.getService(this, REQUEST_CODE_PAUSE, new Intent(this, AdVpnService.class)
+                                .putExtra("COMMAND", Command.PAUSE.ordinal()), 0));
+    }
+
     public static void checkStartVpnOnBoot(Context context) {
         Log.i("BOOT", "Checking whether to start ad buster on boot");
         Configuration config = FileHelper.loadCurrentSettings(context);
@@ -119,17 +135,23 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
         Log.i("BOOT", "Starting ad buster from boot");
 
+        Intent intent = getStartIntent(context);
+        context.startService(intent);
+    }
+
+    @NonNull
+    private static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, AdVpnService.class);
         intent.putExtra("COMMAND", Command.START.ordinal());
         intent.putExtra("NOTIFICATION_INTENT",
                 PendingIntent.getActivity(context, 0,
                         new Intent(context, MainActivity.class), 0));
-        context.startService(intent);
+        return intent;
     }
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        Log.i(TAG, "onStartCommand");
+        Log.i(TAG, "onStartCommand" + intent);
         switch (intent == null ? Command.START : Command.values()[intent.getIntExtra("COMMAND", Command.START.ordinal())]) {
             case START:
                 getSharedPreferences("state", MODE_PRIVATE).edit().putBoolean("isActive", true).apply();
@@ -139,9 +161,25 @@ public class AdVpnService extends VpnService implements Handler.Callback {
                 getSharedPreferences("state", MODE_PRIVATE).edit().putBoolean("isActive", false).apply();
                 stopVpn();
                 break;
+            case PAUSE:
+                pauseVpn();
+                break;
         }
 
         return Service.START_STICKY;
+    }
+
+    private void pauseVpn() {
+        stopVpn();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID_STATE, new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
+                .setPriority(Notification.PRIORITY_LOW)
+                .setAutoCancel(true)
+                .setContentTitle(getString(R.string.notification_paused_title))
+                .setContentText(getString(R.string.notification_paused_text))
+                .setContentIntent(PendingIntent.getService(this, REQUEST_CODE_START, getStartIntent(this), PendingIntent.FLAG_ONE_SHOT))
+                .build());
     }
 
     private void updateVpnStatus(int status) {
@@ -150,7 +188,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         notificationBuilder.setContentText(getString(notificationTextId));
 
         if (FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
-            startForeground(10, notificationBuilder.build());
+            startForeground(NOTIFICATION_ID_STATE, notificationBuilder.build());
 
         Intent intent = new Intent(VPN_UPDATE_STATUS_INTENT);
         intent.putExtra(VPN_UPDATE_STATUS_EXTRA, status);

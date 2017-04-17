@@ -90,4 +90,7 @@
     <string name="switch_onboot_description">Start DNS66 when the device is turned on if it was active when the device was turned off.</string>
     <string name="activity_edit_dns_server">Edit DNS server</string>
     <string name="activity_edit_filter">Edit Filter</string>
+    <string name="notification_paused_title">DNS66 paused</string>
+    <string name="notification_paused_text">Tap to resume.</string>
+    <string name="notification_action_pause">Pause</string>
 </resources>
