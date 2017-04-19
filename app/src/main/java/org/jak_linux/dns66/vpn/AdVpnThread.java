@@ -404,6 +404,33 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
     }
 
+    void configurePackages(VpnService.Builder builder, Configuration config) {
+        Set<String> allowOnVpn = new HashSet<>();
+        Set<String> doNotAllowOnVpn = new HashSet<>();
+
+        config.whitelist.resolve(vpnService.getPackageManager(), allowOnVpn, doNotAllowOnVpn);
+
+        if (config.whitelist.defaultMode == Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN) {
+            for (String app : allowOnVpn) {
+                try {
+                    Log.d(TAG, "configure: Allowing " + app + " to use the DNS VPN");
+                    builder.addAllowedApplication(app);
+                } catch (Exception e) {
+                    Log.w(TAG, "configure: Cannot disallow", e);
+                }
+            }
+        } else {
+            for (String app : doNotAllowOnVpn) {
+                try {
+                    Log.d(TAG, "configure: Disallowing " + app + " from using the DNS VPN");
+                    builder.addDisallowedApplication(app);
+                } catch (Exception e) {
+                    Log.w(TAG, "configure: Cannot disallow", e);
+                }
+            }
+        }
+    }
+
     private ParcelFileDescriptor configure() throws VpnNetworkException {
         Log.i(TAG, "Configuring" + this);
 
@@ -471,18 +498,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
 
         builder.setBlocking(true);
 
-        // Work around DownloadManager bug on Nougat - It cannot resolve DNS
-        // names while a VPN service is active.
-        for (String app : config.whitelist.items) {
-            try {
-                if (app.equals("org.jak_linux.dns66"))
-                    continue;
-                Log.d(TAG, "configure: Disallowing " + app + " from using the DNS VPN");
-                builder.addDisallowedApplication(app);
-            } catch (Exception e) {
-                Log.w(TAG, "configure: Cannot disallow", e);
-            }
-        }
+        configurePackages(builder, config);
 
         // Create a new interface using the builder and save the parameters.
         ParcelFileDescriptor pfd = builder

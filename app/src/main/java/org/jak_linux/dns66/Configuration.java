@@ -7,12 +7,19 @@
  */
 package org.jak_linux.dns66;
 
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Configuration class. This is serialized as JSON using read() and write() methods.
@@ -38,7 +45,17 @@ public class Configuration {
                 case "showSystemApps":
                     whitelist.showSystemApps = reader.nextBoolean();
                     break;
+                case "defaultMode":
+                    whitelist.defaultMode = reader.nextInt();
+                    break;
                 case "items":
+                    reader.beginArray();
+                    while (reader.hasNext())
+                        whitelist.items.add(reader.nextString());
+
+                    reader.endArray();
+                    break;
+                case "itemsBlacklist":
                     reader.beginArray();
                     while (reader.hasNext())
                         whitelist.items.add(reader.nextString());
@@ -137,9 +154,16 @@ public class Configuration {
     private static void writeWhitelist(JsonWriter writer, Whitelist w) throws IOException {
         writer.beginObject();
         writer.name("showSystemApps").value(w.showSystemApps);
+        writer.name("defaultMode").value(w.defaultMode);
         writer.name("items");
         writer.beginArray();
         for (String string : w.items) {
+            writer.value(string);
+        }
+        writer.endArray();
+        writer.name("itemsOnVpn");
+        writer.beginArray();
+        for (String string : w.itemsOnVpn) {
             writer.value(string);
         }
         writer.endArray();
@@ -264,7 +288,80 @@ public class Configuration {
     }
 
     public static class Whitelist {
+        /**
+         * All apps use the VPN.
+         */
+        public static final int DEFAULT_MODE_ON_VPN = 0;
+        /**
+         * No apps use the VPN.
+         */
+        public static final int DEFAULT_MODE_NOT_ON_VPN = 1;
+        /**
+         * System apps (excluding browsers) do not use the VPN.
+         */
+        public static final int DEFAULT_MODE_INTELLIGENT = 2;
+
         public boolean showSystemApps;
+        /**
+         * The default mode to put apps in, that are not listed in the lists.
+         */
+        public int defaultMode = DEFAULT_MODE_ON_VPN;
+        /**
+         * Apps that should not be allowed on the VPN
+         */
         public List<String> items = new ArrayList<>();
+        /**
+         * Apps that should be on the VPN
+         */
+        public List<String> itemsOnVpn = new ArrayList<>();
+
+        /**
+         * Categorizes all packages in the system into "on vpn" or
+         * "not on vpn".
+         *
+         * @param pm       A {@link PackageManager}
+         * @param onVpn    names of packages to use the VPN
+         * @param notOnVpn Names of packages not to use the VPN
+         */
+        public void resolve(PackageManager pm, Set<String> onVpn, Set<String> notOnVpn) {
+            Set<String> webBrowserPackageNames = new HashSet<String>();
+            List<ResolveInfo> resolveInfoList = pm.queryIntentActivities(newBrowserIntent(), 0);
+            for (ResolveInfo resolveInfo : resolveInfoList) {
+                webBrowserPackageNames.add(resolveInfo.activityInfo.packageName);
+            }
+
+            for (ApplicationInfo applicationInfo : pm.getInstalledApplications(0)) {
+                // We need to always keep ourselves using the VPN, otherwise our
+                // watchdog does not work.
+                if (applicationInfo.packageName.equals(BuildConfig.APPLICATION_ID)) {
+                    onVpn.add(applicationInfo.packageName);
+                } else if (itemsOnVpn.contains(applicationInfo.packageName)) {
+                    onVpn.add(applicationInfo.packageName);
+                } else if (items.contains(applicationInfo.packageName)) {
+                    notOnVpn.add(applicationInfo.packageName);
+                } else if (defaultMode == DEFAULT_MODE_ON_VPN) {
+                    onVpn.add(applicationInfo.packageName);
+                } else if (defaultMode == DEFAULT_MODE_NOT_ON_VPN) {
+                    notOnVpn.add(applicationInfo.packageName);
+                } else if (defaultMode == DEFAULT_MODE_INTELLIGENT) {
+                    if (webBrowserPackageNames.contains(applicationInfo.packageName))
+                        onVpn.add(applicationInfo.packageName);
+                    else if ((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+                        notOnVpn.add(applicationInfo.packageName);
+                    else
+                        onVpn.add(applicationInfo.packageName);
+                }
+            }
+        }
+
+        /**
+         * Returns an intent for opening a website, used for finding
+         * web browsers. Extracted method for mocking.
+         */
+        Intent newBrowserIntent() {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://isabrowser.dns66.jak-linux.org/"));
+            return intent;
+        }
     }
 }

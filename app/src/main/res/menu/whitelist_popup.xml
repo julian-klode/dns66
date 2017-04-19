@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/whitelist_default_on_vpn"
+        android:orderInCategory="100"
+        android:title="@string/whitelist_on_vpn" />
+    <item
+        android:id="@+id/whitelist_default_not_on_vpn"
+        android:orderInCategory="100"
+        android:title="@string/whitelist_not_on_vpn" />
+    <item
+        android:id="@+id/whitelist_default_intelligent"
+        android:orderInCategory="100"
+        android:title="@string/whitelist_intelligent" />
+</menu>

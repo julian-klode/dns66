@@ -87,9 +87,12 @@
   },
   "whitelist": {
     "showSystemApps": false,
+    "defaultMode": 2,
     "items": [
-      "org.jak_linux.dns66",
       "com.android.vending"
+    ],
+    "itemsBlacklist": [
+
     ]
   }
 }

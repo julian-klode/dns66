@@ -90,4 +90,12 @@
     <string name="notification_paused_text">Zum Fortsetzen tippen.</string>
     <string name="notification_paused_title">DNS66 unterbrochen</string>
     <string name="notification_action_pause">Unterbrechen</string>
+    <string name="whitelist_on_vpn">Keine Apps</string>
+    <string name="whitelist_not_on_vpn">Alle Apps</string>
+    <string name="whitelist_intelligent">System Apps (außer Browser)</string>
+    <string-array name="whitelist_defaults">
+        <item>Keine Apps umgehen standardmäßig</item>
+        <item>Alle Apps umgehen standardmäßig</item>
+        <item>System Apps umgehen standardmäßig</item>
+    </string-array>
 </resources>
