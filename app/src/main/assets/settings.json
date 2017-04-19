@@ -4,6 +4,7 @@
   "showNotification": true,
   "nightMode": false,
   "watchDog": true,
+  "ipV6Support": true,
   "dnsServers": {
     "enabled": false,
     "items": [

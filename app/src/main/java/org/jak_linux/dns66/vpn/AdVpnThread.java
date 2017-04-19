@@ -64,6 +64,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
+    /* Upstream DNS servers, indexed by our IP */
+    final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
     private final VpnService vpnService;
     private final Notify notify;
     /* Data to be written to the device */
@@ -78,8 +80,6 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
      * After how many iterations we should clear pcap4js packetfactory property cache
      */
     private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
-    /* Upstream DNS servers, indexed by our IP */
-    private final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -379,14 +379,13 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         deviceWrites.add(ipOutPacket.getRawData());
     }
 
-    private void newDNSServer(VpnService.Builder builder, String format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
+    void newDNSServer(VpnService.Builder builder, String format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
         // Optimally we'd allow either one, but the forwarder checks if upstream size is empty, so
         // we really need to acquire both an ipv6 and an ipv4 subnet.
-        if (ipv6Template == null || format == null) {
-            Log.i(TAG, "configure: Adding DNS Server " + addr);
-            builder.addDnsServer(addr);
-            vpnWatchDog.setTarget(addr);
-            builder.addRoute(addr, addr.getAddress().length * 8);
+        if (addr instanceof Inet6Address && ipv6Template == null) {
+            Log.i(TAG, "newDNSServer: Ignoring DNS server " + addr);
+        } else if (addr instanceof Inet4Address && format == null) {
+            Log.i(TAG, "newDNSServer: Ignoring DNS server " + addr);
         } else if (addr instanceof Inet4Address) {
             upstreamDnsServers.add(addr);
             String alias = String.format(format, upstreamDnsServers.size() + 1);
@@ -434,6 +433,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     private ParcelFileDescriptor configure() throws VpnNetworkException {
         Log.i(TAG, "Configuring" + this);
 
+        Configuration config = FileHelper.loadCurrentSettings(vpnService);
+
         // Get the current DNS servers before starting the VPN
         Set<InetAddress> dnsServers = getDnsServers(vpnService);
         Log.i(TAG, "Got DNS servers = " + dnsServers);
@@ -460,10 +461,18 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // documentation purposes. We should do this differently. Anyone have a free /120 subnet
         // for us to use?
         byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        try {
-            builder.addAddress(Inet6Address.getByAddress(ipv6Template), 120);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (hasIpV6Servers(config, dnsServers)) {
+            try {
+                InetAddress addr = Inet6Address.getByAddress(ipv6Template);
+                Log.d(TAG, "configure: Adding IPv6 address" + addr);
+                builder.addAddress(addr, 120);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                ipv6Template = null;
+            }
+        } else {
             ipv6Template = null;
         }
 
@@ -472,10 +481,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             builder.addAddress("192.168.50.1", 24);
         }
 
-        upstreamDnsServers.clear();
-
         // Add configured DNS servers
-        Configuration config = FileHelper.loadCurrentSettings(vpnService);
+        upstreamDnsServers.clear();
         if (config.dnsServers.enabled) {
             for (Configuration.Item item : config.dnsServers.items) {
                 if (item.state == item.STATE_ALLOW) {
@@ -508,6 +515,24 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
                                 PendingIntent.FLAG_CANCEL_CURRENT)).establish();
         Log.i(TAG, "Configured");
         return pfd;
+    }
+
+    boolean hasIpV6Servers(Configuration config, Set<InetAddress> dnsServers) {
+        if (!config.ipV6Support)
+            return false;
+
+        if (config.dnsServers.enabled) {
+            for (Configuration.Item item : config.dnsServers.items) {
+                if (item.state == Configuration.Item.STATE_ALLOW && item.location.contains(":"))
+                    return true;
+            }
+        }
+        for (InetAddress inetAddress : dnsServers) {
+            if (inetAddress instanceof Inet6Address)
+                return true;
+        }
+
+        return false;
     }
 
     public interface Notify {

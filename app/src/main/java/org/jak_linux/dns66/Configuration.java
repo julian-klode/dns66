@@ -35,6 +35,7 @@ public class Configuration {
     public boolean showNotification = true;
     public boolean nightMode;
     public boolean watchDog = true;
+    public boolean ipV6Support = true;
 
     private static Whitelist readWhitelist(JsonReader reader) throws IOException {
         Whitelist whitelist = new Whitelist();
@@ -210,6 +211,7 @@ public class Configuration {
         writer.name("showNotification").value(showNotification);
         writer.name("nightMode").value(nightMode);
         writer.name("watchDog").value(watchDog);
+        writer.name("ipV6Support").value(ipV6Support);
         writer.name("hosts");
         writeHosts(writer, hosts);
         writer.name("dnsServers");
@@ -239,6 +241,9 @@ public class Configuration {
                     break;
                 case "watchDog":
                     watchDog = reader.nextBoolean();
+                    break;
+                case "ipV6Support":
+                    ipV6Support = reader.nextBoolean();
                     break;
                 case "hosts":
                     hosts = readHosts(reader);

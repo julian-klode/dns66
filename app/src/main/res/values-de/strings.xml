@@ -98,4 +98,6 @@
         <item>Alle Apps umgehen standardmäßig</item>
         <item>System Apps umgehen standardmäßig</item>
     </string-array>
+    <string name="ipv6_support">IPv6 Unterstützung</string>
+    <string name="ipv6_support_description">Deaktiviere dies falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
 </resources>

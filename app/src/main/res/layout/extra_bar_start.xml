@@ -69,5 +69,21 @@
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
             android:text="@string/watchdog_description"/>
+
+        <Switch
+            android:id="@+id/ipv6_support"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/ipv6_support"/>
+
+        <TextView
+            android:id="@+id/ipv6_support_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/ipv6_support_description"/>
     </LinearLayout>
 </LinearLayout>

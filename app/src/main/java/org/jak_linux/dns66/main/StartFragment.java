@@ -92,6 +92,16 @@ public class StartFragment extends Fragment {
             }
         });
 
+        Switch ipV6Support = (Switch) rootView.findViewById(R.id.ipv6_support);
+        ipV6Support.setChecked(MainActivity.config.ipV6Support);
+        ipV6Support.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.ipV6Support = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "start");
 
         return rootView;
