@@ -59,6 +59,7 @@
     <string name="state_dns_enabled">Enabled</string>
     <string name="host_update_error_item">Error %1$d: %2$s</string>
     <string name="update_incomplete">Update incomplete</string>
+    <string name="update_incomplete_description">Some host files could not be downloaded. If files were previously downloaded, old versions will continue to be used.</string>
     <string name="updating_hostfiles">Updating hostfiles</string>
     <string name="action_use_file">Use file</string>
     <string name="persistable_uri_permission_failed">Cannot use the requested file: Not permitted to persistently use requested file</string>
