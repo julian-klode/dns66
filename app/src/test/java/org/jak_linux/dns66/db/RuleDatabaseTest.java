@@ -164,7 +164,7 @@ public class RuleDatabaseTest {
         Context context = mock(Context.class);
         mockStatic(FileHelper.class);
         when(FileHelper.loadCurrentSettings(context)).thenReturn(configuration);
-        when(FileHelper.openItemFile(context, item)).thenReturn(null);
+        when(FileHelper.openItemFile(context, item)).thenCallRealMethod();
         ruleDatabase.initialize(context);
 
         assertTrue(ruleDatabase.isBlocked("ahost.com"));

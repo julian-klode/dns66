@@ -155,7 +155,7 @@ public class RuleDatabase {
         if (item.state == Configuration.Item.STATE_IGNORE)
             return;
 
-        InputStreamReader reader;
+        Reader reader;
         try {
             reader = FileHelper.openItemFile(context, item);
         } catch (FileNotFoundException e) {
@@ -163,12 +163,7 @@ public class RuleDatabase {
             return;
         }
 
-        if (reader == null) {
-            addHost(item, item.location);
-            return;
-        } else {
-            loadReader(item, reader);
-        }
+        loadReader(item, reader);
     }
 
     /**

@@ -20,6 +20,7 @@ import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -28,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.*;
@@ -101,7 +104,9 @@ public class FileHelperTest {
         Configuration.Item item = new Configuration.Item();
         // Test encoding fails
         item.location = "hexample.com";
-        assertNull(FileHelper.openItemFile(mockContext, item));
+        Reader reader = FileHelper.openItemFile(mockContext, item);
+        assertNotNull(reader);
+        assertEquals(item.location, new BufferedReader(reader).readLine());
     }
 
     @Test

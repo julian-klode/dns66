@@ -3,6 +3,7 @@ package org.jak_linux.dns66;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
@@ -22,6 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -128,7 +131,8 @@ public final class FileHelper {
         }
     }
 
-    public static InputStreamReader openItemFile(Context context, Configuration.Item item) throws FileNotFoundException {
+    @NonNull
+    public static Reader openItemFile(Context context, Configuration.Item item) throws FileNotFoundException {
         if (item.location.startsWith("content://")) {
             try {
                 return new InputStreamReader(context.getContentResolver().openInputStream(Uri.parse(item.location)));
@@ -139,7 +143,7 @@ public final class FileHelper {
         } else {
             File file = getItemFile(context, item);
             if (file == null)
-                return  null;
+                return new StringReader(item.location);
             if (item.isDownloadable())
                 return new InputStreamReader(new SingleWriterMultipleReaderFile(getItemFile(context, item)).openRead());
             return new FileReader(getItemFile(context, item));

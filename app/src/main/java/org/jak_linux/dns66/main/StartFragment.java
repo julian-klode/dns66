@@ -37,6 +37,7 @@ import org.jak_linux.dns66.vpn.Command;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -193,7 +194,7 @@ public class StartFragment extends Fragment {
         for (Configuration.Item item : MainActivity.config.hosts.items) {
             if (item.state != Configuration.Item.STATE_IGNORE) {
                 try {
-                    InputStreamReader reader = FileHelper.openItemFile(getContext(), item);
+                    Reader reader = FileHelper.openItemFile(getContext(), item);
                     if (reader == null)
                         continue;
 
