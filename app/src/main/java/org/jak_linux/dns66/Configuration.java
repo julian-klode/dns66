@@ -12,10 +12,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.util.JsonReader;
-import android.util.JsonWriter;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,245 +29,34 @@ import java.util.Set;
  * @author Julian Andres Klode
  */
 public class Configuration {
-    private static final int VERSION = 1;
+    public static final Gson GSON = new Gson();
+    static final int VERSION = 1;
+    public int version = 1;
     public boolean autoStart;
-    public Hosts hosts;
-    public DnsServers dnsServers;
-    public Whitelist whitelist;
+    public Hosts hosts = new Hosts();
+    public DnsServers dnsServers = new DnsServers();
+    public Whitelist whitelist = new Whitelist();
     public boolean showNotification = true;
     public boolean nightMode;
     public boolean watchDog = true;
     public boolean ipV6Support = true;
 
-    private static Whitelist readWhitelist(JsonReader reader) throws IOException {
-        Whitelist whitelist = new Whitelist();
-        reader.beginObject();
+    public static Configuration read(Reader reader) throws IOException {
+        Configuration config = GSON.fromJson(reader, Configuration.class);
 
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "showSystemApps":
-                    whitelist.showSystemApps = reader.nextBoolean();
-                    break;
-                case "defaultMode":
-                    whitelist.defaultMode = reader.nextInt();
-                    break;
-                case "items":
-                    reader.beginArray();
-                    while (reader.hasNext())
-                        whitelist.items.add(reader.nextString());
-
-                    reader.endArray();
-                    break;
-                case "itemsOnVpn":
-                    reader.beginArray();
-                    while (reader.hasNext())
-                        whitelist.itemsOnVpn.add(reader.nextString());
-
-                    reader.endArray();
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
+        if (config.whitelist.items.isEmpty()) {
+            config.whitelist = new Whitelist();
+            config.whitelist.items.add("com.android.vending");
         }
-        reader.endObject();
 
-        return whitelist;
+        if (config.version > VERSION)
+            throw new IOException("Unhandled file format version");
+
+        return config;
     }
 
-    private static Hosts readHosts(JsonReader reader) throws IOException {
-        Hosts hosts = new Hosts();
-        reader.beginObject();
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "enabled":
-                    hosts.enabled = reader.nextBoolean();
-                    break;
-                case "automaticRefresh":
-                    hosts.automaticRefresh = reader.nextBoolean();
-                    break;
-                case "items":
-                    hosts.items = readItemList(reader);
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
-        }
-        reader.endObject();
-
-        return hosts;
-    }
-
-    private static DnsServers readDnsServers(JsonReader reader) throws IOException {
-        DnsServers servers = new DnsServers();
-        reader.beginObject();
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "enabled":
-                    servers.enabled = reader.nextBoolean();
-                    break;
-                case "items":
-                    servers.items = readItemList(reader);
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
-        }
-        reader.endObject();
-
-        return servers;
-    }
-
-    private static List<Item> readItemList(JsonReader reader) throws IOException {
-        reader.beginArray();
-        List<Item> list = new ArrayList<>();
-        while (reader.hasNext())
-            list.add(readItem(reader));
-
-        reader.endArray();
-        return list;
-    }
-
-    private static Item readItem(JsonReader reader) throws IOException {
-        Item item = new Item();
-        reader.beginObject();
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "title":
-                    item.title = reader.nextString();
-                    break;
-                case "location":
-                    item.location = reader.nextString();
-                    break;
-                case "state":
-                    item.state = reader.nextInt();
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
-        }
-        reader.endObject();
-
-        return item;
-    }
-
-    private static void writeWhitelist(JsonWriter writer, Whitelist w) throws IOException {
-        writer.beginObject();
-        writer.name("showSystemApps").value(w.showSystemApps);
-        writer.name("defaultMode").value(w.defaultMode);
-        writer.name("items");
-        writer.beginArray();
-        for (String string : w.items) {
-            writer.value(string);
-        }
-        writer.endArray();
-        writer.name("itemsOnVpn");
-        writer.beginArray();
-        for (String string : w.itemsOnVpn) {
-            writer.value(string);
-        }
-        writer.endArray();
-        writer.endObject();
-    }
-
-    private static void writeHosts(JsonWriter writer, Hosts h) throws IOException {
-        writer.beginObject();
-        writer.name("enabled").value(h.enabled);
-        writer.name("automaticRefresh").value(h.automaticRefresh);
-        writer.name("items");
-        writeItemList(writer, h.items);
-        writer.endObject();
-    }
-
-    private static void writeDnsServers(JsonWriter writer, DnsServers s) throws IOException {
-        writer.beginObject();
-        writer.name("enabled").value(s.enabled);
-        writer.name("items");
-        writeItemList(writer, s.items);
-        writer.endObject();
-    }
-
-    private static void writeItemList(JsonWriter writer, List<Item> items) throws IOException {
-        writer.beginArray();
-        for (Item i : items) {
-            writeItem(writer, i);
-        }
-        writer.endArray();
-    }
-
-    private static void writeItem(JsonWriter writer, Item i) throws IOException {
-        writer.beginObject();
-        writer.name("title").value(i.title);
-        writer.name("location").value(i.location);
-        writer.name("state").value(i.state);
-        writer.endObject();
-    }
-
-    public void write(JsonWriter writer) throws IOException {
-        writer.beginObject();
-        writer.name("version").value(VERSION);
-        writer.name("autoStart").value(autoStart);
-        writer.name("showNotification").value(showNotification);
-        writer.name("nightMode").value(nightMode);
-        writer.name("watchDog").value(watchDog);
-        writer.name("ipV6Support").value(ipV6Support);
-        writer.name("hosts");
-        writeHosts(writer, hosts);
-        writer.name("dnsServers");
-        writeDnsServers(writer, dnsServers);
-        writer.name("whitelist");
-        writeWhitelist(writer, whitelist);
-        writer.endObject();
-    }
-
-    public void read(JsonReader reader) throws IOException {
-        reader.beginObject();
-        while (reader.hasNext()) {
-            switch (reader.nextName()) {
-                case "version":
-                    if (reader.nextInt() > VERSION) {
-                        throw new RuntimeException("Incompatible format");
-                    }
-                    break;
-                case "autoStart":
-                    autoStart = reader.nextBoolean();
-                    break;
-                case "showNotification":
-                    showNotification = reader.nextBoolean();
-                    break;
-                case "nightMode":
-                    nightMode = reader.nextBoolean();
-                    break;
-                case "watchDog":
-                    watchDog = reader.nextBoolean();
-                    break;
-                case "ipV6Support":
-                    ipV6Support = reader.nextBoolean();
-                    break;
-                case "hosts":
-                    hosts = readHosts(reader);
-                    break;
-                case "dnsServers":
-                    dnsServers = readDnsServers(reader);
-                    break;
-                case "whitelist":
-                    whitelist = readWhitelist(reader);
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
-        }
-        reader.endObject();
-
-        if (whitelist == null) {
-            whitelist = new Whitelist();
-            whitelist.items.add("org.jak_linux.dns66");
-            whitelist.items.add("com.android.vending");
-        }
+    public void write(Writer writer) throws IOException {
+        GSON.toJson(this, writer);
     }
 
     public static class Item {

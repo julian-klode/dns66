@@ -6,7 +6,9 @@ Comment:
  expressions matching libraries listed in the gradle file instead.
 
 Libraries: com.android.*
+           com.google.*
 Copyright: 2016 The Android Open Source Project
+           2008 Google Inc.
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

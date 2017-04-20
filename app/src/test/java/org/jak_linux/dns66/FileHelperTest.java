@@ -7,7 +7,6 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructPollfd;
-import android.util.JsonReader;
 import android.util.Log;
 
 import org.junit.Before;
@@ -28,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.*;
@@ -138,15 +138,15 @@ public class FileHelperTest {
     }
 
     @Test
-    @PrepareForTest({FileHelper.class})
+    @PrepareForTest({FileHelper.class, Configuration.class})
     public void testLoadDefaultSettings() throws Exception {
         InputStream mockInStream = mock(InputStream.class);
         Configuration mockConfig = mock(Configuration.class);
         when(mockAssets.open(anyString())).thenReturn(mockInStream);
         when(mockContext.getAssets()).thenReturn(mockAssets);
 
-        whenNew(Configuration.class).withNoArguments().thenReturn(mockConfig);
-        doNothing().when(mockConfig, "read", any(JsonReader.class));
+        mockStatic(Configuration.class);
+        doReturn(mockConfig).when(Configuration.class, "read", any(Reader.class));
 
         assertSame(mockConfig, FileHelper.loadDefaultSettings(mockContext));
 

@@ -2,13 +2,10 @@ package org.jak_linux.dns66;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructPollfd;
-import android.util.JsonReader;
-import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 /**
  * Utility class for working with files.
@@ -65,9 +63,8 @@ public final class FileHelper {
             stream = context.getAssets().open(name);
         else
             stream = FileHelper.openRead(context, name);
-        Configuration config = new Configuration();
-        config.read(new JsonReader(new InputStreamReader(stream)));
-        return config;
+
+        return Configuration.read(new InputStreamReader(stream));
     }
 
     public static Configuration loadCurrentSettings(Context context) {
@@ -100,7 +97,7 @@ public final class FileHelper {
     public static void writeSettings(Context context, Configuration config) {
         Log.d("FileHelper", "writeSettings: Writing the settings file");
         try {
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(FileHelper.openWrite(context, "settings.json")));
+            Writer writer = new OutputStreamWriter(FileHelper.openWrite(context, "settings.json"));
             config.write(writer);
             writer.close();
         } catch (IOException e) {
@@ -139,7 +136,7 @@ public final class FileHelper {
         } else {
             File file = getItemFile(context, item);
             if (file == null)
-                return  null;
+                return null;
             if (item.isDownloadable())
                 return new InputStreamReader(new SingleWriterMultipleReaderFile(getItemFile(context, item)).openRead());
             return new FileReader(getItemFile(context, item));

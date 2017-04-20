@@ -26,8 +26,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.JsonReader;
-import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +44,7 @@ import org.jak_linux.dns66.vpn.AdVpnService;
 
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -251,9 +250,7 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedfile = data.getData(); //The uri with the location of the file
 
             try {
-                Configuration newConfig = new Configuration();
-                newConfig.read(new JsonReader(new InputStreamReader(getContentResolver().openInputStream(selectedfile))));
-                config = newConfig;
+                config = Configuration.read(new InputStreamReader(getContentResolver().openInputStream(selectedfile)));
             } catch (Exception e) {
                 Toast.makeText(this, "Cannot read file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -262,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (requestCode == REQUEST_FILE_STORE && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData(); //The uri with the location of the file
-            JsonWriter writer = null;
+            Writer writer = null;
             try {
-                writer = new JsonWriter(new OutputStreamWriter(getContentResolver().openOutputStream(selectedfile)));
+                writer = new OutputStreamWriter(getContentResolver().openOutputStream(selectedfile));
                 config.write(writer);
                 writer.close();
             } catch (Exception e) {

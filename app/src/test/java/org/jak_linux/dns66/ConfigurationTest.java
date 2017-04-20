@@ -7,8 +7,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.annotation.NonNull;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,12 +22,16 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by jak on 07/04/17.
  */
 public class ConfigurationTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private Configuration.Item newItemForLocation(String location) {
         Configuration.Item item = new Configuration.Item();
@@ -134,6 +144,44 @@ public class ConfigurationTest {
         wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN;
         wl.resolve(pm, onVpn, notOnVpn);
         assertTrue(onVpn.contains("data-app"));
+    }
+
+    @Test
+    public void testRead() throws Exception {
+        Configuration config = Configuration.read(new StringReader("{}"));
+
+        assertNotNull(config.hosts);
+        assertNotNull(config.hosts.items);
+        assertNotNull(config.whitelist);
+        assertNotNull(config.whitelist.items);
+        assertNotNull(config.whitelist.itemsOnVpn);
+        assertNotNull(config.dnsServers);
+        assertNotNull(config.dnsServers.items);
+        assertTrue(config.whitelist.items.contains("com.android.vending"));
+        assertTrue(config.ipV6Support);
+        assertTrue(config.watchDog);
+        assertFalse(config.nightMode);
+        assertTrue(config.showNotification);
+        assertFalse(config.autoStart);
+    }
+
+    @Test
+    public void testReadNewer() throws Exception {
+        thrown.expect(IOException.class);
+
+        thrown.expectMessage(CoreMatchers.containsString("version"));
+        Configuration.read(new StringReader("{version: " + (Configuration.VERSION + 1) + "}"));
+    }
+
+    @Test
+    public void testReadWrite() throws Exception {
+        Configuration config = Configuration.read(new StringReader("{}"));
+        StringWriter writer = new StringWriter();
+        config.write(writer);
+        Configuration config2 = Configuration.read(new StringReader(writer.toString()));
+        StringWriter writer2 = new StringWriter();
+        config2.write(writer2);
+        assertEquals(writer.toString(), writer2.toString());
     }
 
     @NonNull
