@@ -56,10 +56,10 @@ public class Configuration {
 
                     reader.endArray();
                     break;
-                case "itemsBlacklist":
+                case "itemsOnVpn":
                     reader.beginArray();
                     while (reader.hasNext())
-                        whitelist.items.add(reader.nextString());
+                        whitelist.itemsOnVpn.add(reader.nextString());
 
                     reader.endArray();
                     break;
