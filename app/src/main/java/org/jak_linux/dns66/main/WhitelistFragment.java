@@ -211,9 +211,11 @@ public class WhitelistFragment extends Fragment {
                     if (checked) {
                         MainActivity.config.whitelist.items.add(entry.getPackageName());
                         MainActivity.config.whitelist.itemsOnVpn.remove(entry.getPackageName());
+                        notOnVpn.add(entry.getPackageName());
                     } else {
                         MainActivity.config.whitelist.items.remove(entry.getPackageName());
                         MainActivity.config.whitelist.itemsOnVpn.add(entry.getPackageName());
+                        notOnVpn.remove(entry.getPackageName());
                     }
                     FileHelper.writeSettings(getActivity(), MainActivity.config);
                 }
