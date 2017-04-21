@@ -8,8 +8,8 @@ android {
         applicationId "org.jak_linux.dns66"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 11
-        versionName "0.5.0 (RC1)"
+        versionCode 12
+        versionName "0.5.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
