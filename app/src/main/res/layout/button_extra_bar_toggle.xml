@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+           xmlns:app="http://schemas.android.com/apk/res-auto"
+           android:layout_width="48dp"
+           android:layout_height="48dp"
+           android:alpha="0.4"
+           android:background="?android:attr/selectableItemBackground"
+           android:clickable="true"
+           android:contentDescription="@string/expand_bar_toggle_expand"
+           android:focusable="true"
+           android:paddingBottom="6dp"
+           android:paddingStart="@dimen/activity_horizontal_margin_half"
+           android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+           android:paddingEnd="@dimen/activity_horizontal_margin_half"
+           android:paddingTop="10dp"
+           android:tint="?android:attr/textColorPrimary"
+           app:srcCompat="@drawable/ic_expand_more_black_24dp"/>

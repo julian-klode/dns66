@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_shortdesc">Блокирование узлов и настраиваемых ДНС-серверов</string>
+    <string name="custom_dns">Включить настраиваемые ДНС-сервера</string>
+    <string name="enable_hosts">Включить Фильтрация Доменов</string>
+    <string name="start_tab">Старт</string>
+    <string name="do_not_use_dns_server">Выкл.</string>
+    <string name="use_dns_server">Вкл.</string>
+    <string name="missing_hosts_files_message">Некоторые из ваших настроенных (не игнорируемых) файлов hosts отсутствуют. \n\nИспользуйте команду «Обновить» для загрузки файлов hosts. \n\nВы все еще хотите продолжить?</string>
+    <string name="update_incomplete">Обновление не завершено</string>
+    <string name="expand_bar_toggle_close">Закрыть панель детали</string>
+    <string name="expand_bar_expanded">Открыта</string>
+    <string name="expand_bar_closed">Закрыта</string>
+    <string name="action_stop">Остановить</string>
+    <string name="action_start">Запустить</string>
+    <string name="activity_edit_filter">Изменить Фильтр</string>
+    <string name="activity_edit_dns_server">Изменить ДНС сервер</string>
+    <string name="persistable_uri_permission_failed">Невозможно использовать запрошенный файл: Не разрешено настойчиво использовать запрошенный файл</string>
+    <string name="updating_hostfiles">Обновление хост файлов</string>
+    <string name="updating_n_host_files">Обновление %1$d хост файлов</string>
+    <string name="hosts_tab">Хосты</string>
+    <string name="host_update_error_item">Ошибка %1$d: %2$s</string>
+    <string name="could_not_update_all_hosts">Не удалось обновить все хост файлы</string>
+    <string name="file_not_found">Файл не найден</string>
+    <string name="unknown_error_s">Непредвиденная ошибка: %1$s</string>
+    <string name="requested_timed_out">Время запроса истекло</string>
+    <string name="action_delete">Удалить</string>
+    <string name="permission_denied">Доступ запрещен</string>
+    <string name="invalid_url_s">Неверная ссылка: %1$s</string>
+    <string name="night_mode">Темная Тема</string>
+    <string name="watchdog">Смотреть подключение</string>
+    <string name="watchdog_description">Проверяйте подключение в более длинные интервалы и переподключитесь, если оно перестало работать</string>
+    <string name="switch_onboot_description">Запустить DNS66, когда устройство включается, если было активно, перед выключением.</string>
+    <string name="automatic_refresh">Ежедневное Обновление</string>
+    <string name="automatic_refresh_description">Ежедневные обновления происходит при зарядке, в режиме ожидания.</string>
+    <string name="legend_host_ignore">Игнорировать эту запись</string>
+    <string name="legend_host_allow">Разрешить доступ к Хостам этой записи</string>
+    <string name="expand_bar_toggle_expand">Открыть панель детали</string>
+    <string name="dns_tab">ДНС</string>
+    <string name="legend_host_deny">Запретить доступ к хостам в этой записи</string>
+    <string name="legend_host_intro">Записи обрабатываются по очереди. Если несколько записей содержат один и тот же узел, применяется последняя запись. Действия:</string>
+    <string name="action_export">Экспортировать настройки</string>
+    <string name="action_import">Импортировать настройки</string>
+    <string name="action_save">Сохранить</string>
+    <string name="load_defaults">Загрузить настройки по умолчанию</string>
+    <string name="action_about">О Приложении</string>
+    <string name="info_app_license">Эта программа является свободным программным обеспечением: вы можете распространять и/или модифицировать ее согласно условиям стандартной общественной лицензии GNU, опубликованной Фондом свободного программного обеспечения, либо версии 3 лицензии, либо (по вашему выбору) любой более поздней версии.</string>
+    <string name="switch_onboot">Автоматический запуск при загрузке</string>
+    <string name="activity_edit">Изменить элемент</string>
+    <string name="title">Заголовок</string>
+    <string name="location">Местоположение (URL-адрес или хост)</string>
+    <string name="action">Действие</string>
+    <string name="cannot_restore_previous_config">Не удалось восстановить предыдущую конфигурацию: %s</string>
+    <string name="cannot_read_config">Не удается прочитать конфигурацию: %s</string>
+    <string name="cannot_load_default_config">Не удается прочитать настройки по умолчанию: %s - Этого не должно произойти</string>
+    <string name="cannot_write_config">Не удается записать конфигурацию: %s</string>
+    <string name="action_refresh">Обновить хост файл</string>
+    <string name="notification_starting">Запуск</string>
+    <string name="notification_running">Запущен</string>
+    <string name="notification_stopping">Остановка</string>
+    <string name="notification_waiting_for_net">Ожидание сети</string>
+    <string name="notification_reconnecting">Переподключение</string>
+    <string name="notification_reconnecting_error">Ошибка переподключения</string>
+    <string name="notification_stopped">Остановлен</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Отклонять</item>
+        <item>Принять</item>
+        <item>Игнорировать</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Русский Перевод: Николай Бузовский</string>
+    <string name="app_version_info">Версия: %s</string>
+    <string name="missing_hosts_files_title">Отсутствующие файлы hosts</string>
+    <string name="button_no">Нет</string>
+    <string name="button_yes">Да</string>
+    <string name="could_not_configure_vpn_service">Не удалось настроить службу VPN - Убедитесь, что вы всегда используете VPN-сервис, например, WiFi Assistant, и отключите его</string>
+    <string name="dns_description">Включить предпочитаемые ДНС-сервера</string>
+    <string name="host_description">Красные правила блокируется, зеленые правила разрешены</string>
+    <string name="disable_notification_title">Отключить Уведомления</string>
+    <string name="disable_notification_message">Отключение уведомления может привести к тому, что Блокировщик Рекламы будет остановлен под давлением памяти. \n\nВы хотите отключить уведомление?</string>
+    <string name="disable_notification_ack">Отключить Уведомления</string>
+    <string name="disable_notification_nak">Прервать</string>
+    <string name="whitelist_description">Обход DNS66 для отмеченных приложений</string>
+    <string name="switch_show_system_apps">Паказать системные приложения</string>
+    <string name="location_dns">IP адрес ДНС сервера (IPv4 или IPv6)</string>
+    <string name="state_dns_enabled">Включен</string>
+    <string name="whitelist_tab">Приложения</string>
+    <string name="show_notification">Показывать Уведомления</string>
+    <string name="notification_paused_title">DNS66 на паузе</string>
+    <string name="notification_paused_text">Нажмите, чтобы возобновить.</string>
+    <string name="notification_action_pause">Пауза</string>
+    <string name="whitelist_on_vpn">Нет приложений</string>
+    <string name="whitelist_not_on_vpn">Все Приложения</string>
+    <string name="whitelist_intelligent">Системные приложения, кроме браузеров</string>
+    <string name="ipv6_support_description">Отключите это, если в вашей сети не используется протокол IPv6, или Вы не можете запустить службу.</string>
+    <string name="ipv6_support">Поддержка IPv6</string>
+    <string name="update_incomplete_description">Некоторые хост-файлы не могут быть загружены. Если файлы были загружены ранее, старые версии будут по-прежнему использоваться.</string>
+    <string-array name="whitelist_defaults">
+        <item>Нет приложений для обхода блокировки по умолчанию</item>
+        <item>Все приложения для обхода блокировки по умолчанию</item>
+        <item>Системные приложения для обхода блокировки по умолчанию</item>
+    </string-array>
+</resources>

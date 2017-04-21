@@ -8,7 +8,6 @@
 package org.jak_linux.dns66;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,30 +15,37 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.util.JsonReader;
-import android.util.JsonWriter;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
-
+import org.jak_linux.dns66.db.RuleDatabaseUpdateJobService;
+import org.jak_linux.dns66.db.RuleDatabaseUpdateTask;
+import org.jak_linux.dns66.main.FloatingActionButtonFragment;
 import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_FILE_OPEN = 1;
@@ -54,17 +60,26 @@ public class MainActivity extends AppCompatActivity {
             updateStatus(str_id);
         }
     };
-    private AHBottomNavigation bottomNavigation;
+
     private ItemChangedListener itemChangedListener = null;
-    private MenuItem showNotificationMenuItem = null;
+    private MainFragmentPagerAdapter fragmentPagerAdapter;
+    private FloatingActionButton floatingActionButton;
+    private ViewPager.SimpleOnPageChangeListener pageChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null || config == null) {
             config = FileHelper.loadCurrentSettings(this);
         }
+
+        if (config.nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,28 +87,29 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
 
+        fragmentPagerAdapter = new MainFragmentPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(fragmentPagerAdapter);
 
-        int[] tabColors = {R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary, R.color.colorBottomNavigationPrimary,};
-        bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
-        AHBottomNavigationAdapter navigationAdapter = new AHBottomNavigationAdapter(this, R.menu.bottom_navigation);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
-        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
-        navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors);
-
-        reload();
-        updateStatus(AdVpnService.vpnStatus);
-
-        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+        // Add a page change listener that sets the floating action button per tab.
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_action_button);
+        pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
-                if (wasSelected) {
-                    return true;
+            public void onPageSelected(int position) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + fragmentPagerAdapter.getItemId(position));
+                if (fragment instanceof FloatingActionButtonFragment) {
+                    ((FloatingActionButtonFragment) fragment).setupFloatingActionButton(floatingActionButton);
+                    floatingActionButton.show();
+                } else {
+                    floatingActionButton.hide();
                 }
-
-                viewPager.setCurrentItem(position, false);
-                return true;
             }
-        });
+        };
+        viewPager.addOnPageChangeListener(pageChangeListener);
+
+        RuleDatabaseUpdateJobService.scheduleOrCancel(this, config);
     }
 
     @Override
@@ -103,10 +119,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        showNotificationMenuItem = menu.findItem(R.id.setting_show_notification);
-        showNotificationMenuItem.setChecked(config.showNotification);
+        menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
+        menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
         return true;
     }
 
@@ -116,18 +131,13 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_restore:
-                config = FileHelper.loadPreviousSettings(this);
-                FileHelper.writeSettings(this, MainActivity.config);
-                reload();
-                break;
             case R.id.action_refresh:
                 refresh();
                 break;
             case R.id.action_load_defaults:
                 config = FileHelper.loadDefaultSettings(this);
-                reload();
                 FileHelper.writeSettings(this, MainActivity.config);
+                recreate();
                 break;
             case R.id.action_import:
                 Intent intent = new Intent()
@@ -144,6 +154,12 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra(Intent.EXTRA_TITLE, "dns66.json");
 
                 startActivityForResult(exportIntent, REQUEST_FILE_STORE);
+                break;
+            case R.id.setting_night_mode:
+                item.setChecked(!item.isChecked());
+                MainActivity.config.nightMode = item.isChecked();
+                FileHelper.writeSettings(MainActivity.this, MainActivity.config);
+                recreate();
                 break;
             case R.id.setting_show_notification:
                 // If we are enabling notifications, we do not need to show a dialog.
@@ -181,22 +197,49 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void refresh() {
-        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d("MainActivity", "onNewIntent: Wee");
 
-        for (Configuration.Item item : config.hosts.items) {
-            File file = FileHelper.getItemFile(this, item);
-
-            if (file != null && item.state != 2) {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.location));
-                Log.d("MainActivity", String.format("refresh: Downkoading %s to %s", item.location, file.getAbsolutePath()));
-                file.delete();
-                request.setDestinationUri(Uri.fromFile(file));
-                request.setTitle(item.title);
-                request.setVisibleInDownloadsUi(false);
-                dm.enqueue(request);
-            }
+        if (intent.getBooleanExtra("UPDATE", false)) {
+            refresh();
         }
+
+        List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
+        if (errors != null && !errors.isEmpty()) {
+            Log.d("MainActivity", "onNewIntent: It's an error");
+            new AlertDialog.Builder(this)
+                    .setAdapter(newAdapter(errors), null)
+                    .setTitle(R.string.update_incomplete)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
+        super.onNewIntent(intent);
+
+    }
+
+    @NonNull
+    private ArrayAdapter<String> newAdapter(final List<String> errors) {
+        return new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, errors) {
+            @NonNull
+            @Override
+            @SuppressWarnings("deprecation")
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                //noinspection deprecation
+                text1.setText(Html.fromHtml(errors.get(position)));
+                return view;
+            }
+        };
+    }
+
+
+    private void refresh() {
+        final RuleDatabaseUpdateTask task = new RuleDatabaseUpdateTask(getApplicationContext(), config, true);
+
+
+        task.execute();
     }
 
     @Override
@@ -207,20 +250,18 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedfile = data.getData(); //The uri with the location of the file
 
             try {
-                Configuration newConfig = new Configuration();
-                newConfig.read(new JsonReader(new InputStreamReader(getContentResolver().openInputStream(selectedfile))));
-                config = newConfig;
+                config = Configuration.read(new InputStreamReader(getContentResolver().openInputStream(selectedfile)));
             } catch (Exception e) {
                 Toast.makeText(this, "Cannot read file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            reload();
+            recreate();
             FileHelper.writeSettings(this, MainActivity.config);
         }
         if (requestCode == REQUEST_FILE_STORE && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData(); //The uri with the location of the file
-            JsonWriter writer = null;
+            Writer writer = null;
             try {
-                writer = new JsonWriter(new OutputStreamWriter(getContentResolver().openOutputStream(selectedfile)));
+                writer = new OutputStreamWriter(getContentResolver().openOutputStream(selectedfile));
                 config.write(writer);
                 writer.close();
             } catch (Exception e) {
@@ -232,11 +273,15 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-            reload();
+            recreate();
         }
         if (requestCode == REQUEST_ITEM_EDIT && resultCode == RESULT_OK) {
             Configuration.Item item = new Configuration.Item();
             Log.d("FOOOO", "onActivityResult: item title = " + data.getStringExtra("ITEM_TITLE"));
+            if (data.hasExtra("DELETE")) {
+                this.itemChangedListener.onItemChanged(null);
+                return;
+            }
             item.title = data.getStringExtra("ITEM_TITLE");
             item.location = data.getStringExtra("ITEM_LOCATION");
             item.state = data.getIntExtra("ITEM_STATE", 0);
@@ -260,17 +305,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
+        if (errors != null && !errors.isEmpty()) {
+            Log.d("MainActivity", "onNewIntent: It's an error");
+            new AlertDialog.Builder(this)
+                    .setAdapter(newAdapter(errors), null)
+                    .setTitle(R.string.update_incomplete)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
+        pageChangeListener.onPageSelected(viewPager.getCurrentItem());
         updateStatus(AdVpnService.vpnStatus);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(vpnServiceBroadcastReceiver, new IntentFilter(AdVpnService.VPN_UPDATE_STATUS_INTENT));
-    }
-
-    private void reload() {
-        if (showNotificationMenuItem != null)
-            showNotificationMenuItem.setChecked(config.showNotification);
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(bottomNavigation.getCurrentItem());
-        updateStatus(AdVpnService.vpnStatus);
     }
 
     /**

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.jak_linux.dns66.ItemActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="org.jak_linux.dns66.ItemActivity">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/title_layout"
@@ -34,9 +35,11 @@
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:hint="@string/location" />
+            android:hint="@string/location"
+            android:drawableEnd="@drawable/ic_attach_file_black_24dp"
+            android:inputType="textUri"/>
     </android.support.design.widget.TextInputLayout>
+
 
     <TextView
         android:id="@+id/state_label"
@@ -55,4 +58,14 @@
         android:layout_below="@+id/state_label"
         android:entries="@array/item_states" />
 
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/state_spinner"
+        android:layout_marginTop="10dp"
+        android:alpha="0.1"
+        android:checked="true"
+        android:tint="?android:attr/textColorPrimary"
+        app:srcCompat="@drawable/ic_state_deny"/>
 </RelativeLayout>

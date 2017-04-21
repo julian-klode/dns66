@@ -17,5 +17,5 @@ package org.jak_linux.dns66.vpn;
  */
 
 public enum Command {
-    START, STOP
+    START, STOP, PAUSE
 }

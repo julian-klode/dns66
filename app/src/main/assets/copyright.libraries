@@ -6,11 +6,9 @@ Comment:
  expressions matching libraries listed in the gradle file instead.
 
 Libraries: com.android.*
-           com.aurelhubert:ahbottomnavigation
-           com.stephentuso:welcome
+           com.google.*
 Copyright: 2016 The Android Open Source Project
-           2016 Aurelien Hubert (http://github.com/aurelhubert)
-           2015-2016 Stephen Tuso
+           2008 Google Inc.
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
