@@ -1,0 +1,107 @@
+<resources>
+
+    <string name="app_shortdesc">ホストのブロックとカスタム DNS サーバー</string>
+    <string name="custom_dns">カスタム DNS サーバーを有効にする</string>
+    <string name="enable_hosts">ドメインフィルターを有効にする</string>
+    <string name="start_tab">開始</string>
+    <string name="hosts_tab">ホスト</string>
+    <string name="dns_tab">DNS サーバー</string>
+    <string name="action_export">設定をエクスポート</string>
+    <string name="action_import">設定をインポート</string>
+    <string name="action_save">保存</string>
+    <string name="load_defaults">デフォルトの設定を読み込み</string>
+    <string name="action_about">アプリについて</string>
+    <string name="info_app_license">このプログラムはフリーソフトウェアです: フリーソフトウェア財団が発行した GNU 一般公衆利用許諾契約書、バージョン 3 のライセンス、または（オプションで）それ以降のバージョンのいずれかの条件で、再配布および/または変更することができます。</string>
+
+    <string name="switch_onboot">起動時に自動的に開始する</string>
+    <string name="activity_edit">アイテムを編集</string>
+    <string name="title">タイトル</string>
+    <string name="location">ロケーション (URL またはホスト)</string>
+    <string name="action">操作</string>
+    <string name="cannot_restore_previous_config">以前の設定を復元できません: %s</string>
+    <string name="cannot_read_config">設定を読み込みできません: %s</string>
+    <string name="cannot_load_default_config">デフォルトの設定を読み込みできません: %s - これは起こらないはずです</string>
+    <string name="cannot_write_config">設定を書き込みできません: %s</string>
+    <string name="action_refresh">ホストファイルを更新</string>
+    <string name="notification_starting">開始中</string>
+    <string name="notification_running">実行中</string>
+    <string name="notification_stopping">停止中</string>
+    <string name="notification_waiting_for_net">ネットワークの待機中</string>
+    <string name="notification_reconnecting">再接続中</string>
+    <string name="notification_reconnecting_error">再接続エラー</string>
+    <string name="notification_stopped">停止しました</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>拒否</item>
+        <item>許可</item>
+        <item>無視</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">日本語翻訳: Naofumi Fukue</string>
+    <string name="app_version_info">バージョン: %s</string>
+    <string name="missing_hosts_files_message">いくつかの設定した (無視以外) hosts ファイルが見つかりません。‘更新’ 操作を使用して hosts ファイルをダウンロードしてください。\n\nそれでも続行しますか?</string>
+    <string name="missing_hosts_files_title">hosts ファイルが見つかりません</string>
+    <string name="button_no">いいえ</string>
+    <string name="button_yes">はい</string>
+
+    <string name="whitelist_tab">アプリ</string>
+    <string name="show_notification">通知を表示</string>
+    <string name="could_not_configure_vpn_service">VPN サービスを設定できません - WiFi Assistant のような VPN サービスを常にオンにしていないかを確認して、無効にしてください</string>
+    <string name="dns_description">優先の DNS サーバーを有効にする</string>
+    <string name="host_description">赤のルールはブロック、緑のルールは許可</string>
+    <string name="disable_notification_title">通知を無効にしています</string>
+    <string name="disable_notification_message">通知を無効にすると、DNS66 がメモリ不足の状態で停止することがあります。\n\n通知を無効にしてもよろしいですか?</string>
+    <string name="disable_notification_ack">通知を無効にする</string>
+    <string name="disable_notification_nak">中断</string>
+    <string name="whitelist_description">マークしたアプリで DNS66 をバイパスします</string>
+    <string name="switch_show_system_apps">システムアプリを表示</string>
+    <string name="location_dns">DNS サーバーの IP アドレス (IPv4 または IPv6)</string>
+    <string name="state_dns_enabled">有効</string>
+    <string name="host_update_error_item">エラー %1$d: %2$s</string>
+    <string name="update_incomplete">更新が未完了</string>
+    <string name="update_incomplete_description">一部のホストファイルがダウンロードできませんでした。 ファイルを以前ダウンロードしている場合は、古いバージョンが引き続き使用されます。</string>
+    <string name="updating_hostfiles">ホストファイルを更新中</string>
+    <string name="action_use_file">ファイルを使用</string>
+    <string name="persistable_uri_permission_failed">要求したファイルを使用できません: 要求したファイルを永続的に使用できません</string>
+    <string name="updating_n_host_files">%1$d ホストファイルを更新中</string>
+    <string name="could_not_update_all_hosts">すべてのホストファイルを更新できませんでした</string>
+    <string name="permission_denied">アクセスが拒否されました</string>
+    <string name="invalid_url_s">無効な URL: %1$s</string>
+    <string name="file_not_found">ファイルが見つかりません</string>
+    <string name="unknown_error_s">予期しないエラー: %1$s</string>
+    <string name="requested_timed_out">リクエストタイムアウト</string>
+    <string name="action_delete">削除</string>
+    <string name="night_mode">ダークテーマ</string>
+    <string name="expand_bar_toggle_expand">詳細パネルを開く</string>
+    <string name="expand_bar_toggle_close">詳細パネルを閉じる</string>
+    <string name="expand_bar_expanded">開きます</string>
+    <string name="expand_bar_closed">閉じます</string>
+    <string name="action_stop">停止</string>
+    <string name="action_start">開始</string>
+    <string name="automatic_refresh">日次更新</string>
+    <string name="automatic_refresh_description">日次の更新は、充電中、アイドル、およびネットワークが従量課金ではない場合に行います。</string>
+    <string name="watchdog">接続を監視</string>
+    <string name="watchdog_description">より長い間隔で接続を確認し、動作が停止した場合は再接続します</string>
+    <string name="legend_host_intro">エントリは順番に処理されます。 複数のエントリに同じホストが含まれている場合、最後のエントリが適用されます。 操作は:</string>
+    <string name="legend_host_ignore">このエントリを無視する</string>
+    <string name="legend_host_allow">このエントリのホストにアクセスを許可する</string>
+    <string name="legend_host_deny">このエントリのホストにアクセスを拒否する</string>
+    <string name="do_not_use_dns_server">オフ</string>
+    <string name="use_dns_server">オン</string>
+    <string name="switch_onboot_description">デバイスをオフにしたときに DNS66 が有効になっていた場合は、デバイスをオンにしたときに DNS66 を開始します。</string>
+    <string name="activity_edit_dns_server">DNS サーバーを編集</string>
+    <string name="activity_edit_filter">フィルターを編集</string>
+    <string name="notification_paused_title">DNS66 が一時停止しました</string>
+    <string name="notification_paused_text">タップすると再開します。</string>
+    <string name="notification_action_pause">一時停止</string>
+    <string name="whitelist_on_vpn">アプリなし</string>
+    <string name="whitelist_not_on_vpn">すべてのアプリ</string>
+    <string name="whitelist_intelligent">ブラウザーを除くシステムアプリ</string>
+    <string name="ipv6_support_description">ネットワークが IPv6 を使用していない場合や、サービスを開始できない場合は、これを無効にしてください。</string>
+    <string name="ipv6_support">IPv6 サポート</string>
+    <string-array name="whitelist_defaults">
+        <item>デフォルトでアプリをバイパスしません</item>
+        <item>デフォルトですべてのアプリをバイパスします</item>
+        <item>デフォルトでシステムアプリをバイパスします</item>
+    </string-array>
+</resources>
