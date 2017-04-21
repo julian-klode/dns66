@@ -71,7 +71,7 @@
     <string name="file_not_found">Fichier introuvable</string>
     <string name="unknown_error_s">Erreur inattendue : %1$s</string>
     <string name="requested_timed_out">Délai de la requête dépassé</string>
-    <string name="action_delete">Supprimer</string >
+    <string name="action_delete">Supprimer</string>
     <string name="night_mode">Thème sombre</string>
     <string name="expand_bar_toggle_expand">Ouvrir le panneau détaillé</string>
     <string name="expand_bar_toggle_close">Fermer le panneau détaillé</string>

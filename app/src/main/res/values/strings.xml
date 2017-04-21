@@ -37,7 +37,7 @@
         <item>Ignore</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
-    <string name="translator_credits" />
+    <string name="translator_credits"/>
     <string name="app_version_info">Version: %s</string>
     <string name="missing_hosts_files_message">Some of your configured (non-ignored) hosts files are missing.\n\nUse the ‘Refresh’ action to download hosts files.\n\nDo you still want to continue?</string>
     <string name="missing_hosts_files_title">Missing hosts file</string>
@@ -70,7 +70,7 @@
     <string name="file_not_found">File not found</string>
     <string name="unknown_error_s">Unexpected error: %1$s</string>
     <string name="requested_timed_out">Request timed out</string>
-    <string name="action_delete">Delete</string >
+    <string name="action_delete">Delete</string>
     <string name="night_mode">Dark Theme</string>
     <string name="expand_bar_toggle_expand">Open details panel</string>
     <string name="expand_bar_toggle_close">Close details panel</string>
