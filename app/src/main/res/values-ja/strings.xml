@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_shortdesc">ホストのブロックとカスタム DNS サーバー</string>
+    <string name="start_description">長押しして、オン/オフします</string>
+    <string name="custom_dns">カスタム DNS サーバーを有効にする</string>
+    <string name="enable_hosts">ドメインフィルターを有効にする</string>
+    <string name="start_tab">開始</string>
+    <string name="hosts_tab">ホスト</string>
+    <string name="dns_tab">DNS サーバー</string>
+    <string name="action_export">設定をエクスポート</string>
+    <string name="action_import">設定をインポート</string>
+    <string name="action_save">保存</string>
+    <string name="load_defaults">デフォルトの設定を読み込み</string>
+    <string name="action_about">アプリについて</string>
+    <string name="info_app_license">このプログラムはフリーソフトウェアです: フリーソフトウェア財団が発行した GNU 一般公衆利用許諾契約書、バージョン 3 のライセンス、または（オプションで）それ以降のバージョンのいずれかの条件で、再配布および/または変更することができます。</string>
+    <string name="switch_onboot">起動時に自動的に開始する</string>
+    <string name="activity_edit">アイテムを編集</string>
+    <string name="title">タイトル</string>
+    <string name="location">ロケーション (URL またはホスト)</string>
+    <string name="action">操作</string>
+    <string name="cannot_restore_previous_config">以前の設定を復元できません: %s</string>
+    <string name="cannot_read_config">設定を読み込みできません: %s</string>
+    <string name="cannot_load_default_config">デフォルトの設定を読み込みできません: %s - これは起こらないはずです</string>
+    <string name="action_restore">以前の設定を復元</string>
+    <string name="cannot_write_config">設定を書き込みできません: %s</string>
+    <string name="action_refresh">ホストファイルを更新</string>
+    <string name="notification_starting">開始中</string>
+    <string name="notification_running">実行中</string>
+    <string name="notification_stopping">停止中</string>
+    <string name="notification_waiting_for_net">ネットワークの待機中</string>
+    <string name="notification_reconnecting">再接続中</string>
+    <string name="notification_reconnecting_error">再接続エラー</string>
+    <string name="notification_stopped">停止しました</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>拒否</item>
+        <item>許可</item>
+        <item>無視</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">日本語翻訳: Naofumi Fukue</string>
+    <string name="app_version_info">バージョン: %s</string>
+    <string name="missing_hosts_files_message">いくつかの設定した (無視以外) hosts ファイルが見つかりません。‘更新’ 操作を使用して hosts ファイルをダウンロードしてください。\n\nそれでも続行しますか?</string>
+    <string name="missing_hosts_files_title">hosts ファイルが見つかりません</string>
+    <string name="button_no">いいえ</string>
+    <string name="button_yes">はい</string>
+    <string name="whitelist_tab">アプリ</string>
+    <string name="show_notification">通知を表示</string>
+    <string name="could_not_configure_vpn_service">VPN サービスを設定できません - WiFi Assistant のような VPN サービスを常にオンにしていないかを確認して、無効にしてください</string>
+    <string name="dns_description">優先の DNS サーバーを有効にする</string>
+    <string name="host_description">赤のルールはブロック、緑のルールは許可</string>
+    <string name="disable_notification_title">通知を無効にしています</string>
+    <string name="disable_notification_message">通知を無効にすると、DNS66 がメモリ不足の状態で停止することがあります。\n\n通知を無効にしてもよろしいですか?</string>
+    <string name="disable_notification_ack">通知を無効にする</string>
+    <string name="disable_notification_nak">中断</string>
+    <string name="whitelist_description">マークしたアプリで DNS66 をバイパスします</string>
+    <string name="switch_show_system_apps">システムアプリを表示</string>
+    <string name="location_dns">DNS サーバーの IP アドレス (IPv4 または IPv6)</string>
+    <string name="state_dns_enabled">有効</string>
+</resources>
