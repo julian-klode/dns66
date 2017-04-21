@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/entry"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:paddingBottom="8dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -14,7 +18,7 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_marginEnd="16dp"
-        android:clickable="false" />
+        android:clickable="false"/>
 
     <TextView
         android:id="@+id/name"
@@ -24,7 +28,7 @@
         android:layout_toStartOf="@+id/checkbox"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="18sp" />
+        android:textAppearance="?android:attr/textAppearanceListItem" />
 
     <TextView
         android:id="@+id/details"
@@ -32,14 +36,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/name"
         android:layout_toEndOf="@+id/app_icon"
+        android:layout_toStartOf="@+id/checkbox"
         android:ellipsize="end"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceListItemSecondary"
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <Switch
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:clickable="false" />
+        android:clickable="false"
+        android:focusable="false"/>
 
 </RelativeLayout>

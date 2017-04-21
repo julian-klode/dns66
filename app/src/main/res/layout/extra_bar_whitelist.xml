@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/extra_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorBackgroundSecondary"
+    android:orientation="vertical"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="0dp"
+    tools:showIn="@layout/activity_whitelist">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/extra_bar_toggle"
+            layout="@layout/button_extra_bar_toggle"/>
+
+        <TextView
+            android:id="@+id/whitelist_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorBackgroundSecondary"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:text="@string/whitelist_description"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/extra_bar_extra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:visibility="gone">
+
+        <Switch
+            android:id="@+id/switch_show_system_apps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorBackgroundSecondary"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/switch_show_system_apps"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/whitelist_default_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/change_default"
+                android:text="Foo"
+                android:textAppearance="?android:attr/textAppearance"/>
+
+            <ImageButton
+                android:id="@+id/change_default"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:paddingBottom="8dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:tint="?android:attr/textColorPrimary"
+                android:alpha="0.54"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

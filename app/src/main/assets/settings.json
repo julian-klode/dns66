@@ -2,6 +2,9 @@
   "version": 1,
   "autoStart": true,
   "showNotification": true,
+  "nightMode": false,
+  "watchDog": true,
+  "ipV6Support": true,
   "dnsServers": {
     "enabled": false,
     "items": [
@@ -39,6 +42,7 @@
   },
   "hosts": {
     "enabled": true,
+    "automaticRefresh": false,
     "items": [
       {
         "title": "Adaway hosts file",
@@ -84,9 +88,12 @@
   },
   "whitelist": {
     "showSystemApps": false,
+    "defaultMode": 2,
     "items": [
-      "org.jak_linux.dns66",
       "com.android.vending"
+    ],
+    "itemsBlacklist": [
+
     ]
   }
 }

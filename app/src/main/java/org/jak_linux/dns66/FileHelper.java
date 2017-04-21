@@ -1,12 +1,11 @@
 package org.jak_linux.dns66;
 
 import android.content.Context;
+import android.net.Uri;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructPollfd;
-import android.util.JsonReader;
-import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,12 +13,14 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 /**
  * Utility class for working with files.
@@ -62,9 +63,8 @@ public final class FileHelper {
             stream = context.getAssets().open(name);
         else
             stream = FileHelper.openRead(context, name);
-        Configuration config = new Configuration();
-        config.read(new JsonReader(new InputStreamReader(stream)));
-        return config;
+
+        return Configuration.read(new InputStreamReader(stream));
     }
 
     public static Configuration loadCurrentSettings(Context context) {
@@ -97,7 +97,7 @@ public final class FileHelper {
     public static void writeSettings(Context context, Configuration config) {
         Log.d("FileHelper", "writeSettings: Writing the settings file");
         try {
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(FileHelper.openWrite(context, "settings.json")));
+            Writer writer = new OutputStreamWriter(FileHelper.openWrite(context, "settings.json"));
             config.write(writer);
             writer.close();
         } catch (IOException e) {
@@ -113,14 +113,33 @@ public final class FileHelper {
      * @return File or null, if that item is not downloadable.
      */
     public static File getItemFile(Context context, Configuration.Item item) {
-        if (!item.location.contains("/"))
+        if (item.isDownloadable()) {
+            try {
+                return new File(context.getExternalFilesDir(null), java.net.URLEncoder.encode(item.location, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
             return null;
+        }
+    }
 
-        try {
-            return new File(context.getExternalFilesDir(null), java.net.URLEncoder.encode(item.location, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
+    public static InputStreamReader openItemFile(Context context, Configuration.Item item) throws FileNotFoundException {
+        if (item.location.startsWith("content://")) {
+            try {
+                return new InputStreamReader(context.getContentResolver().openInputStream(Uri.parse(item.location)));
+            } catch (SecurityException e) {
+                Log.d("FileHelper", "openItemFile: Cannot open", e);
+                throw new FileNotFoundException(e.getMessage());
+            }
+        } else {
+            File file = getItemFile(context, item);
+            if (file == null)
+                return null;
+            if (item.isDownloadable())
+                return new InputStreamReader(new SingleWriterMultipleReaderFile(getItemFile(context, item)).openRead());
+            return new FileReader(getItemFile(context, item));
         }
     }
 

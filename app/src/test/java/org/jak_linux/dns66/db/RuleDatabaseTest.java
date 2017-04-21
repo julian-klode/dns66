@@ -1,9 +1,10 @@
 package org.jak_linux.dns66.db;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
-import org.jak_linux.dns66.db.RuleDatabase;
+import org.jak_linux.dns66.FileHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +13,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
@@ -31,6 +36,15 @@ public class RuleDatabaseTest {
         // use Mockito to set up your expectation
         //Mockito.when(Log.d(param, msg)).thenReturn(0);
         //Mockito.when(Log.d(tag, msg, throwable)).thenReturn(0);
+    }
+
+    @Test
+    public void testGetInstance() throws Exception {
+        RuleDatabase instance = RuleDatabase.getInstance();
+
+        assertNotNull(instance);
+        assertTrue(instance.isEmpty());
+        assertFalse(instance.isBlocked("example.com"));
     }
 
     @Test
@@ -71,6 +85,7 @@ public class RuleDatabaseTest {
     @Test
     public void testLoadReader() throws Exception {
         RuleDatabase db = new RuleDatabase();
+        db.nextBlockedHosts = db.blockedHosts.get();
 
         Configuration.Item item = new Configuration.Item();
 
@@ -131,6 +146,85 @@ public class RuleDatabaseTest {
         assertFalse(db.loadReader(item, reader));
     }
 
+    @Test
+    @PrepareForTest({Log.class, FileHelper.class})
+    public void testInitialize_host() throws Exception {
+        RuleDatabase ruleDatabase = spy(new RuleDatabase());
+
+        Configuration.Item item = new Configuration.Item();
+
+        item.location = "ahost.com";
+        item.state = Configuration.Item.STATE_DENY;
+
+        Configuration configuration = new Configuration();
+        configuration.hosts = new Configuration.Hosts();
+        configuration.hosts.items = new ArrayList<>();
+        configuration.hosts.items.add(item);
+
+        Context context = mock(Context.class);
+        mockStatic(FileHelper.class);
+        when(FileHelper.loadCurrentSettings(context)).thenReturn(configuration);
+        when(FileHelper.openItemFile(context, item)).thenReturn(null);
+        ruleDatabase.initialize(context);
+
+        assertTrue(ruleDatabase.isBlocked("ahost.com"));
+    }
+
+    @Test
+    @PrepareForTest({Log.class, FileHelper.class})
+    public void testInitialize_file() throws Exception {
+        RuleDatabase ruleDatabase = spy(new RuleDatabase());
+
+        Configuration.Item item = new Configuration.Item();
+
+        item.location = "protocol://some-weird-file-uri";
+        item.state = Configuration.Item.STATE_DENY;
+
+        Configuration configuration = new Configuration();
+        configuration.hosts = new Configuration.Hosts();
+        configuration.hosts.enabled = true;
+        configuration.hosts.items = new ArrayList<>();
+        configuration.hosts.items.add(item);
+
+        Context context = mock(Context.class);
+        mockStatic(FileHelper.class);
+        when(FileHelper.loadCurrentSettings(context)).thenReturn(configuration);
+        when(FileHelper.openItemFile(context, item)).thenReturn(new InputStreamReader(new ByteArrayInputStream("example.com".getBytes("utf-8"))));
+        ruleDatabase.initialize(context);
+
+        assertTrue(ruleDatabase.isBlocked("example.com"));
+
+        item.state = Configuration.Item.STATE_IGNORE;
+
+        ruleDatabase.initialize(context);
+
+        assertTrue(ruleDatabase.isEmpty());
+
+    }
+
+    @Test
+    @PrepareForTest({Log.class, FileHelper.class})
+    public void testInitialize_fileNotFound() throws Exception {
+        RuleDatabase ruleDatabase = spy(new RuleDatabase());
+
+        Configuration.Item item = new Configuration.Item();
+
+        item.location = "protocol://some-weird-file-uri";
+        item.state = Configuration.Item.STATE_DENY;
+
+        Configuration configuration = new Configuration();
+        configuration.hosts = new Configuration.Hosts();
+        configuration.hosts.enabled = true;
+        configuration.hosts.items = new ArrayList<>();
+        configuration.hosts.items.add(item);
+
+        Context context = mock(Context.class);
+        mockStatic(FileHelper.class);
+        when(FileHelper.loadCurrentSettings(context)).thenReturn(configuration);
+        when(FileHelper.openItemFile(context, item)).thenThrow(new FileNotFoundException("foobar"));
+        ruleDatabase.initialize(context);
+        assertTrue(ruleDatabase.isEmpty());
+    }
 
     public static class FooException extends RuntimeException {
     }

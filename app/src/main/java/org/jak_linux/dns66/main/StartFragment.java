@@ -12,6 +12,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -33,7 +35,8 @@ import org.jak_linux.dns66.R;
 import org.jak_linux.dns66.vpn.AdVpnService;
 import org.jak_linux.dns66.vpn.Command;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -51,21 +54,20 @@ public class StartFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_start, container, false);
         Switch switchOnBoot = (Switch) rootView.findViewById(R.id.switch_onboot);
 
-        ImageView view = (ImageView) rootView.findViewById(R.id.start_button);
+        ImageView view = (ImageView) rootView.findViewById(R.id.state_image);
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (AdVpnService.vpnStatus != AdVpnService.VPN_STATUS_STOPPED) {
-                    Log.i(TAG, "Attempting to disconnect");
+                return startStopService();
+            }
+        });
 
-                    Intent intent = new Intent(getActivity(), AdVpnService.class);
-                    intent.putExtra("COMMAND", org.jak_linux.dns66.vpn.Command.STOP.ordinal());
-                    getActivity().startService(intent);
-                } else {
-                    checkHostsFilesAndStartService();
-                }
-                return true;
+        Button startButton = (Button) rootView.findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStopService();
             }
         });
 
@@ -80,35 +82,77 @@ public class StartFragment extends Fragment {
             }
         });
 
+        Switch watchDog = (Switch) rootView.findViewById(R.id.watchdog);
+        watchDog.setChecked(MainActivity.config.watchDog);
+        watchDog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.watchDog = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+
+        Switch ipV6Support = (Switch) rootView.findViewById(R.id.ipv6_support);
+        ipV6Support.setChecked(MainActivity.config.ipV6Support);
+        ipV6Support.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.ipV6Support = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "start");
+
         return rootView;
+    }
+
+    private boolean startStopService() {
+        if (AdVpnService.vpnStatus != AdVpnService.VPN_STATUS_STOPPED) {
+            Log.i(TAG, "Attempting to disconnect");
+
+            Intent intent = new Intent(getActivity(), AdVpnService.class);
+            intent.putExtra("COMMAND", Command.STOP.ordinal());
+            getActivity().startService(intent);
+        } else {
+            checkHostsFilesAndStartService();
+        }
+        return true;
     }
 
     public static void updateStatus(View rootView, int status) {
         Context context = rootView.getContext();
         TextView stateText = (TextView) rootView.findViewById(R.id.state_textview);
-        ImageView startButton = (ImageView) rootView.findViewById(R.id.start_button);
+        ImageView stateImage = (ImageView) rootView.findViewById(R.id.state_image);
+        Button startButton = (Button) rootView.findViewById(R.id.start_button);
 
-        if (startButton == null || stateText == null)
+        if (stateImage == null || stateText == null)
             return;
 
         stateText.setText(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
-
-        startButton.getDrawable().setTintList(null);
+        stateImage.setContentDescription(rootView.getContext().getString(AdVpnService.vpnStatusToTextId(status)));
+        stateImage.setImageAlpha(255);
+        stateImage.setImageTintList(ContextCompat.getColorStateList(context, R.color.colorStateImage));
         switch(status) {
             case AdVpnService.VPN_STATUS_RECONNECTING:
             case AdVpnService.VPN_STATUS_STARTING:
             case AdVpnService.VPN_STATUS_STOPPING:
-                startButton.setImageAlpha(128);
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_settings_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
             case AdVpnService.VPN_STATUS_STOPPED:
-                startButton.setImageAlpha(64);
+                stateImage.setImageDrawable(context.getDrawable(R.mipmap.app_icon_large));
+                stateImage.setImageAlpha(32);
+                stateImage.setImageTintList(null);
+                startButton.setText(R.string.action_start);
                 break;
             case AdVpnService.VPN_STATUS_RUNNING:
-                startButton.setImageAlpha(255);
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_verified_user_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
             case AdVpnService.VPN_STATUS_RECONNECTING_NETWORK_ERROR:
-                startButton.setImageAlpha(255);
-                startButton.getDrawable().setTint(ContextCompat.getColor(context, R.color.stateError));
+                stateImage.setImageDrawable(context.getDrawable(R.drawable.ic_error_black_24dp));
+                startButton.setText(R.string.action_stop);
                 break;
         }
     }
@@ -155,11 +199,18 @@ public class StartFragment extends Fragment {
     private boolean areHostsFilesExistant() {
         if (!MainActivity.config.hosts.enabled)
             return true;
+
         for (Configuration.Item item : MainActivity.config.hosts.items) {
-            File file = FileHelper.getItemFile(getContext(), item);
-            if (item.state != Configuration.Item.STATE_IGNORE && file != null) {
-                if (!file.exists())
+            if (item.state != Configuration.Item.STATE_IGNORE) {
+                try {
+                    InputStreamReader reader = FileHelper.openItemFile(getContext(), item);
+                    if (reader == null)
+                        continue;
+
+                    reader.close();
+                } catch (IOException e) {
                     return false;
+                }
             }
         }
         return true;

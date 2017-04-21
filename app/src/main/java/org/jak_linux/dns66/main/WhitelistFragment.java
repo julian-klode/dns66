@@ -7,7 +7,6 @@
  */
 package org.jak_linux.dns66.main;
 
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -15,17 +14,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import org.jak_linux.dns66.BuildConfig;
+import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.jak_linux.dns66.R;
@@ -33,7 +37,9 @@ import org.jak_linux.dns66.R;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Activity showing a list of apps that are whitelisted by the VPN.
@@ -44,7 +50,7 @@ public class WhitelistFragment extends Fragment {
 
     private static final String TAG = "Whitelist";
     private AppListGenerator appListGenerator;
-    private ListView appList;
+    private RecyclerView appList;
     private SwipeRefreshLayout swipeRefresh;
 
     @Override
@@ -52,9 +58,18 @@ public class WhitelistFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View rootView = inflater.inflate(R.layout.activity_whitelist, container, false);
+        final View rootView = inflater.inflate(R.layout.activity_whitelist, container, false);
 
-        appList = (ListView) rootView.findViewById(R.id.list);
+        appList = (RecyclerView) rootView.findViewById(R.id.list);
+        appList.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        appList.setLayoutManager(layoutManager);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(appList.getContext(),
+                DividerItemDecoration.VERTICAL);
+        appList.addItemDecoration(dividerItemDecoration);
+
 
         swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         swipeRefresh.setOnRefreshListener(
@@ -69,7 +84,6 @@ public class WhitelistFragment extends Fragment {
         swipeRefresh.setRefreshing(true);
 
         Switch switchShowSystemApps = (Switch) rootView.findViewById(R.id.switch_show_system_apps);
-
         switchShowSystemApps.setChecked(MainActivity.config.whitelist.showSystemApps);
         switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -81,41 +95,89 @@ public class WhitelistFragment extends Fragment {
             }
         });
 
+        final TextView whitelistDefaultText = (TextView) rootView.findViewById(R.id.whitelist_default_text);
+        whitelistDefaultText.setText(getResources().getStringArray(R.array.whitelist_defaults)[MainActivity.config.whitelist.defaultMode]);
+        View.OnClickListener onDefaultChangeClicked = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu menu = new PopupMenu(getContext(), rootView.findViewById(R.id.change_default));
+                menu.inflate(R.menu.whitelist_popup);
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Log.d(TAG, "onMenuItemClick: Setting" + item);
+                        switch (item.getItemId()) {
+                            case R.id.whitelist_default_on_vpn:
+                                Log.d(TAG, "onMenuItemClick: OnVpn");
+                                MainActivity.config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_ON_VPN;
+                                break;
+                            case R.id.whitelist_default_not_on_vpn:
+                                Log.d(TAG, "onMenuItemClick: NotOnVpn");
+                                MainActivity.config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN;
+                                break;
+                            case R.id.whitelist_default_intelligent:
+                                Log.d(TAG, "onMenuItemClick: Intelligent");
+                                MainActivity.config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_INTELLIGENT;
+                                break;
+                        }
+
+                        whitelistDefaultText.setText(getResources().getStringArray(R.array.whitelist_defaults)[MainActivity.config.whitelist.defaultMode]);
+                        appListGenerator = new AppListGenerator();
+                        appListGenerator.execute();
+                        FileHelper.writeSettings(getContext(), MainActivity.config);
+                        return true;
+                    }
+                });
+
+                menu.show();
+            }
+        };
+
+        rootView.findViewById(R.id.change_default).setOnClickListener(onDefaultChangeClicked);
+        whitelistDefaultText.setOnClickListener(onDefaultChangeClicked);
+
         appListGenerator = new AppListGenerator();
         appListGenerator.execute();
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "whitelist");
+
 
         return rootView;
     }
 
-    private class AppListAdapter extends ArrayAdapter<ListEntry> {
-        AppListAdapter(Context context, int layout, List<ListEntry> list) {
-            super(context, layout, list);
+    private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
+
+        public ArrayList<ListEntry> list;
+
+        Set<String> onVpn = new HashSet<>();
+        Set<String> notOnVpn = new HashSet<>();
+
+        public AppListAdapter(PackageManager pm, ArrayList<ListEntry> list) {
+            this.list = list;
+            MainActivity.config.whitelist.resolve(pm, onVpn, notOnVpn);
         }
 
         @Override
-        public View getView(int position, View convertView, final ViewGroup parent) {
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null)
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.whitelist_row, parent, false);
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.whitelist_row, parent, false));
+        }
 
-            final ListEntry entry = getItem(position);
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            final ListEntry entry = list.get(position);
 
-            final ImageView iconView = (ImageView) convertView.findViewById(R.id.app_icon);
+            if (holder.task != null)
+                holder.task.cancel(true);
 
-            AsyncTask<ListEntry, Void, Drawable> task = (AsyncTask<ListEntry, Void, Drawable>) convertView.getTag();
-            if (task != null)
-                task.cancel(true);
-
-            task = null;
+            holder.task = null;
             final Drawable icon = entry.getIcon();
             if (icon != null) {
-                iconView.setImageDrawable(icon);
-                iconView.setVisibility(View.VISIBLE);
-                convertView.setTag(null);
+                holder.icon.setImageDrawable(icon);
+                holder.icon.setVisibility(View.VISIBLE);
             } else {
-                iconView.setVisibility(View.INVISIBLE);
+                holder.icon.setVisibility(View.INVISIBLE);
 
-                task = new AsyncTask<ListEntry, Void, Drawable>() {
+                holder.task = new AsyncTask<ListEntry, Void, Drawable>() {
                     @Override
                     protected Drawable doInBackground(ListEntry... entries) {
                         return entries[0].loadIcon(getContext().getPackageManager());
@@ -124,52 +186,70 @@ public class WhitelistFragment extends Fragment {
                     @Override
                     protected void onPostExecute(Drawable drawable) {
                         if (!isCancelled()) {
-                            iconView.setImageDrawable(drawable);
-                            iconView.setVisibility(View.VISIBLE);
+                            holder.icon.setImageDrawable(drawable);
+                            holder.icon.setVisibility(View.VISIBLE);
                         }
                         super.onPostExecute(drawable);
                     }
                 };
-                convertView.setTag(task);
 
-                task.execute(entry);
+                holder.task.execute(entry);
             }
 
-            TextView textView = (TextView) convertView.findViewById(R.id.name);
-            textView.setText(entry.getLabel());
-
-
-            TextView details = (TextView) convertView.findViewById(R.id.details);
-            details.setText(entry.getPackageName());
-
-            final Switch checkBox = (Switch) convertView.findViewById(R.id.checkbox);
-
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.name.setText(entry.getLabel());
+            holder.details.setText(entry.getPackageName());
+            holder.whitelistSwitch.setOnCheckedChangeListener(null);
+            holder.whitelistSwitch.setChecked(notOnVpn.contains(entry.getPackageName()));
+            holder.whitelistSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                     /* No change, do nothing */
-                    if (checked == MainActivity.config.whitelist.items.contains(entry.getPackageName()))
+                    if (checked && MainActivity.config.whitelist.items.contains(entry.getPackageName()))
+                        return;
+                    if (!checked && MainActivity.config.whitelist.itemsOnVpn.contains(entry.getPackageName()))
                         return;
                     if (checked) {
                         MainActivity.config.whitelist.items.add(entry.getPackageName());
+                        MainActivity.config.whitelist.itemsOnVpn.remove(entry.getPackageName());
+                        notOnVpn.add(entry.getPackageName());
                     } else {
                         MainActivity.config.whitelist.items.remove(entry.getPackageName());
+                        MainActivity.config.whitelist.itemsOnVpn.add(entry.getPackageName());
+                        notOnVpn.remove(entry.getPackageName());
                     }
                     FileHelper.writeSettings(getActivity(), MainActivity.config);
                 }
             });
 
-            View layout = convertView.findViewById(R.id.entry);
-            layout.setOnClickListener(new View.OnClickListener() {
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    checkBox.setChecked(!checkBox.isChecked());
+                    holder.whitelistSwitch.setChecked(!holder.whitelistSwitch.isChecked());
                 }
             });
 
-            checkBox.setChecked(MainActivity.config.whitelist.items.contains(entry.getPackageName()));
+        }
 
-            return convertView;
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView icon;
+            TextView name;
+            TextView details;
+            Switch whitelistSwitch;
+            AsyncTask<ListEntry, Void, Drawable> task;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                icon = (ImageView) itemView.findViewById(R.id.app_icon);
+                name = (TextView) itemView.findViewById(R.id.name);
+                details = (TextView) itemView.findViewById(R.id.details);
+                whitelistSwitch = (Switch) itemView.findViewById(R.id.checkbox);
+            }
         }
     }
 
@@ -184,7 +264,7 @@ public class WhitelistFragment extends Fragment {
 
             Collections.sort(info, new ApplicationInfo.DisplayNameComparator(pm));
 
-            final List<ListEntry> entries = new ArrayList<>();
+            final ArrayList<ListEntry> entries = new ArrayList<>();
             for (ApplicationInfo appInfo : info) {
                 if (!appInfo.packageName.equals(BuildConfig.APPLICATION_ID) && (MainActivity.config.whitelist.showSystemApps || (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0))
                     entries.add(new ListEntry(
@@ -193,8 +273,7 @@ public class WhitelistFragment extends Fragment {
                             appInfo.loadLabel(pm).toString()));
             }
 
-
-            return new AppListAdapter(getContext(), R.layout.whitelist_row, entries);
+            return new AppListAdapter(pm, entries);
         }
 
         @Override

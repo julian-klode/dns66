@@ -48,29 +48,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.titleView.setText(items.get(position).title);
         holder.subtitleView.setText(items.get(position).location);
 
-        if (stateChoices == 2) {
-            switch (items.get(position).state) {
-                case Configuration.Item.STATE_IGNORE:
-                case Configuration.Item.STATE_DENY:
-                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
-                    break;
-                case Configuration.Item.STATE_ALLOW:
-                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_black_24dp));
-                    break;
-            }
-        } else {
-            switch (items.get(position).state) {
-                case Configuration.Item.STATE_IGNORE:
-                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));
-                    break;
-                case Configuration.Item.STATE_DENY:
-                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_deny));
-                    break;
-                case Configuration.Item.STATE_ALLOW:
-                    holder.iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_allow));
-                    break;
-            }
-        }
+        holder.updateState();
     }
 
     @Override
@@ -96,12 +74,44 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
             iconView.setOnClickListener(this);
         }
 
+        void updateState() {
+            iconView.setImageAlpha(255 * 87 / 100);
+            if (stateChoices == 2) {
+                switch (item.state) {
+                    case Configuration.Item.STATE_IGNORE:
+                    case Configuration.Item.STATE_DENY:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
+                        iconView.setContentDescription(context.getString(R.string.do_not_use_dns_server));
+                        break;
+                    case Configuration.Item.STATE_ALLOW:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_black_24dp));
+                        iconView.setContentDescription(context.getString(R.string.use_dns_server));
+                        break;
+                }
+            } else {
+                switch (item.state) {
+                    case Configuration.Item.STATE_IGNORE:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_ignore));
+                        iconView.setImageAlpha(255 * 38 / 100);
+                        break;
+                    case Configuration.Item.STATE_DENY:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_deny));
+                        break;
+                    case Configuration.Item.STATE_ALLOW:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_allow));
+                        break;
+                }
+                iconView.setContentDescription(context.getResources().getStringArray(R.array.item_states)[item.state]);
+            }
+
+        }
+
         @Override
         public void onClick(View v) {
             final int position = getAdapterPosition();
             if (v == iconView) {
                 item.state = (item.state + 1) % stateChoices;
-                ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                updateState();
                 FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
             } else if (v == view) {
                 // Start edit activity
@@ -109,8 +119,13 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 main.editItem(stateChoices, item, new ItemChangedListener() {
                             @Override
                             public void onItemChanged(Configuration.Item changedItem) {
-                                items.set(position, changedItem);
-                                ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                                if (changedItem == null) {
+                                    items.remove(position);
+                                    notifyItemRemoved(position);
+                                } else {
+                                    items.set(position, changedItem);
+                                    ItemRecyclerViewAdapter.this.notifyItemChanged(position);
+                                }
                                 FileHelper.writeSettings(itemView.getContext(), MainActivity.config);
                             }
                         }

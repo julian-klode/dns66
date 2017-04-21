@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_shortdesc">Blocage d\'hôtes et serveur DNS personnalisé</string>
+    <string name="custom_dns">Activer les serveurs DNS personnalisés</string>
+    <string name="enable_hosts">Filtrer les hôtes</string>
+    <string name="start_tab">Démarrer</string>
+    <string name="hosts_tab">Hôtes</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Exporter les paramètres</string>
+    <string name="action_import">Importer les paramètres</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="load_defaults">Charger les paramètres par défaut</string>
+    <string name="action_about">À propos</string>
+    <string name="info_app_license">Ce programme est un logiciel libre : vous pouvez le redistribuer et le modifier suivant les termes de la Licence Public Générale GNU telle que publiée par la Free Software Foundation, soit la version 3 de la licence, soit (à votre gré) toute version ultérieure.</string>
+    <string name="switch_onboot">Lancer l\'application automatiquement au démarrage</string>
+    <string name="activity_edit">Modifier l\'élément</string>
+    <string name="title">Titre</string>
+    <string name="location">Localisation (URL ou hôte)</string>
+    <string name="action">Action</string>
+    <string name="cannot_restore_previous_config">Impossible de rétablir la configuration précédente : %s</string>
+    <string name="cannot_read_config">Impossible de lire la configuration : %s</string>
+    <string name="cannot_load_default_config">Impossible de lire les paramètres par défaut : %s – ça ne devrait pas arriver</string>
+    <string name="cannot_write_config">Impossible d\'écrire la configuration : %s</string>
+    <string name="action_refresh">Rafraîchir les fichiers d\'hôtes</string>
+    <string name="notification_starting">Démarrage</string>
+    <string name="notification_running">Active</string>
+    <string name="notification_stopping">Arrêt</string>
+    <string name="notification_waiting_for_net">En attente du réseau</string>
+    <string name="notification_reconnecting">Reconnexion</string>
+    <string name="notification_reconnecting_error">Erreur de reconnexion</string>
+    <string name="notification_stopped">Arrêtée</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Refuser</item>
+        <item>Accepter</item>
+        <item>Ignorer</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Traduction française : Julien Lepiller</string>
+    <string name="app_version_info">Version : %s</string>
+    <string name="missing_hosts_files_message">Certains de vos fichiers d\'hôtes configurés (non ignorés) sont manquants.\n
+  \nUtilisez l\'action « Rafraichir » pour télécharger les fichiers d\'hôtes.\n
+  \nSouhaitez-vous continuer ?</string>
+    <string name="missing_hosts_files_title">Fichier d\'hôtes manquant</string>
+    <string name="button_no">Non</string>
+    <string name="button_yes">Oui</string>
+    <string name="whitelist_tab">Apps</string>
+    <string name="show_notification">Montrer la notification</string>
+    <string name="could_not_configure_vpn_service">Impossible de configurer le service de VPN – vérifiez que vous n\'utilisez pas déjà un service VPN toujours actif comme Wifi Assistant et désactivez-le le cas échéant</string>
+    <string name="dns_description">Active vos serveurs DNS préférés</string>
+    <string name="host_description">Règle rouge pour bloquer, règle verte pour permettre</string>
+    <string name="disable_notification_title">Désactivation de la notification</string>
+    <string name="disable_notification_message">Désactiver la notification peut faire s\'arrêter DNS66 en cas d\'usage mémoire important.\n
+  \nSouhaitez-vous désactiver la notification ?</string>
+    <string name="disable_notification_ack">Désactiver la notification</string>
+    <string name="disable_notification_nak">Annuler</string>
+    <string name="whitelist_description">Les apps marquées ne passent pas par DNS66</string>
+    <string name="switch_show_system_apps">Montrer les applications système</string>
+    <string name="location_dns">Adresse IP du serveur DNS (IPv4 ou IPv6)</string>
+    <string name="state_dns_enabled">Activé</string>
+    <string name="host_update_error_item">Erreur %1$d : %2$s</string>
+    <string name="update_incomplete">Mise à jour incomplète</string>
+    <string name="update_incomplete_description">Certains fichiers d\'hôtes n\'ont pas pu être téléchargés. Si les fichiers ont déjà été téléchargés, les anciennes versions seront utilisées.</string>
+    <string name="updating_hostfiles">Mise à jour des fichiers d\'hôtes</string>
+    <string name="action_use_file">Utiliser le fichier</string>
+    <string name="persistable_uri_permission_failed">Impossible d\'utiliser le fichier demandé : utilisation persistante du fichier demandé non permise</string>
+    <string name="updating_n_host_files">Mise à jour de %1$d fichiers d\'hôtes</string>
+    <string name="could_not_update_all_hosts">Impossible de mettre à jour tous les fichiers d\'hôtes</string>
+    <string name="permission_denied">Permission refusée</string>
+    <string name="invalid_url_s">URL invalide : %1$s</string>
+    <string name="file_not_found">Fichier introuvable</string>
+    <string name="unknown_error_s">Erreur inattendue : %1$s</string>
+    <string name="requested_timed_out">Délai de la requête dépassé</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="night_mode">Thème sombre</string>
+    <string name="expand_bar_toggle_expand">Ouvrir le panneau détaillé</string>
+    <string name="expand_bar_toggle_close">Fermer le panneau détaillé</string>
+    <string name="expand_bar_expanded">Ouverte</string>
+    <string name="expand_bar_closed">Fermée</string>
+    <string name="action_stop">Arrêter</string>
+    <string name="action_start">Démarrer</string>
+    <string name="automatic_refresh">Rafraîchir quotidiennement</string>
+    <string name="automatic_refresh_description">Les mises à jour quotidiennes ont lieu lorsque le téléphone se recharge, est inactif et sur un réseau illimité.</string>
+    <string name="watchdog">Surveiller la connexion</string>
+    <string name="watchdog_description">Surveille la connexion à intervalles de plus en plus grands et se reconnecte si elle a cessé de fonctionner</string>
+    <string name="legend_host_intro">Les entrées sont traitées dans l\'ordre. Si plusieurs entrées contiennent le même hôte, la dernière entrée est appliquée. Les actions sont :</string>
+    <string name="legend_host_ignore">Ignorer cette entrée</string>
+    <string name="legend_host_allow">Permettre l\'accès aux hôtes de cette entrée</string>
+    <string name="legend_host_deny">Refuser l\'accès aux hôtes de cette entrée</string>
+    <string name="do_not_use_dns_server">Désactivé</string>
+    <string name="use_dns_server">Activé</string>
+    <string name="switch_onboot_description">Démarrer DNS66 lorsque l\'appareil est allumé s\'il était actif quand l\'appareil a été éteint.</string>
+    <string name="activity_edit_dns_server">Modifier le serveur DNS</string>
+    <string name="activity_edit_filter">Modifier le filtre</string>
+    <string name="notification_paused_title">DNS66 est en pause</string>
+    <string name="notification_paused_text">Appuie simple pour reprendre</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="whitelist_on_vpn">Aucune app</string>
+    <string name="whitelist_not_on_vpn">Toutes les apps</string>
+    <string name="whitelist_intelligent">Les apps systèmes sauf les navigateurs</string>
+    <string name="ipv6_support_description">Désactivez ceci si votre réseau n\'utilise pas IPv6 ou si ne parvenez pas à démarrer le service.</string>
+    <string name="ipv6_support">Support de l\'IPv6</string>
+    <string-array name="whitelist_defaults">
+        <item>Toutes les apps passent par DNS66 par défaut</item>
+        <item>Aucune app ne passe par DNS66 par défaut</item>
+        <item>Les apps systèmes ne passent pas par DNS66 par défaut</item>
+    </string-array>
+</resources>

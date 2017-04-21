@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/extra_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorBackgroundSecondary"
+    android:orientation="vertical"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="0dp"
+    tools:showIn="@layout/fragment_start">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/extra_bar_toggle"
+            layout="@layout/button_extra_bar_toggle"/>
+
+        <TextView
+            android:id="@+id/state_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:text="@string/notification_stopped"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/extra_bar_extra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:visibility="gone">
+
+        <Switch
+            android:id="@+id/switch_onboot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:saveEnabled="false"
+            android:text="@string/switch_onboot"/>
+
+        <TextView
+            android:id="@+id/switch_onboot_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/switch_onboot_description"/>
+
+        <Switch
+            android:id="@+id/watchdog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/watchdog"/>
+
+        <TextView
+            android:id="@+id/watchdog_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/watchdog_description"/>
+
+        <Switch
+            android:id="@+id/ipv6_support"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/ipv6_support"/>
+
+        <TextView
+            android:id="@+id/ipv6_support_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/ipv6_support_description"/>
+    </LinearLayout>
+</LinearLayout>

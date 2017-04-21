@@ -1,44 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.jak_linux.dns66.main.StartFragment">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="org.jak_linux.dns66.main.StartFragment">
+
+    <include layout="@layout/extra_bar_start"/>
 
     <ImageView
+        android:id="@+id/state_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:longClickable="true"
+        android:tint="@color/colorStateImage"
+        app:srcCompat="@drawable/ic_menu_start"/>
+
+    <Button
         android:id="@+id/start_button"
-        app:srcCompat="@drawable/ic_menu_start" />
-
-    <TextView
-        android:id="@+id/state_textview"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/notification_stopped"
-        android:textAlignment="center" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/start_description"
-        android:textAlignment="center" />
-
-    <Switch
-        android:id="@+id/switch_onboot"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@color/colorPrimaryLight"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:saveEnabled="false"
-        android:text="@string/switch_onboot" />
-
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/pill"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Activate"
+        android:textColor="?android:attr/textColorPrimaryInverse"/>
 </LinearLayout>

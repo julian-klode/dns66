@@ -32,11 +32,18 @@ Files: app/src/main/res/drawable/ic_add.xml
        app/src/main/res/drawable/ic_apps_black_24dp.xml
        app/src/main/res/drawable/ic_check_box_black_24dp.xml
        app/src/main/res/drawable/ic_check_box_outline_blank_black_24dp.xml
+       app/src/main/res/drawable/ic_delete_forever_white_24dp.xml
+       app/src/main/res/drawable/ic_done_white_24dp.xml
+       app/src/main/res/drawable/ic_error_black_24dp.xml
+       app/src/main/res/drawable/ic_expand_less_black_24dp.xml
+       app/src/main/res/drawable/ic_expand_more_black_24dp.xml
        app/src/main/res/drawable/ic_menu_hosts*.xml
        app/src/main/res/drawable/ic_menu_info.xml
        app/src/main/res/drawable/ic_menu_start*.xml
        app/src/main/res/drawable/ic_refresh.xml
-       app/src/main/res/drawable/ic_restore.xml
+       app/src/main/res/drawable/ic_settings_black_24dp.xml
+       app/src/main/res/drawable/ic_state_deny.xml
+       app/src/main/res/drawable/ic_verified_user_black_24dp.xml
        app/src/main/res/drawable/ic_warning.xml
 Copyright: 2014-2016 Google
 License: Apache-2.0
@@ -49,3 +56,13 @@ Comment:
  These files come from Google's material design icon set. They were translated
  from SVG to Android vector graphics and for some icons, the color has been
  changed in the resulting file.
+
+Files: app/src/main/res/drawable/ic_state_ignore.xml
+       app/src/main/res/drawable/ic_state_allow.xml
+Copyright: 2014-2016 Google
+           2017 Julian Andres Klode
+License: Apache-2.0
+ Works derived from the ic_security_black_24dp.svg by Google, licensed under the Apache license.
+Comment:
+ Created by editing the svg with Inkscape, converting to xml via Android studio, and some manual
+ clean-up afterwards.
