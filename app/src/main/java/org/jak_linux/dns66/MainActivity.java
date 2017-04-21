@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
         if (errors != null && !errors.isEmpty()) {
             Log.d("MainActivity", "onNewIntent: It's an error");
+            errors.add(0, getString(R.string.update_incomplete_description));
             new AlertDialog.Builder(this)
                     .setAdapter(newAdapter(errors), null)
                     .setTitle(R.string.update_incomplete)
@@ -308,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> errors = RuleDatabaseUpdateTask.lastErrors.getAndSet(null);
         if (errors != null && !errors.isEmpty()) {
             Log.d("MainActivity", "onNewIntent: It's an error");
+            errors.add(0, getString(R.string.update_incomplete_description));
             new AlertDialog.Builder(this)
                     .setAdapter(newAdapter(errors), null)
                     .setTitle(R.string.update_incomplete)
