@@ -58,11 +58,12 @@
         android:layout_below="@+id/state_label"
         android:entries="@array/item_states" />
 
-    <ImageView
+    <org.jak_linux.dns66.SquareImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/state_spinner"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:alpha="0.1"
         android:checked="true"

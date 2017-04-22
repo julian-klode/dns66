@@ -9,10 +9,11 @@
 
     <include layout="@layout/extra_bar_start"/>
 
-    <ImageView
+    <org.jak_linux.dns66.SquareImageView
         android:id="@+id/state_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="1"
         android:longClickable="true"
         android:tint="@color/colorStateImage"

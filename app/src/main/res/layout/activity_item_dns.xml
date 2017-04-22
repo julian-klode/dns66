@@ -48,11 +48,12 @@
         android:checked="true"
         android:text="@string/state_dns_enabled"/>
 
-    <ImageView
+    <org.jak_linux.dns66.SquareImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/state_switch"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:alpha="0.1"
         android:checked="true"
