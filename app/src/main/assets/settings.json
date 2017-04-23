@@ -3,7 +3,7 @@
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
-  "watchDog": true,
+  "watchDog": false,
   "ipV6Support": true,
   "dnsServers": {
     "enabled": false,

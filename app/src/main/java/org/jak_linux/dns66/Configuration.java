@@ -38,7 +38,7 @@ public class Configuration {
     public Whitelist whitelist = new Whitelist();
     public boolean showNotification = true;
     public boolean nightMode;
-    public boolean watchDog = true;
+    public boolean watchDog = false;
     public boolean ipV6Support = true;
 
     public static Configuration read(Reader reader) throws IOException {
