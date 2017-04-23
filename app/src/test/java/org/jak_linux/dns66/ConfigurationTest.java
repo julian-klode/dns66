@@ -159,7 +159,7 @@ public class ConfigurationTest {
         assertNotNull(config.dnsServers.items);
         assertTrue(config.whitelist.items.contains("com.android.vending"));
         assertTrue(config.ipV6Support);
-        assertTrue(config.watchDog);
+        assertFalse(config.watchDog);
         assertFalse(config.nightMode);
         assertTrue(config.showNotification);
         assertFalse(config.autoStart);
