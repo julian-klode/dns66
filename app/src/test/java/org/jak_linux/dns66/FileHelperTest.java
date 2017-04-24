@@ -138,7 +138,7 @@ public class FileHelperTest {
     }
 
     @Test
-    @PrepareForTest({FileHelper.class, Configuration.class})
+    @PrepareForTest({Configuration.class})
     public void testLoadDefaultSettings() throws Exception {
         InputStream mockInStream = mock(InputStream.class);
         Configuration mockConfig = mock(Configuration.class);
