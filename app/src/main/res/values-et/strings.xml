@@ -1,0 +1,107 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">Host blocking and custom DNS servers</string>
+    <string name="custom_dns">Custom DNS servers</string>
+    <string name="enable_hosts">Filter hosts</string>
+    <string name="start_tab">Start</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Export settings</string>
+    <string name="action_import">Import settings</string>
+    <string name="action_save">Done</string>
+    <string name="load_defaults">Load default settings</string>
+    <string name="action_about">About</string>
+    <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="switch_onboot">Resume on system start-up</string>
+    <string name="activity_edit">Edit Item</string>
+    <string name="title">Title</string>
+    <string name="location">Location (URL or host)</string>
+    <string name="action">Action</string>
+    <string name="cannot_restore_previous_config">Cannot restore previous configuration: %s</string>
+    <string name="cannot_read_config">Cannot read configuration: %s</string>
+    <string name="cannot_load_default_config">Cannot read default settings: %s - This should not happen</string>
+    <string name="cannot_write_config">Cannot write configuration: %s</string>
+    <string name="action_refresh">Refresh host files</string>
+    <string name="notification_starting">Starting</string>
+    <string name="notification_running">Active</string>
+    <string name="notification_stopping">Stopping</string>
+    <string name="notification_waiting_for_net">Waiting for network</string>
+    <string name="notification_reconnecting">Reconnecting</string>
+    <string name="notification_reconnecting_error">Reconnecting error</string>
+    <string name="notification_stopped">Stopped</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Deny</item>
+        <item>Allow</item>
+        <item>Ignore</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits"/>
+    <string name="app_version_info">Version: %s</string>
+    <string name="missing_hosts_files_message">Some of your configured (non-ignored) hosts files are missing.\n\nUse the ‘Refresh’ action to download hosts files.\n\nDo you still want to continue?</string>
+    <string name="missing_hosts_files_title">Missing hosts file</string>
+    <string name="button_no">No</string>
+    <string name="button_yes">Yes</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
+    <string name="whitelist_tab">Apps</string>
+    <string name="show_notification">Show Notification</string>
+    <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
+    <string name="dns_description">Enable your preferred DNS servers</string>
+    <string name="host_description">Red rules block, green rules allow</string>
+    <string name="disable_notification_title">Disabling Notification</string>
+    <string name="disable_notification_message">Disabling the notification may cause DNS66 to be stopped under memory pressure.\n\nDo you want to disable the notification?</string>
+    <string name="disable_notification_ack">Disable Notification</string>
+    <string name="disable_notification_nak">Abort</string>
+    <string name="whitelist_description">Bypass DNS66 for marked apps</string>
+    <string name="switch_show_system_apps">Show system apps</string>
+    <string name="location_dns">IP address of DNS server (IPv4 or IPv6)</string>
+    <string name="state_dns_enabled">Enabled</string>
+    <string name="host_update_error_item">Error %1$d: %2$s</string>
+    <string name="update_incomplete">Update incomplete</string>
+    <string name="update_incomplete_description">Some host files could not be downloaded. If files were previously downloaded, old versions will continue to be used.</string>
+    <string name="updating_hostfiles">Updating hostfiles</string>
+    <string name="action_use_file">Use file</string>
+    <string name="persistable_uri_permission_failed">Cannot use the requested file: Not permitted to persistently use requested file</string>
+    <string name="updating_n_host_files">Updating %1$d host files</string>
+    <string name="could_not_update_all_hosts">Could not update all hostfiles</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="invalid_url_s">Invalid URL: %1$s</string>
+    <string name="file_not_found">File not found</string>
+    <string name="unknown_error_s">Unexpected error: %1$s</string>
+    <string name="requested_timed_out">Request timed out</string>
+    <string name="action_delete">Delete</string>
+    <string name="night_mode">Dark Theme</string>
+    <string name="expand_bar_toggle_expand">Open details panel</string>
+    <string name="expand_bar_toggle_close">Close details panel</string>
+    <string name="expand_bar_expanded">Opened</string>
+    <string name="expand_bar_closed">Closed</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_start">Start</string>
+    <string name="automatic_refresh">Refresh daily</string>
+    <string name="automatic_refresh_description">Daily updates occur when charging, idle, and on an unmetered network.</string>
+    <string name="watchdog">Watch connection</string>
+    <string name="watchdog_description">Check the connection in increasingly longer intervals and reconnect if it stopped working</string>
+    <string name="legend_host_intro">Entries are processed in order. If multiple entries contain the same host, the last entry is applied. The actions are:</string>
+    <string name="legend_host_ignore">Ignore this entry</string>
+    <string name="legend_host_allow">Allow access to hosts in this entry</string>
+    <string name="legend_host_deny">Deny access to hosts in this entry</string>
+    <string name="do_not_use_dns_server">Off</string>
+    <string name="use_dns_server">On</string>
+    <string name="switch_onboot_description">Start DNS66 when the device is turned on if it was active when the device was turned off.</string>
+    <string name="activity_edit_dns_server">Edit DNS server</string>
+    <string name="activity_edit_filter">Edit Filter</string>
+    <string name="notification_paused_title">DNS66 paused</string>
+    <string name="notification_paused_text">Tap to resume.</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="whitelist_on_vpn">No apps</string>
+    <string name="whitelist_not_on_vpn">All apps</string>
+    <string name="whitelist_intelligent">System apps except browsers</string>
+    <string name="ipv6_support_description">Disable this if your network does not use IPv6 or you cannot start the service.</string>
+    <string name="ipv6_support">IPv6 support</string>
+    <string-array name="whitelist_defaults">
+        <item>No apps bypass by default</item>
+        <item>All apps bypass by default</item>
+        <item>System apps bypass by default</item>
+    </string-array>
+</resources>
