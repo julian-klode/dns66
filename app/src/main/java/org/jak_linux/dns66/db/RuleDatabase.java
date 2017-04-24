@@ -132,12 +132,12 @@ public class RuleDatabase {
 
         if (!config.hosts.enabled) {
             Log.d(TAG, "loadBlockedHosts: Not loading, disabled.");
-        }
-
-        for (Configuration.Item item : config.hosts.items) {
-            if (Thread.interrupted())
-                throw new InterruptedException("Interrupted");
-            loadItem(context, item);
+        } else {
+            for (Configuration.Item item : config.hosts.items) {
+                if (Thread.interrupted())
+                    throw new InterruptedException("Interrupted");
+                loadItem(context, item);
+            }
         }
 
         blockedHosts.set(nextBlockedHosts);

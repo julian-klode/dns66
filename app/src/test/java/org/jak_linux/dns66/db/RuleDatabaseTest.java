@@ -158,6 +158,7 @@ public class RuleDatabaseTest {
 
         Configuration configuration = new Configuration();
         configuration.hosts = new Configuration.Hosts();
+        configuration.hosts.enabled = true;
         configuration.hosts.items = new ArrayList<>();
         configuration.hosts.items.add(item);
 
@@ -168,6 +169,38 @@ public class RuleDatabaseTest {
         ruleDatabase.initialize(context);
 
         assertTrue(ruleDatabase.isBlocked("ahost.com"));
+
+        configuration.hosts.enabled = false;
+
+        ruleDatabase.initialize(context);
+
+        assertFalse(ruleDatabase.isBlocked("ahost.com"));
+        assertTrue(ruleDatabase.isEmpty());
+    }
+
+    @PrepareForTest({Log.class, FileHelper.class})
+    public void testInitialize_disabled() throws Exception {
+        RuleDatabase ruleDatabase = spy(new RuleDatabase());
+
+        Configuration.Item item = new Configuration.Item();
+
+        item.location = "ahost.com";
+        item.state = Configuration.Item.STATE_DENY;
+
+        Configuration configuration = new Configuration();
+        configuration.hosts = new Configuration.Hosts();
+        configuration.hosts.enabled = false;
+        configuration.hosts.items = new ArrayList<>();
+        configuration.hosts.items.add(item);
+
+        Context context = mock(Context.class);
+        mockStatic(FileHelper.class);
+        when(FileHelper.loadCurrentSettings(context)).thenReturn(configuration);
+        when(FileHelper.openItemFile(context, item)).thenReturn(null);
+        ruleDatabase.initialize(context);
+
+        assertFalse(ruleDatabase.isBlocked("ahost.com"));
+        assertTrue(ruleDatabase.isEmpty());
     }
 
     @Test
