@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_shortdesc">Hostide blokeerimine ja kohandatud DNS-serverid</string>
+    <string name="custom_dns">Kohandatud DNS-serverid</string>
+    <string name="enable_hosts">Hostide filtreerimine</string>
+    <string name="start_tab">Algus</string>
+    <string name="hosts_tab">Hostid</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Ekspordi seaded</string>
+    <string name="action_import">Impordi seaded</string>
+    <string name="action_save">Valmis</string>
+    <string name="load_defaults">Laadi vaikimisi seaded</string>
+    <string name="action_about">Teave</string>
+    <string name="info_app_license">See programm on vaba tarkvara: sa võid seda edasi levitada ja/või muuta litsensi GNU General Public License tingimuste järgi, nagu on postitanud Free Software Foundation, kas litsensi 3. versioon või (omal valikul) mõni hilisem versioon.</string>
+    <string name="switch_onboot">Jätka süsteemi käivitusel</string>
+    <string name="activity_edit">Muuda üksust</string>
+    <string name="title">Pealkiri</string>
+    <string name="location">Asukoht (URL või host)</string>
+    <string name="action">Tegevus</string>
+    <string name="cannot_restore_previous_config">Eelmist konfiguratsiooni ei saa taastada: %s</string>
+    <string name="cannot_read_config">Konfiguratsiooni ei saa lugeda: %s</string>
+    <string name="cannot_load_default_config">Vaikimisi seadeid ei saa lugeda: %s - See ei tohiks juhtuda</string>
+    <string name="cannot_write_config">Konfiguratsiooni ei saa kirjutada: %s</string>
+    <string name="action_refresh">Värskenda hostifaile</string>
+    <string name="notification_starting">Käivitun</string>
+    <string name="notification_running">Aktiivne</string>
+    <string name="notification_stopping">Peatan</string>
+    <string name="notification_waiting_for_net">Ootan võrgu järel</string>
+    <string name="notification_reconnecting">Taasühendun</string>
+    <string name="notification_reconnecting_error">Taasühendamise viga</string>
+    <string name="notification_stopped">Peatatud</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Keela</item>
+        <item>Luba</item>
+        <item>Ignoreeri</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Eesti keelde tõlkinud Madis0</string>
+    <string name="app_version_info">Versioon: %s</string>
+    <string name="missing_hosts_files_message">Mõned sinu konfigureeritud (mitte-ignoreeritud) hostifailidest on puudu.\n\nHostifailide allalaadimiseks kasuta nuppu "värskenda".\n\nKas soovid siiski jätkata?</string>
+    <string name="missing_hosts_files_title">Puuduv hostifail</string>
+    <string name="button_no">Ei</string>
+    <string name="button_yes">Jah</string>
+    <string name="whitelist_tab">Rakendused</string>
+    <string name="show_notification">Kuva teadet</string>
+    <string name="could_not_configure_vpn_service">VPN-teenust ei suudetud konfigureerida - kontrolli, kas kasutad alati sees olevat VPN-teenust nagu WiFi Assistant ja keela see</string>
+    <string name="dns_description">Luba oma eelistatud DNS-serverid</string>
+    <string name="host_description">Punased reeglid keelavad, rohelised lubavad</string>
+    <string name="disable_notification_title">Teate keelamine</string>
+    <string name="disable_notification_message">Teate keelamine võib põhjustada DNS66 peatumise mälusurve tagajärjel.\n\nKas soovid teate keelata?</string>
+    <string name="disable_notification_ack">Keela teade</string>
+    <string name="disable_notification_nak">Tühista</string>
+    <string name="whitelist_description">Ignoreeri DNS66-te märgitud rakenduste puhul</string>
+    <string name="switch_show_system_apps">Kuva süsteemirakendusi</string>
+    <string name="location_dns">DNS-serveri IP-aadress (IPv4 või IPv6)</string>
+    <string name="state_dns_enabled">Lubatud</string>
+    <string name="host_update_error_item">Viga %1$d: %2$s</string>
+    <string name="update_incomplete">Uuendus teostamata</string>
+    <string name="update_incomplete_description">Mõndasid hostifaile ei suudetud alla laadida. Kui failid olid eelnevalt alla laaditud, kasutatakse jätkuvalt vanu versioone.</string>
+    <string name="updating_hostfiles">Uuendan hostifaile</string>
+    <string name="action_use_file">Kasuta faili</string>
+    <string name="persistable_uri_permission_failed">Taotletud faili ei saa kasutada: pole õigust soovitud faili püsivaks kasutamiseks</string>
+    <string name="updating_n_host_files">Uuendan %1$d hostifaili</string>
+    <string name="could_not_update_all_hosts">Kõiki hostifaile ei suudetud uuendada</string>
+    <string name="permission_denied">Luba tühistatud</string>
+    <string name="invalid_url_s">Sobimatu URL: %1$s</string>
+    <string name="file_not_found">Faili ei leitud</string>
+    <string name="unknown_error_s">Ootamatu viga: %1$s</string>
+    <string name="requested_timed_out">Taotluse ajalõpp</string>
+    <string name="action_delete">Kustuta</string>
+    <string name="night_mode">Tume teema</string>
+    <string name="expand_bar_toggle_expand">Ava seadetepaneel</string>
+    <string name="expand_bar_toggle_close">Sulge seadetepaneel</string>
+    <string name="expand_bar_expanded">Avatud</string>
+    <string name="expand_bar_closed">Suletud</string>
+    <string name="action_stop">Peata</string>
+    <string name="action_start">Käivita</string>
+    <string name="automatic_refresh">Värskenda igapäevaselt</string>
+    <string name="automatic_refresh_description">Igapäevased uuendused toimuvad, kui seade laeb, on ebaaktiivne ja mahupiiranguta võrgus.</string>
+    <string name="watchdog">Jälgi ühendust</string>
+    <string name="watchdog_description">Kontrolli ühendust pidevalt pikenevate intervallidega ja taasühenda, kui see lakkas töötamast</string>
+    <string name="legend_host_intro">Üksuseid töödeldakse järjekorras. Kui mitu üksust sisaldavad sama hosti, rakendatakse viimast. Tegevused on:</string>
+    <string name="legend_host_ignore">Ignoreeri seda üksust</string>
+    <string name="legend_host_allow">Luba hostidele ligipääs selles üksuses</string>
+    <string name="legend_host_deny">Keela hostidele ligipääs selles üksuses</string>
+    <string name="do_not_use_dns_server">Väljas</string>
+    <string name="use_dns_server">Sees</string>
+    <string name="switch_onboot_description">Käivita DNS66, kui seade lülitatakse sisse, kui see oli aktiivne välja lülitamise ajal.</string>
+    <string name="activity_edit_dns_server">Muuda DNS-serverit</string>
+    <string name="activity_edit_filter">Muuda filtrit</string>
+    <string name="notification_paused_title">DNS66 pausil</string>
+    <string name="notification_paused_text">Koputa jätkamiseks.</string>
+    <string name="notification_action_pause">Paus</string>
+    <string name="whitelist_on_vpn">Mitte ükski rakendus</string>
+    <string name="whitelist_not_on_vpn">Kõik rakendused</string>
+    <string name="whitelist_intelligent">Süsteemirakendused, v.a. brauserid</string>
+    <string name="ipv6_support_description">Keela see, kui su võrk ei kasuta IPv6-te või sa ei saa teenust käivitada.</string>
+    <string name="ipv6_support">IPv6-tugi</string>
+    <string-array name="whitelist_defaults">
+        <item>Vaikimisi ära ignoreeri ühtegi rakendust</item>
+        <item>Vaikimisi ignoreeri kõiki rakendusi</item>
+        <item>Vaikimisi ignoreeri süsteemirakendusi</item>
+    </string-array>
+</resources>
