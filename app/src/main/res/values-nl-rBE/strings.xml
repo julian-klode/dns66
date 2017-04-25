@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_shortdesc">Host blokkering en aangepaste DNS servers</string>
+    <string name="custom_dns">Aangepaste DNS servers</string>
+    <string name="enable_hosts">Hosts filtreren</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Instellingen exporten</string>
+    <string name="action_import">Instellingen importen</string>
+    <string name="action_save">Voltooid</string>
+    <string name="action_about">Over</string>
+    <string name="activity_edit">Item bewerken</string>
+    <string name="action">Aktie</string>
+    <string name="cannot_restore_previous_config">De vorige configuratie-instellingen kunnen niet worden hersteld: %s</string>
+    <string name="cannot_read_config">De configuratie-instellingen kunnen niet worden ingelezen: %s</string>
+    <string name="cannot_load_default_config">De standaard-instellingen kunnen niet worden ingelezen: %s - Dit zou niet mogen gebeuren.</string>
+    <string-array name="item_states">
+        <item></item>
+        <item></item>
+        <item>Negeer</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits"/>
+    <string name="app_version_info">Versie: %s</string>
+    <string name="button_no">Neen</string>
+    <string name="button_yes">Ja</string>
+    <string name="disable_notification_nak">Afbreken</string>
+    <string name="action_use_file">Gebruik het bestand</string>
+    <string name="could_not_update_all_hosts">Niet alle host-bestanden komen worden geüpdate.</string>
+    <string name="file_not_found">Het bestand kan niet worden gevonden</string>
+    <string name="action_delete">Verwijderen</string>
+    <string name="expand_bar_toggle_expand">Detailpaneel openen</string>
+    <string name="expand_bar_toggle_close">Detailpaneel sluiten</string>
+    <string name="expand_bar_expanded">Geopend</string>
+    <string name="expand_bar_closed">Gesloten</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_start">Start</string>
+    <string name="automatic_refresh">Dagelijks vernieuwen</string>
+    <string name="do_not_use_dns_server">Uit</string>
+    <string name="activity_edit_dns_server">Bewerk DNS server</string>
+    <string name="activity_edit_filter">Bewerk filter</string>
+    <string name="ipv6_support">IPv6 ondersteuning</string>
+</resources>
