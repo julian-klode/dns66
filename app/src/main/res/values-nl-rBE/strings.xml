@@ -2,32 +2,79 @@
     <string name="app_shortdesc">Host blokkering en aangepaste DNS servers</string>
     <string name="custom_dns">Aangepaste DNS servers</string>
     <string name="enable_hosts">Hosts filtreren</string>
+    <string name="start_tab">Start</string>
     <string name="hosts_tab">Hosts</string>
     <string name="dns_tab">DNS</string>
     <string name="action_export">Instellingen exporten</string>
     <string name="action_import">Instellingen importen</string>
     <string name="action_save">Voltooid</string>
+    <string name="load_defaults">Standaardinstellingen laden</string>
     <string name="action_about">Over</string>
+    <string name="info_app_license">Dit programma is vrije software: u kan het verder verdelen en/of aanpassen onder de voorwaarden van de GNU General Public License zoals gepubliceerd die de Free Software Foundation, onder ofwel versie 3 van de licentie of (indien ter beschikking) een latere versie.</string>
+    <string name="switch_onboot">Aanschakelen bij het opstarten</string>
     <string name="activity_edit">Item bewerken</string>
+    <string name="title">Titel</string>
+    <string name="location">Locatie (URL of host)</string>
     <string name="action">Aktie</string>
     <string name="cannot_restore_previous_config">De vorige configuratie-instellingen kunnen niet worden hersteld: %s</string>
     <string name="cannot_read_config">De configuratie-instellingen kunnen niet worden ingelezen: %s</string>
     <string name="cannot_load_default_config">De standaard-instellingen kunnen niet worden ingelezen: %s - Dit zou niet mogen gebeuren.</string>
+    <string name="cannot_write_config">De instellingen kunen niet worden opgeslaan: %s</string>
+    <string name="action_refresh">Recente host bestanden</string>
+    <string name="notification_starting">Bezig met starten</string>
+    <string name="notification_running">Actief</string>
+    <string name="notification_stopping">Bezig net stoppen</string>
+    <string name="notification_waiting_for_net">Wacht op het netwerk</string>
+    <string name="notification_reconnecting">Bezig met opnieuw te verbinden</string>
+    <string name="notification_reconnecting_error">Herverbindingsfout</string>
+    <string name="notification_stopped">Gestopt</string>
+    <string name="notification_title">DNS66</string>
     <string-array name="item_states">
-        <item></item>
-        <item></item>
+        <item>Weiger</item>
+        <item>Toestaan</item>
         <item>Negeer</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits"/>
     <string name="app_version_info">Versie: %s</string>
+    <string name="missing_hosts_files_message">Sommige geconfigureerde (en niet-genegeerde) hosts bestanden zijn niet beschikbaar.\n
+ \n
+ Gebruik de \'Ververs\' actie om deze hosts bestanden te downloaden. \n
+ \n
+ Wenst u nog steeds verder te gaan?</string>
+    <string name="missing_hosts_files_title">Het hosts bestand kan niet worden gevonden.</string>
     <string name="button_no">Neen</string>
     <string name="button_yes">Ja</string>
+    <string name="whitelist_tab">Applicaties</string>
+    <string name="show_notification">Bericht Tonen</string>
+    <string name="could_not_configure_vpn_service">De VPN service kon niet geconfigureerd worden; kijk even of u een altijd-aan VPN dienst zoals WiFi Assistent gebruikt en schakel die uit.</string>
+    <string name="dns_description">Schakel uw voorkeurs-DNS servers in</string>
+    <string name="host_description">Rode regels blokkeren, groene regels laten toe</string>
+    <string name="disable_notification_title">Berichten worden uitgeschakeld</string>
+    <string name="disable_notification_message">De berichten uitschakelen kan ervoor zorgen dat DNS66 stoor met werken wanneer er weinig geheugen beschikbaar is. \n
+  \n
+  Bent u er zeker van dat u berichten wilt uitschakelen?</string>
+    <string name="disable_notification_ack">Berichten Uitschakelen</string>
     <string name="disable_notification_nak">Afbreken</string>
+    <string name="whitelist_description">Laat geselecteerde applicaties DNS66 omzeilen</string>
+    <string name="switch_show_system_apps">Toon systeemapplicaties</string>
+    <string name="location_dns">IP adres van de DNS server (IPv4 of IPv6)</string>
+    <string name="state_dns_enabled">Ingeschakeld</string>
+    <string name="host_update_error_item">Fout %1$d: %2$s</string>
+    <string name="update_incomplete">Onvoltooide update</string>
+    <string name="update_incomplete_description">Sommige hosts bestanden konden niet worden gedownload. Indien een vroegere versie van deze bestanden reeds gedownload werd, zal dezer oudere versie verder worden gebruikt.</string>
+    <string name="updating_hostfiles">De hosts bestanden worden bijgewerkt</string>
     <string name="action_use_file">Gebruik het bestand</string>
+    <string name="persistable_uri_permission_failed">Het verzochte bestand kan niet worden gebruikt: Het is niet toegestaan om het gekozen bestand als opgeslagen bestand te gebruiken</string>
+    <string name="updating_n_host_files">%1$d hosts bestanden worden bijgewerkt</string>
     <string name="could_not_update_all_hosts">Niet alle host-bestanden komen worden geüpdate.</string>
+    <string name="permission_denied">Toestemming geweigerd</string>
+    <string name="invalid_url_s">Ongeldige URL: %1$s</string>
     <string name="file_not_found">Het bestand kan niet worden gevonden</string>
+    <string name="unknown_error_s">Onvoorziene fout: %1$s</string>
+    <string name="requested_timed_out">Het verzoek duurde te lang</string>
     <string name="action_delete">Verwijderen</string>
+    <string name="night_mode">Donker Thema</string>
     <string name="expand_bar_toggle_expand">Detailpaneel openen</string>
     <string name="expand_bar_toggle_close">Detailpaneel sluiten</string>
     <string name="expand_bar_expanded">Geopend</string>
@@ -35,8 +82,29 @@
     <string name="action_stop">Stop</string>
     <string name="action_start">Start</string>
     <string name="automatic_refresh">Dagelijks vernieuwen</string>
+    <string name="automatic_refresh_description">Dagelijkse updates gebeuren gedurende het opladen, wanneer het apparaat niet wordt gebruikt en op gemeterde netwerken.</string>
+    <string name="watchdog">Verbinding in het oog houden</string>
+    <string name="watchdog_description">Kijk de verbinding na na steeds langer durende intervals en herverbindt indien deze werd verbroken.</string>
+    <string name="legend_host_intro">Bestanden worden verwerkt in de weergegeven volgorde.  Indien meerdere bestanden dezelfde host bevatten, is hey laatste bestand van toepassing. De beschikbare acties zijn:</string>
+    <string name="legend_host_ignore">Negeer dit bestand</string>
+    <string name="legend_host_allow">Sta toegang tot hosts in dit bestand toe</string>
+    <string name="legend_host_deny">Weiger toegang tot hosts in dit bestand</string>
     <string name="do_not_use_dns_server">Uit</string>
+    <string name="use_dns_server">Aan</string>
+    <string name="switch_onboot_description">Start DNS66 wanneer het apparaat wordt aangeschakeld indien het reeds actief was wanneer het apparaat werd uitgezet.</string>
     <string name="activity_edit_dns_server">Bewerk DNS server</string>
     <string name="activity_edit_filter">Bewerk filter</string>
+    <string name="notification_paused_title">DNS66 is gepauzeerd</string>
+    <string name="notification_paused_text">Tik aan on verder te gaan.</string>
+    <string name="notification_action_pause">Pauzeren</string>
+    <string name="whitelist_on_vpn">Geen enkele applicatie</string>
+    <string name="whitelist_not_on_vpn">Alle applicaties</string>
+    <string name="whitelist_intelligent">Alle systeem-applicaties behalve browsers</string>
+    <string name="ipv6_support_description">Schakel dit uit indien uw netwerk geen gebruik maakt van IPv6 of indien u de service niet kan starten.</string>
     <string name="ipv6_support">IPv6 ondersteuning</string>
+    <string-array name="whitelist_defaults">
+        <item>Geen enkele applicatie omzeilt standaard</item>
+        <item>Alle applicaties omzeilen standaard</item>
+        <item>Systeem-applicaties omzeilen standaard</item>
+    </string-array>
 </resources>
