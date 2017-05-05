@@ -1,9 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">DNS66</string>
     <string name="app_shortdesc">Adres engelleme ve özel DNS sunucuları</string>
     <string name="custom_dns">Özel DNS sunucuları</string>
     <string name="enable_hosts">Adresleri filtrele</string>
     <string name="start_tab">Başlat</string>
+    <string name="do_not_use_dns_server">Kapalı</string>
+    <string name="use_dns_server">Açık</string>
+    <string name="missing_hosts_files_message">Yapılandırılmış (göz ardı edilmemiş olanlar) adres dosyalarından bazıları eksik.\n\n‘Yenile’ düğmesine basarak adres dosyalarını indir.\n\nDevam etmek istiyor musun ?</string>
+    <string name="update_incomplete">Güncelleme tamamlanmadı</string>
+    <string name="expand_bar_toggle_close">Ayrıntı panelini kapat</string>
+    <string name="expand_bar_expanded">Açıldı</string>
+    <string name="expand_bar_closed">Kapatıldı</string>
+    <string name="action_stop">Durdur</string>
+    <string name="action_start">Başlat</string>
     <string name="hosts_tab">Adresler</string>
     <string name="dns_tab">DNS</string>
     <string name="action_export">Ayarları Kaydet</string>
@@ -11,8 +20,7 @@
     <string name="action_save">Tamamlandı</string>
     <string name="load_defaults">Varsayılan ayarları yükle</string>
     <string name="action_about">Hakkında</string>
-    <string name="info_app_license">Bu program ücretsizdir: GNU Genel Kamu Lisansı'nın, Lisansın sürüm 3'ü veya (isteğe bağlı olarak) herhangi bir sonraki sürümünde yayınlanan Free Software Foundation'ın şartlarına göre yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
-    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="info_app_license">Bu program ücretsizdir: GNU Genel Kamu Lisansının, Lisansın sürüm 3 veya (isteğe bağlı olarak) herhangi bir sonraki sürümünde yayınlanan Free Software Foundationın şartlarına göre yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
     <string name="switch_onboot">Sistem başlatıldığında devam et</string>
     <string name="activity_edit">Maddeyi Düzenle</string>
     <string name="title">Başlık</string>
@@ -39,26 +47,23 @@
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits">Çeviri : Mehmet Yüksel POLAT</string>
     <string name="app_version_info">Versiyon: %s</string>
-    <string name="missing_hosts_files_message">Yapılandırılmış (göz ardı edilmemiş olanlar) adres dosyalarından bazıları eksik.\n\n‘Yenile’ düğmesine basarak adres dosyalarını indir.\n\nDevam etmek istiyor musun ?</string>
     <string name="missing_hosts_files_title">Kayıp adres dosyaları</string>
     <string name="button_no">Hayır</string>
     <string name="button_yes">Evet</string>
-    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
     <string name="whitelist_tab">Uygulamalar</string>
     <string name="show_notification">Bildirimi Göster</string>
     <string name="could_not_configure_vpn_service">VPN servisi ayarlanamadı - Eğer VPN servisi ile birlikte Wifi Asistanı gibi uygulama kullanıyorsan onu kapatmayı dene.</string>
     <string name="dns_description">Tercih edilen DNS sunucularını aktif et</string>
     <string name="host_description">Kırmızı kurallar engeller, Yeşil kurallar izin verir</string>
     <string name="disable_notification_title">Bildirimi Devredışı Bırakma</string>
-    <string name="disable_notification_message">Bildirimin devre dışı bırakılması DNS66'nın bellek baskısı altında durdurulmasına neden olabilir.\n\nBildirimi devre dışı bırakmak istiyor musunuz?</string>
+    <string name="disable_notification_message">Bildirimin devre dışı bırakılması, uygulamanın bellek baskısı altında durdurulmasına neden olabilir.\n\nBildirimi devre dışı bırakmak istiyor musunuz?</string>
     <string name="disable_notification_ack">Bildirimi Kapat</string>
     <string name="disable_notification_nak">İptal</string>
-    <string name="whitelist_description">İşaretli uygulamalar için DNS66'yı atla</string>
+    <string name="whitelist_description">İşaretli uygulamalar için DNS66 uygulamasını atla</string>
     <string name="switch_show_system_apps">Sistem uygulamalarını göster</string>
     <string name="location_dns">DNS sunucusunun IP adresi (IPv4 veya IPv6)</string>
     <string name="state_dns_enabled">Aktif Edildi</string>
     <string name="host_update_error_item">Hata %1$d: %2$s</string>
-    <string name="update_incomplete">Güncelleme tamamlanmadı</string>
     <string name="update_incomplete_description">Bazı adres dosyaları indirilemedi. Eğer dosyaları daha önceden indirmişsen, eski versiyonlar kullanılmaya devam edecek.</string>
     <string name="updating_hostfiles">Adres dosyaları güncelleniyor</string>
     <string name="action_use_file">Dosya kullan</string>
@@ -73,11 +78,6 @@
     <string name="action_delete">Sil</string>
     <string name="night_mode">Gece Modu</string>
     <string name="expand_bar_toggle_expand">Ayrıntı panelini aç</string>
-    <string name="expand_bar_toggle_close">Ayrıntı panelini kapat</string>
-    <string name="expand_bar_expanded">Açıldı</string>
-    <string name="expand_bar_closed">Kapatıldı</string>
-    <string name="action_stop">Durdur</string>
-    <string name="action_start">Başlat</string>
     <string name="automatic_refresh">Günlük olarak güncelle</string>
     <string name="automatic_refresh_description">Günlük güncelleme; şarj olurken, boşta ve sınırsız bir ağda (örn: wifi açıkken) gerçekleşir.</string>
     <string name="watchdog">Bağlantıyı izle</string>
@@ -86,8 +86,6 @@
     <string name="legend_host_ignore">Bu maddeyi yoksay</string>
     <string name="legend_host_allow">Bu maddedeki adreslere erişim izni ver</string>
     <string name="legend_host_deny">Bu maddedeki adreslere erişimi engelle</string>
-    <string name="do_not_use_dns_server">Kapalı</string>
-    <string name="use_dns_server">Açık</string>
     <string name="switch_onboot_description">Cihaz kapalıyken DNS66 etkinse, cihaz açıldığında da başlat.</string>
     <string name="activity_edit_dns_server">DNS sunucusunu düzenle</string>
     <string name="activity_edit_filter">Filtreyi Düzenle</string>
