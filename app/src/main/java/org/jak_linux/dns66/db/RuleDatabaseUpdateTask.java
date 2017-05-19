@@ -10,8 +10,11 @@ package org.jak_linux.dns66.db;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.UriPermission;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,8 +29,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.jak_linux.dns66.Configuration.Item.STATE_IGNORE;
 
 /**
  * Asynchronous task to update the database.
@@ -75,12 +76,13 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
         long start = System.currentTimeMillis();
         ExecutorService executor = Executors.newCachedThreadPool();
 
-
         for (Configuration.Item item : configuration.hosts.items) {
             RuleDatabaseItemUpdateRunnable runnable = getCommand(item);
             if (runnable.shouldDownload())
                 executor.execute(runnable);
         }
+
+        releaseGarbagePermissions();
 
         executor.shutdown();
         while (true) {
@@ -98,6 +100,34 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
         postExecute();
 
         return null;
+    }
+
+    /**
+     * Releases all persisted URI permissions that are no longer referenced
+     */
+    void releaseGarbagePermissions() {
+        ContentResolver contentResolver = context.getContentResolver();
+        for (UriPermission permission : contentResolver.getPersistedUriPermissions()) {
+            if (isGarbage(permission.getUri())) {
+                Log.i(TAG, "releaseGarbagePermissions: Releasing permission for " + permission.getUri());
+                contentResolver.releasePersistableUriPermission(permission.getUri(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } else {
+                Log.v(TAG, "releaseGarbagePermissions: Keeping permission for " + permission.getUri());
+            }
+        }
+    }
+
+    /**
+     * Returns whether URI is no longer referenced in the configuration
+     *
+     * @param uri URI to check
+     */
+    private boolean isGarbage(Uri uri) {
+        for (Configuration.Item item : configuration.hosts.items) {
+            if (Uri.parse(item.location).equals(uri))
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -186,6 +216,7 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
 
     /**
      * Adds an item to the notification
+     *
      * @param item The item currently being processed.
      */
     synchronized void addBegin(Configuration.Item item) {
