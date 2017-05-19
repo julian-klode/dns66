@@ -42,6 +42,9 @@ import org.jak_linux.dns66.main.MainFragmentPagerAdapter;
 import org.jak_linux.dns66.main.StartFragment;
 import org.jak_linux.dns66.vpn.AdVpnService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -192,9 +195,40 @@ public class MainActivity extends AppCompatActivity {
                 Intent infoIntent = new Intent(this, InfoActivity.class);
                 startActivity(infoIntent);
                 break;
+            case R.id.action_logcat:
+                sendLogcat();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendLogcat() {
+        Process proc = null;
+        try {
+            proc = Runtime.getRuntime().exec("logcat -d");
+            InputStream is = proc.getInputStream();
+            BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+            StringBuilder logcat = new StringBuilder();
+            String line;
+            while ((line = bis.readLine()) != null) {
+                logcat.append(line);
+                logcat.append('\n');
+            }
+
+            Intent eMailIntent = new Intent(Intent.ACTION_SEND);
+            eMailIntent.setType("text/plain");
+            eMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"jak@jak-linux.org"});
+            eMailIntent.putExtra(Intent.EXTRA_SUBJECT, "DNS66 Logcat");
+            eMailIntent.putExtra(Intent.EXTRA_TEXT, logcat.toString());
+            eMailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(eMailIntent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (proc != null)
+                proc.destroy();
+        }
     }
 
     @Override

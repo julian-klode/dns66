@@ -38,4 +38,9 @@
         android:orderInCategory="100"
         android:title="@string/action_about"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_logcat"
+        android:orderInCategory="100"
+        android:title="@string/action_logcat"
+        app:showAsAction="never" />
 </menu>
