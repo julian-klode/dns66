@@ -99,6 +99,7 @@
     <string name="whitelist_intelligent">System apps except browsers</string>
     <string name="ipv6_support_description">Disable this if your network does not use IPv6 or you cannot start the service.</string>
     <string name="ipv6_support">IPv6 support</string>
+    <string name="action_logcat">Logcat</string>
     <string-array name="whitelist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>

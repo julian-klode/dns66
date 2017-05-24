@@ -101,4 +101,5 @@
     <string name="ipv6_support">IPv6 Unterstützung</string>
     <string name="ipv6_support_description">Deaktiviere dies falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
     <string name="update_incomplete_description">Einige Hostdateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden, werden die alten Versionen weiter verwendet.</string>
+    <string name="action_logcat">Logcat senden</string>
 </resources>
