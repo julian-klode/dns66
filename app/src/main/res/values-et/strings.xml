@@ -10,7 +10,7 @@
     <string name="action_save">Valmis</string>
     <string name="load_defaults">Laadi vaikimisi seaded</string>
     <string name="action_about">Teave</string>
-    <string name="info_app_license">See programm on vaba tarkvara: sa võid seda edasi levitada ja/või muuta litsensi GNU General Public License tingimuste järgi, nagu on postitanud Free Software Foundation, kas litsensi 3. versioon või (omal valikul) mõni hilisem versioon.</string>
+    <string name="info_app_license">See programm on vaba tarkvara: sa võid seda edasi levitada ja/või muuta litsensi GNU General Public License tingimuste alusel, nagu on postitanud Free Software Foundation, kas litsensi 3. versioon või (omal valikul) mõni hilisem versioon.</string>
     <string name="switch_onboot">Jätka süsteemi käivitusel</string>
     <string name="activity_edit">Muuda üksust</string>
     <string name="title">Pealkiri</string>
@@ -51,7 +51,7 @@
     <string name="disable_notification_ack">Keela teade</string>
     <string name="disable_notification_nak">Tühista</string>
     <string name="whitelist_description">Ignoreeri DNS66-te märgitud rakenduste puhul</string>
-    <string name="switch_show_system_apps">Kuva süsteemirakendusi</string>
+    <string name="switch_show_system_apps">Kuva süsteemirakendused</string>
     <string name="location_dns">DNS-serveri IP-aadress (IPv4 või IPv6)</string>
     <string name="state_dns_enabled">Lubatud</string>
     <string name="host_update_error_item">Viga %1$d: %2$s</string>
@@ -76,29 +76,30 @@
     <string name="action_stop">Peata</string>
     <string name="action_start">Käivita</string>
     <string name="automatic_refresh">Värskenda igapäevaselt</string>
-    <string name="automatic_refresh_description">Igapäevased uuendused toimuvad, kui seade laeb, on ebaaktiivne ja mahupiiranguta võrgus.</string>
+    <string name="automatic_refresh_description">Igapäevased uuendused toimuvad siis, kui seade laeb, on ebaaktiivne ja ühendatud mahupiiranguta võrku.</string>
     <string name="watchdog">Jälgi ühendust</string>
     <string name="watchdog_description">Kontrolli ühendust pidevalt pikenevate intervallidega ja taasühenda, kui see lakkas töötamast</string>
     <string name="legend_host_intro">Üksuseid töödeldakse järjekorras. Kui mitu üksust sisaldavad sama hosti, rakendatakse viimast. Tegevused on:</string>
     <string name="legend_host_ignore">Ignoreeri seda üksust</string>
-    <string name="legend_host_allow">Luba hostidele ligipääs selles üksuses</string>
-    <string name="legend_host_deny">Keela hostidele ligipääs selles üksuses</string>
+    <string name="legend_host_allow">Luba sellel üksusel hostidele ligipääs</string>
+    <string name="legend_host_deny">Keela sellel üksusel hostidele ligipääs</string>
     <string name="do_not_use_dns_server">Väljas</string>
     <string name="use_dns_server">Sees</string>
-    <string name="switch_onboot_description">Käivita DNS66, kui seade lülitatakse sisse, kui see oli aktiivne välja lülitamise ajal.</string>
+    <string name="switch_onboot_description">Käivita DNS66 seadme sisselülitusel, kui see oli aktiivne seadme väljalülituse ajal.</string>
     <string name="activity_edit_dns_server">Muuda DNS-serverit</string>
     <string name="activity_edit_filter">Muuda filtrit</string>
     <string name="notification_paused_title">DNS66 pausil</string>
     <string name="notification_paused_text">Koputa jätkamiseks.</string>
     <string name="notification_action_pause">Paus</string>
-    <string name="whitelist_on_vpn">Mitte ükski rakendus</string>
-    <string name="whitelist_not_on_vpn">Kõik rakendused</string>
-    <string name="whitelist_intelligent">Süsteemirakendused, v.a. brauserid</string>
+    <string name="whitelist_on_vpn">Mitte ühtegi rakendust</string>
+    <string name="whitelist_not_on_vpn">Kõiki rakendusi</string>
+    <string name="whitelist_intelligent">Süsteemirakendusi, v.a. brauserid</string>
     <string name="ipv6_support_description">Keela see, kui su võrk ei kasuta IPv6-te või sa ei saa teenust käivitada.</string>
     <string name="ipv6_support">IPv6-tugi</string>
+    <string name="action_logcat">Logcat</string>
     <string-array name="whitelist_defaults">
-        <item>Vaikimisi ära ignoreeri ühtegi rakendust</item>
-        <item>Vaikimisi ignoreeri kõiki rakendusi</item>
-        <item>Vaikimisi ignoreeri süsteemirakendusi</item>
+        <item>Ära ignoreeri vaikimisi ühtegi rakendust</item>
+        <item>Ignoreeri vaikimisi kõiki rakendusi</item>
+        <item>Ignoreeri vaikimisi süsteemirakendusi</item>
     </string-array>
 </resources>
