@@ -21,8 +21,8 @@
     <string name="cannot_load_default_config">Nie można odczytać ustawień domyślnych: %s - To się nie powinno zdarzyć</string>
     <string name="cannot_write_config">Nie można zapisać konfiguracji: %s</string>
     <string name="action_refresh">Odśwież pliki hosts</string>
-    <string name="notification_starting">Startowanie</string>
-    <string name="notification_running">Działanie</string>
+    <string name="notification_starting">Uruchamianie</string>
+    <string name="notification_running">Działa</string>
     <string name="notification_stopping">Zatrzymywanie</string>
     <string name="notification_waiting_for_net">Oczekiwanie na sieć</string>
     <string name="notification_reconnecting">Ponowne łączenie</string>
@@ -35,7 +35,7 @@
         <item>Ignoruj</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
-    <string name="translator_credits">Polskie tłumaczenie: justmix4</string>
+    <string name="translator_credits">Tłumaczyli: justmix4</string>
     <string name="app_version_info">Wersja: %s</string>
     <string name="missing_hosts_files_message">Niektóre z Twoich skonfigurowanych (nieignorowanych) plików hosts są brakujące.\n\nUżyj przycisku "Odśwież", aby pobrać pliki hosts.\n\nCzy nadal chcesz kontynuować?</string>
     <string name="missing_hosts_files_title">Brak plików hosts</string>
@@ -43,7 +43,7 @@
     <string name="button_yes">Tak</string>
     <string name="whitelist_tab">Aplikacje</string>
     <string name="show_notification">Pokaż powiadomienie</string>
-    <string name="could_not_configure_vpn_service">Nie można skonfigurować usługi VPN - Sprawdź, czy korzystasz zawsze z usługi VPN, np. WiFi Assistant i wyłącz ją</string>
+    <string name="could_not_configure_vpn_service">Nie można skonfigurować usługi VPN - Sprawdź, czy inne aplikacje nie kolidują z usługą VPN, np. WiFi Assistant i wyłącz ją</string>
     <string name="dns_description">Włącz preferowane serwery DNS</string>
     <string name="host_description">Czerwone reguły blokują, zielone reguły pozwalają</string>
     <string name="disable_notification_title">Wyłączanie powiadomień</string>
@@ -68,24 +68,24 @@
     <string name="unknown_error_s">Nieoczekiwany błąd: %1$s</string>
     <string name="requested_timed_out">Upłynął limit czasu żądania</string>
     <string name="action_delete">Usuń</string>
-    <string name="night_mode">Ciemny Motyw</string>
+    <string name="night_mode">Ciemny motyw</string>
     <string name="expand_bar_toggle_expand">Otwórz panel szczegółów</string>
     <string name="expand_bar_toggle_close">Zamknij panel szczegółów</string>
     <string name="expand_bar_expanded">Otwarty</string>
     <string name="expand_bar_closed">Zamknięty</string>
-    <string name="action_stop">Stop</string>
-    <string name="action_start">Start</string>
+    <string name="action_stop">Zatrzymaj</string>
+    <string name="action_start">Uruchom</string>
     <string name="automatic_refresh">Odśwież codziennie</string>
-    <string name="automatic_refresh_description">Codzienne aktualizacje pojawiają się podczas ładowania, bezczynności i bezobsługowej sieci.</string>
-    <string name="watchdog">Obejrzyj połączenie</string>
-    <string name="watchdog_description">Sprawdź połączenia w coraz większych odstępach czasu i ponownie podłącz je, jeśli przestanie działać</string>
-    <string name="legend_host_intro">Wpisy są przetwarzane w kolejności. Jeśli wiele wpisów zawiera ten sam hosts, zostanie zastosowany ostatni wpis. Działania są:</string>
+    <string name="automatic_refresh_description">Codzienne aktualizuje pliki hosts.</string>
+    <string name="watchdog">Monitoruj połączenie</string>
+    <string name="watchdog_description">Sprawdza połączenie z internetem w określonych odstępach czasu i ponownie je podłącza jeśli przestanie działać</string>
+    <string name="legend_host_intro">Wpisy są przetwarzane w kolejności. Jeśli wiele wpisów zawiera ten sam hosts, zostanie zastosowany ostatni wpis. Dostępne działania:</string>
     <string name="legend_host_ignore">Zignoruj ten wpis</string>
     <string name="legend_host_allow">Zezwala na dostęp do hosts w tym wpisie</string>
     <string name="legend_host_deny">Odmawia dostępu do hosts w tym wpisie</string>
     <string name="do_not_use_dns_server">Wyłączone</string>
     <string name="use_dns_server">Włączone</string>
-    <string name="switch_onboot_description">Uruchom DNS66, gdy urządzenie jest włączone, jeśli było aktywne, gdy urządzenie zostało wyłączone.</string>
+    <string name="switch_onboot_description">Uruchamia DNS66 przy starcie systemu.</string>
     <string name="activity_edit_dns_server">Edytuj serwer DNS</string>
     <string name="activity_edit_filter">Edytuj filtr</string>
     <string name="notification_paused_title">DNS66 wstrzymany</string>
@@ -93,8 +93,8 @@
     <string name="notification_action_pause">Pauza</string>
     <string name="whitelist_on_vpn">Brak aplikacji</string>
     <string name="whitelist_not_on_vpn">Wszystkie aplikacje</string>
-    <string name="whitelist_intelligent">Aplikacje systemowe z wyjątkiem przeglądarek</string>
-    <string name="ipv6_support_description">Wyłącz tę opcję, jeśli sieć nie korzysta z protokołu IPv6 lub nie można uruchomić usługi.</string>
+    <string name="whitelist_intelligent">Aplikacje syst. z wyjątkiem przeglądarek</string>
+    <string name="ipv6_support_description">Wyłącz tę opcję jeśli twoja sieć nie korzysta z protokołu IPv6 lub nie można uruchomić tej usługi.</string>
     <string name="ipv6_support">Obsługa protokołu IPv6</string>
     <string-array name="whitelist_defaults">
         <item>Brak domyślnie wykluczonych aplikacji</item>
