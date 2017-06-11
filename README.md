@@ -1,6 +1,8 @@
-DNS-Based Ad Blocking for Android
-=================================
-This is a DNS based ad blocker for Android.
+DNS-Based Host Blocking for Android
+===================================
+This is a DNS-based host blocker for Android. In the default configuration,
+several widely-respected host files are used to block ads, malware, and other
+weird stuff.
 
 [![codecov](https://codecov.io/gh/julian-klode/dns66/branch/master/graph/badge.svg)](https://codecov.io/gh/julian-klode/dns66)
 [![Build Status](https://travis-ci.org/julian-klode/dns66.svg?branch=master)](https://travis-ci.org/julian-klode/dns66)
