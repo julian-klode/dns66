@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">Host blocking and custom DNS servers</string>
+    <string name="start_description">Long press to turn on or off</string>
+    <string name="custom_dns">Enable custom DNS servers</string>
+    <string name="enable_hosts">Enable Domain Filtering</string>
+    <string name="start_tab">Start / Stop</string>
+    <string name="hosts_tab">Domain Filters</string>
+    <string name="dns_tab">DNS Servers</string>
+    <string name="action_export">Export settings</string>
+    <string name="action_import">Import settings</string>
+    <string name="action_save">Save</string>
+    <string name="load_defaults">Load default settings</string>
+    <string name="action_about">About</string>
+    <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="switch_onboot">Automatically start on boot</string>
+    <string name="activity_edit">Edit Item</string>
+    <string name="title">Title</string>
+    <string name="location">Location (URL or host)</string>
+    <string name="action">Action</string>
+    <string name="cannot_restore_previous_config">Cannot restore previous configuration: %s</string>
+    <string name="cannot_read_config">Cannot read configuration: %s</string>
+    <string name="cannot_load_default_config">Cannot read default settings: %s - This should not happen</string>
+    <string name="action_restore">Restore previous configuration</string>
+    <string name="cannot_write_config">Cannot write configuration: %s</string>
+    <string name="action_refresh">Refresh host files</string>
+    <string name="notification_starting">Starting</string>
+    <string name="notification_running">Running</string>
+    <string name="notification_stopping">Stopping</string>
+    <string name="notification_waiting_for_net">Waiting for network</string>
+    <string name="notification_reconnecting">Reconnecting</string>
+    <string name="notification_reconnecting_error">Reconnecting error</string>
+    <string name="notification_stopped">Stopped</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Deny</item>
+        <item>Allow</item>
+        <item>Ignore</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits" />
+    <string name="welcome_title">Üdvözöl a DNS66</string>
+    <string name="welcome_title_start">Things (still) to look out for</string>
+    <string name="welcome_message_start">
+        We are not yet done with the user experience, therefore:
+        \n\nRestart the service manually after changing a setting in order to apply it.
+        \n\nRefresh the hosts file at least once before starting to have working filtering.
+    </string>
+    <string name="welcome_title_hosts">Host blocking</string>
+    <string name="welcome_message_hosts">
+        Define filters based on URL to a host file or the name of a host.
+        \n\nFilter with colors - Allow with green, deny with red, ignore with grey; change with a click.
+        \n\nChange the order of filters - The last item containing a host defines the action.
+    </string>
+    <string name="welcome_title_dns">Custom DNS servers</string>
+    <string name="welcome_message_dns">
+        Easily define custom DNS servers.
+        \n\nSet a server to ‘allow’ to use a server, anything else to ignore it.
+        \n\nChange the order of DNS servers - the preferred server is at the top.
+    </string>
+    <string name="welcome_button_done">Done</string>
+    <string name="welcome_button_skip">Skip</string>
+    <string name="app_version_info">Version: %s</string>
+    <string name="missing_hosts_files_message">Some of your configured (non-ignored) hosts files are missing.\n\nUse the ‘Refresh’ action to download hosts files.\n\nDo you still want to continue?</string>
+    <string name="missing_hosts_files_title">Missing hosts file</string>
+    <string name="button_no">No</string>
+    <string name="button_yes">Yes</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
+    <string name="action_whitelist">Whitelisted apps</string>
+    <string name="show_notification">Show Notification</string>
+    <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
+</resources>
