@@ -22,7 +22,7 @@
     <string name="cannot_read_config">Kan configuratie niet lezen: %s</string>
     <string name="cannot_load_default_config">Kan standaardinstellingen niet lezen: %s - Dit mag niet gebeuren</string>
     <string name="cannot_write_config">Kan configuratie niet schrijven: %s</string>
-    <string name="action_refresh">Host-bestanden verversen</string>
+    <string name="action_refresh">Hosts-bestanden verversen</string>
     <string name="notification_starting">Starten</string>
     <string name="notification_running">Actief</string>
     <string name="notification_stopping">Stoppen</string>
@@ -83,9 +83,9 @@
     <string name="watchdog">Verbinding bewaken</string>
     <string name="watchdog_description">Controleer de verbinding in toenemende tussenpozen en verbind opnieuw als het stopt met werken</string>
     <string name="legend_host_intro">Regels worden verwerkt op volgorde. Als meerdere regels dezelfde host bevatten, wordt de laatste regel toegepast. De acties zijn:</string>
-    <string name="legend_host_ignore">Deze regel negeren</string>
-    <string name="legend_host_allow">Hosttoegang toestaan in deze regel</string>
-    <string name="legend_host_deny">Hosttoegang weigeren in deze regel</string>
+    <string name="legend_host_ignore">Hosts-bestand negeren</string>
+    <string name="legend_host_allow">Hosts in bestand toestaan</string>
+    <string name="legend_host_deny">Hosts in bestand weigeren</string>
     <string name="do_not_use_dns_server">Uit</string>
     <string name="use_dns_server">Aan</string>
     <string name="switch_onboot_description">DNS66 starten wanneer het apparaat ingeschakeld wordt, of wanneer het actief was tijdens het uitschakelen van het apparaat.</string>
