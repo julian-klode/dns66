@@ -82,7 +82,7 @@
     <string name="automatic_refresh_description">Dagelijkse updates gebeuren tijdens opladen, sluimeren, en op een ongelimiteerd netwerk.</string>
     <string name="watchdog">Verbinding bewaken</string>
     <string name="watchdog_description">Controleer de verbinding in toenemende tussenpozen en verbind opnieuw als het stopt met werken</string>
-    <string name="legend_host_intro">Regels worden verwerkt op volgorde. Als meerdere regels dezelfde host bevatten, wordt de laatste regel toegepast. De acties zijn:</string>
+    <string name="legend_host_intro">Hosts-bestanden worden verwerkt op de onderstaande volgorde. Als meerdere regels dezelfde host bevatten, dan telt de laatste regel. De acties zijn:</string>
     <string name="legend_host_ignore">Hosts-bestand negeren</string>
     <string name="legend_host_allow">Hosts in bestand toestaan</string>
     <string name="legend_host_deny">Hosts in bestand weigeren</string>
@@ -97,7 +97,7 @@
     <string name="whitelist_on_vpn">Geen apps</string>
     <string name="whitelist_not_on_vpn">Alle apps</string>
     <string name="whitelist_intelligent">Systeemapps behalve browsers</string>
-    <string name="ipv6_support_description">Dit uitschakelen als je netwerk geen IPv6 gebruikt, of je de service niet kunt starten.</string>
+    <string name="ipv6_support_description">Uitschakelen als je netwerk geen IPv6 gebruikt, of je de service niet kunt starten.</string>
     <string name="ipv6_support">IPv6-ondersteuning</string>
     <string name="action_logcat">Logcat</string>
     <string-array name="whitelist_defaults">
