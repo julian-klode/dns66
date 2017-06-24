@@ -7,6 +7,7 @@
  */
 package org.jak_linux.dns66.main;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -76,7 +77,7 @@ public class WhitelistFragment extends Fragment {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        appListGenerator = new AppListGenerator();
+                        appListGenerator = new AppListGenerator(getContext());
                         appListGenerator.execute();
                     }
                 }
@@ -90,7 +91,7 @@ public class WhitelistFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.config.whitelist.showSystemApps = isChecked;
                 FileHelper.writeSettings(getContext(), MainActivity.config);
-                appListGenerator = new AppListGenerator();
+                appListGenerator = new AppListGenerator(getContext());
                 appListGenerator.execute();
             }
         });
@@ -122,7 +123,7 @@ public class WhitelistFragment extends Fragment {
                         }
 
                         whitelistDefaultText.setText(getResources().getStringArray(R.array.whitelist_defaults)[MainActivity.config.whitelist.defaultMode]);
-                        appListGenerator = new AppListGenerator();
+                        appListGenerator = new AppListGenerator(getContext());
                         appListGenerator.execute();
                         FileHelper.writeSettings(getContext(), MainActivity.config);
                         return true;
@@ -136,7 +137,7 @@ public class WhitelistFragment extends Fragment {
         rootView.findViewById(R.id.change_default).setOnClickListener(onDefaultChangeClicked);
         whitelistDefaultText.setOnClickListener(onDefaultChangeClicked);
 
-        appListGenerator = new AppListGenerator();
+        appListGenerator = new AppListGenerator(getContext());
         appListGenerator.execute();
 
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "whitelist");
@@ -256,10 +257,12 @@ public class WhitelistFragment extends Fragment {
     private final class AppListGenerator extends AsyncTask<Void, Void, AppListAdapter> {
         private PackageManager pm;
 
+        private AppListGenerator(Context context) {
+            pm = context.getPackageManager();
+        }
+
         @Override
         protected AppListAdapter doInBackground(Void... params) {
-            pm = getContext().getPackageManager();
-
             List<ApplicationInfo> info = pm.getInstalledApplications(0);
 
             Collections.sort(info, new ApplicationInfo.DisplayNameComparator(pm));
@@ -283,7 +286,7 @@ public class WhitelistFragment extends Fragment {
         }
     }
 
-    private class ListEntry {
+    private static class ListEntry {
         private ApplicationInfo appInfo;
         private String packageName;
         private String label;
