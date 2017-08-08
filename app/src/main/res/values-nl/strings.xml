@@ -78,7 +78,7 @@
     <string name="automatic_refresh">Dagelijks verversen</string>
     <string name="automatic_refresh_description">Dagelijkse updates gebeuren tijdens opladen, sluimeren, en op een ongelimiteerd netwerk.</string>
     <string name="watchdog">Verbinding bewaken</string>
-    <string name="watchdog_description">Controleer de verbinding in toenemende tussenpozen en verbind opnieuw als het stopt met werken</string>
+    <string name="watchdog_description">Controleer de verbinding in toenemende tussenpozen en verbind opnieuw als het stopt met werken.</string>
     <string name="legend_host_intro">Hosts-bestanden worden verwerkt op de onderstaande volgorde. Als meerdere regels dezelfde host bevatten, dan telt de laatste regel. De acties zijn:</string>
     <string name="legend_host_ignore">Hosts-bestand negeren</string>
     <string name="legend_host_allow">Hosts in bestand toestaan</string>
