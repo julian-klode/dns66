@@ -75,7 +75,7 @@
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="automatic_refresh">Täglich aktualisieren</string>
-    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, nicht genutzt wird, und die Verbindung gebührenfrei ist.</string>
+    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, nicht genutzt wird und die Verbindung gebührenfrei ist.</string>
     <string name="watchdog">Überwache Verbindung</string>
     <string name="watchdog_description">Prüfe die Verbindung in ansteigenden Abständen und verbinde erneut, falls keine Anfragen mehr verarbeitet werden können.</string>
     <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen Host, so wird der letzte angewandt. Die Aktionen sind:</string>
