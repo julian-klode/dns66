@@ -35,7 +35,7 @@
     <string name="notification_stopping">Am Stoppen</string>
     <string name="notification_title">DNS66</string>
     <string name="notification_waiting_for_net">Warte auf Netzwerk</string>
-    <string name="translator_credits">Deutsche Übersetzung: Julian Andres Klode</string>
+    <string name="translator_credits">Deutsche Übersetzung: Julian Andres Klode, CHEF-KOCH</string>
     <string name="app_version_info">Version: %s</string>
     <string name="missing_hosts_files_message">Eine oder mehrere der konfigurierten (nicht ignorierten) Filterlisten fehlen.\n\nVerwende die „Aktualisieren“-Aktion, um aktuelle Filterlisten herunterzuladen.\n\nTrotzdem fortfahren?</string>
     <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
@@ -49,19 +49,19 @@
     <string name="disable_notification_message">Deaktivieren der Benachrichtigung kann dazu führen, dass DNS66 beendet wird.\n\nSoll die Benachrichtigung deaktiviert werden?</string>
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>
     <string name="disable_notification_nak">Abbrechen</string>
-    <string name="whitelist_description">Umgehe DNS66 für gewählte Apps</string>
+    <string name="whitelist_description">Umgehe DNS für gewählte App(s)</string>
     <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
     <string name="location_dns">IP-Adresse des DNS-Servers (IPv4 oder IPv6)</string>
     <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
     <string name="host_update_error_item">Fehler %1$d: %2$s</string>
     <string name="update_incomplete">Aktualisierung unvollständig</string>
-    <string name="updating_hostfiles">Aktualisiere Hostfiles</string>
+    <string name="updating_hostfiles">Aktualisiere HOST-Datei(en)</string>
     <string name="action_use_file">Datei verwenden</string>
     <string name="persistable_uri_permission_failed">Die gewählte Datei kann nicht verwendet werden: Dauerhafter Zugriff verweigert</string>
-    <string name="updating_n_host_files">Aktualisiere %1$s Hostfiles</string>
+    <string name="updating_n_host_files">Aktualisiere %1$s HOST-Datei(en)</string>
     <string name="permission_denied">Zugriff verweigert</string>
     <string name="invalid_url_s">Ungültige URL: %1$s</string>
-    <string name="could_not_update_all_hosts">Konnte nicht alle Hostfiles aktualisieren</string>
+    <string name="could_not_update_all_hosts">Konnte nicht alle HOST-Dateien aktualisieren</string>
     <string name="disable_notification_title">Benachrichtigung deaktivieren</string>
     <string name="requested_timed_out">Zeitlimit für Anfrage überschritten</string>
     <string name="file_not_found">Datei nicht gefunden</string>
@@ -75,31 +75,31 @@
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="automatic_refresh">Täglich aktualisieren</string>
-    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, in Ruhe ist, und die Verbindung gebührenfrei ist.</string>
+    <string name="automatic_refresh_description">Tägliche Aktualisierungen, wenn das Gerät geladen wird, im Ruhezustand ist und die Verbindung gebührenfrei ist.</string>
     <string name="watchdog">Überwache Verbindung</string>
-    <string name="watchdog_description">Prüfe die Verbindung in ansteigenden Abständen und verbinde erneut, falls sie nicht mehr funktioniert.</string>
-    <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen Host, so wird der letzte Angewandt. Die Aktionen sind:</string>
+    <string name="watchdog_description">Prüfe die Verbindung in regelmäßigen Abständen und verbinde erneut, falls diese nicht mehr funktioniert.</string>
+    <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen HOST, so wird der letzte angewandt. Die Aktionen sind:</string>
     <string name="legend_host_ignore">Ignoriere diesen Eintrag</string>
-    <string name="legend_host_deny">Verweigere Zugriff auf Hosts in diesem Eintrag</string>
-    <string name="legend_host_allow">Erlaube Zugriff auf Hosts in diesem Eintrag</string>
+    <string name="legend_host_deny">Verweigere Zugriff auf HOSTS in diesem Eintrag</string>
+    <string name="legend_host_allow">Erlaube Zugriff auf HOSTSS in diesem Eintrag</string>
     <string name="use_dns_server">An</string>
     <string name="do_not_use_dns_server">Aus</string>
-    <string name="switch_onboot_description">Starte DNS66 beim Einschalten des Gerätes, falls es beim Ausschalten aktiv war.</string>
+    <string name="switch_onboot_description">Starte DNS66 beim Einschalten des Gerätes, falls es beim ausschalten aktiv war.</string>
     <string name="activity_edit_dns_server">DNS Server bearbeiten</string>
     <string name="activity_edit_filter">Filter bearbeiten</string>
-    <string name="notification_paused_text">Zum Fortsetzen tippen.</string>
+    <string name="notification_paused_text">Zum Fortsetzen antippen.</string>
     <string name="notification_paused_title">DNS66 unterbrochen</string>
     <string name="notification_action_pause">Unterbrechen</string>
     <string name="whitelist_on_vpn">Keine Apps</string>
     <string name="whitelist_not_on_vpn">Alle Apps</string>
     <string name="whitelist_intelligent">System Apps (außer Browser)</string>
     <string-array name="whitelist_defaults">
-        <item>Keine Apps umgehen standardmäßig</item>
-        <item>Alle Apps umgehen standardmäßig</item>
-        <item>System Apps umgehen standardmäßig</item>
+        <item>Keine Apps umgehen (Standard)</item>
+        <item>Alle Apps umgehen (Standard)</item>
+        <item>System Apps umgehen (Standard)</item>
     </string-array>
-    <string name="ipv6_support">IPv6 Unterstützung</string>
+    <string name="ipv6_support">IPv6-Unterstützung</string>
     <string name="ipv6_support_description">Deaktiviere dies falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
-    <string name="update_incomplete_description">Einige Hostdateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden, werden die alten Versionen weiter verwendet.</string>
+    <string name="update_incomplete_description">Einige HOST-Dateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden werden die alten Versionen weiter verwendet.</string>
     <string name="action_logcat">Logcat senden</string>
 </resources>
