@@ -52,27 +52,34 @@ public class RuleDatabaseTest {
         // Standard format lines
         assertEquals("example.com", RuleDatabase.parseLine("0.0.0.0 example.com"));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.com"));
+        assertEquals("example.com", RuleDatabase.parseLine("::1 example.com"));
         assertEquals("example.com", RuleDatabase.parseLine("example.com"));
         // Comments
         assertEquals("example.com", RuleDatabase.parseLine("example.com # foo"));
         assertEquals("example.com", RuleDatabase.parseLine("0.0.0.0 example.com # foo"));
+        assertEquals("example.com", RuleDatabase.parseLine("::1 example.com # foo"));
         // Check lower casing
         assertEquals("example.com", RuleDatabase.parseLine("example.cOm"));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.cOm"));
+        assertEquals("example.com", RuleDatabase.parseLine("::1 example.cOm"));
         // Space trimming
         assertNull(RuleDatabase.parseLine(" 127.0.0.1 example.com"));
         assertEquals("127.0.0.1.example.com", RuleDatabase.parseLine("127.0.0.1.example.com "));
+        assertEquals("::1.example.com", RuleDatabase.parseLine("::1.example.com "));
         assertEquals("0.0.0.0.example.com", RuleDatabase.parseLine("0.0.0.0.example.com "));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.com "));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1 example.com\t"));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1   example.com "));
         assertEquals("example.com", RuleDatabase.parseLine("127.0.0.1\t example.com "));
+        assertEquals("example.com", RuleDatabase.parseLine("::1\t example.com "));
         // Space between values
         // Invalid lines
         assertNull(RuleDatabase.parseLine("127.0.0.1 "));
         assertNull(RuleDatabase.parseLine("127.0.0.1"));
         assertNull(RuleDatabase.parseLine("0.0.0.0"));
         assertNull(RuleDatabase.parseLine("0.0.0.0 "));
+        assertNull(RuleDatabase.parseLine("::1 "));
+        assertNull(RuleDatabase.parseLine("::1"));
         assertNull(RuleDatabase.parseLine("invalid example.com"));
         assertNull(RuleDatabase.parseLine("invalid\texample.com"));
         assertNull(RuleDatabase.parseLine("invalid long line"));
