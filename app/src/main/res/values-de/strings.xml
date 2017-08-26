@@ -22,7 +22,7 @@
         <item>Erlauben</item>
         <item>Ignorieren</item>
     </string-array>
-    <string name="action_refresh">Filterlisten aktualisieren</string>
+    <string name="action_refresh">Hosts-Dateien aktualisieren</string>
     <string name="cannot_load_default_config">Standardeinstellungen konnten nicht gelesen werden: %s - Das sollte nicht passieren!</string>
     <string name="cannot_read_config">Kann Einstellungen nicht lesen: %s</string>
     <string name="cannot_restore_previous_config">Kann vorherige Einstellungen nicht wiederherstellen: %s</string>
@@ -37,8 +37,8 @@
     <string name="notification_waiting_for_net">Warte auf Netzwerk</string>
     <string name="translator_credits">Deutsche Übersetzung: Julian Andres Klode</string>
     <string name="app_version_info">Version: %s</string>
-    <string name="missing_hosts_files_message">Eine oder mehrere der konfigurierten (nicht ignorierten) Filterlisten fehlen.\n\nVerwende die „Aktualisieren“-Aktion, um aktuelle Filterlisten herunterzuladen.\n\nTrotzdem fortfahren?</string>
-    <string name="missing_hosts_files_title">Fehlende Filterlisten</string>
+    <string name="missing_hosts_files_message">Eine oder mehrere der konfigurierten (nicht ignorierten) Hosts-Dateien fehlen.\n\nVerwende die „Aktualisieren“-Aktion, um aktuelle Hosts-Dateien herunterzuladen.\n\nTrotzdem fortfahren?</string>
+    <string name="missing_hosts_files_title">Fehlende Hosts-Dateien</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
     <string name="whitelist_tab">Apps</string>
@@ -55,13 +55,13 @@
     <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
     <string name="host_update_error_item">Fehler %1$d: %2$s</string>
     <string name="update_incomplete">Aktualisierung unvollständig</string>
-    <string name="updating_hostfiles">Aktualisiere Hostfiles</string>
+    <string name="updating_hostfiles">Aktualisiere Hosts-Dateien</string>
     <string name="action_use_file">Datei verwenden</string>
     <string name="persistable_uri_permission_failed">Die gewählte Datei kann nicht verwendet werden: Dauerhafter Zugriff verweigert</string>
-    <string name="updating_n_host_files">Aktualisiere %1$s Hostfiles</string>
+    <string name="updating_n_host_files">Aktualisiere %1$s Hosts-Dateien</string>
     <string name="permission_denied">Zugriff verweigert</string>
     <string name="invalid_url_s">Ungültige URL: %1$s</string>
-    <string name="could_not_update_all_hosts">Konnte nicht alle Hostfiles aktualisieren</string>
+    <string name="could_not_update_all_hosts">Konnte nicht alle Hosts-Dateien aktualisieren</string>
     <string name="disable_notification_title">Benachrichtigung deaktivieren</string>
     <string name="requested_timed_out">Zeitlimit für Anfrage überschritten</string>
     <string name="file_not_found">Datei nicht gefunden</string>
@@ -75,10 +75,10 @@
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="automatic_refresh">Täglich aktualisieren</string>
-    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, in Ruhe ist, und die Verbindung gebührenfrei ist.</string>
+    <string name="automatic_refresh_description">Tägliche Aktualisierungen finden statt, wenn das Gerät lädt, nicht genutzt wird, und die Verbindung gebührenfrei ist.</string>
     <string name="watchdog">Überwache Verbindung</string>
-    <string name="watchdog_description">Prüfe die Verbindung in ansteigenden Abständen und verbinde erneut, falls sie nicht mehr funktioniert.</string>
-    <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen Host, so wird der letzte Angewandt. Die Aktionen sind:</string>
+    <string name="watchdog_description">Prüfe die Verbindung in ansteigenden Abständen und verbinde erneut, falls keine Anfragen mehr verarbeitet werden können.</string>
+    <string name="legend_host_intro">Einträge werden der Reihenfolge nach bearbeitet. Enthalten mehrere den gleichen Host, so wird der letzte angewandt. Die Aktionen sind:</string>
     <string name="legend_host_ignore">Ignoriere diesen Eintrag</string>
     <string name="legend_host_deny">Verweigere Zugriff auf Hosts in diesem Eintrag</string>
     <string name="legend_host_allow">Erlaube Zugriff auf Hosts in diesem Eintrag</string>
@@ -98,8 +98,8 @@
         <item>Alle Apps umgehen standardmäßig</item>
         <item>System Apps umgehen standardmäßig</item>
     </string-array>
-    <string name="ipv6_support">IPv6 Unterstützung</string>
-    <string name="ipv6_support_description">Deaktiviere dies falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
-    <string name="update_incomplete_description">Einige Hostdateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden, werden die alten Versionen weiter verwendet.</string>
-    <string name="action_logcat">Logcat senden</string>
+    <string name="ipv6_support">Unterstützung für IPv6</string>
+    <string name="ipv6_support_description">Deaktiviere dies, falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
+    <string name="update_incomplete_description">Einige Hosts-Dateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden, werden die alten Versionen weiter verwendet.</string>
+    <string name="action_logcat">Logcat erstellen</string>
 </resources>
