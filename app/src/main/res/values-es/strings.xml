@@ -85,7 +85,7 @@
     <string name="legend_host_deny">Denegar el acceso a los archivos host en esta entrada</string>
     <string name="do_not_use_dns_server">Apagado</string>
     <string name="use_dns_server">Encendido</string>
-    <string name="switch_onboot_description">Iniciar DNS66 cuando se inicie el dispositivo, si estaba activo cuando apagó el dispositivo.</string>
+    <string name="switch_onboot_description">Iniciar DNS66, cuando se inicie el dispositivo, si estaba activo cuando apagó el dispositivo.</string>
     <string name="activity_edit_dns_server">Editar servidor DNS</string>
     <string name="activity_edit_filter">Editar Filtro</string>
     <string name="notification_paused_title">DNS66 pausado</string>
