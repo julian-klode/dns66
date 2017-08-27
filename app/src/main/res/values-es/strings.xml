@@ -11,7 +11,7 @@
     <string name="load_defaults">Cargar ajustes por defecto</string>
     <string name="action_about">Acerca de</string>
     <string name="info_app_license">Este programa es software libre: puede redistribuirlo y/o modificarlo bajo los términos de la Licencia GNU General Public License publicada por la Free Software Foundation, ya sea la versión 3 de la Licencia, o (a su elección) cualquier versión posterior.</string>
-    <string name="switch_onboot">Reanudar en el inicio del sistema</string>
+    <string name="switch_onboot">Reanudar al iniciar el sistema</string>
     <string name="activity_edit">Modificar item</string>
     <string name="title">Titulo</string>
     <string name="location">Ubicación (URL o host)</string>
@@ -37,7 +37,8 @@
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits">Traducción al español: David López</string>
     <string name="app_version_info">Versión: %s</string>
-        <string name="missing_hosts_files_message">Faltan algunos de los archivos de hosts configurados (no ignorados). \n\nUtilice la acción \'Actualizar\' para descargar los archivos hosts. \n\n¿Aún desea continuar?</string><string name="missing_hosts_files_title">Archivos hosts no encontrados</string>
+    <string name="missing_hosts_files_message">Faltan algunos de los archivos de hosts configurados (no ignorados). \n\nUtilice la acción \'Actualizar\' para descargar los archivos hosts. \n\n¿Aún desea continuar?</string>
+    <string name="missing_hosts_files_title">Archivos hosts no encontrados</string>
     <string name="button_no">No</string>
     <string name="button_yes">Si</string>
     <string name="whitelist_tab">Aplicaciones</string>
@@ -75,7 +76,7 @@
     <string name="action_stop">Parar</string>
     <string name="action_start">Iniciar</string>
     <string name="automatic_refresh">Actualización diaria</string>
-    <string name="automatic_refresh_description">Las actualizaciones diarias se producen al cargar, en reposo y en una red no medida.</string>
+    <string name="automatic_refresh_description">Las actualizaciones diarias se producen al cargar el dispositivo, en reposo y con una red wifi.</string>
     <string name="watchdog">Ver la conexión</string>
     <string name="watchdog_description">Compruebe la conexión en intervalos cada vez más largos y vuelva a conectar si dejó de funcionar</string>
     <string name="legend_host_intro">Las entradas se procesan en orden. Si varias entradas contienen el mismo host, se aplica la última entrada. Las acciones son:</string>
@@ -84,7 +85,7 @@
     <string name="legend_host_deny">Denegar el acceso a los archivos host en esta entrada</string>
     <string name="do_not_use_dns_server">Apagado</string>
     <string name="use_dns_server">Encendido</string>
-    <string name="switch_onboot_description">Iniciar DNS66 cuando el dispositivo está encendido si estaba activo cuando el dispositivo estaba apagado.</string>
+    <string name="switch_onboot_description">Iniciar DNS66 cuando se inicie el dispositivo, si estaba activo cuando apagó el dispositivo.</string>
     <string name="activity_edit_dns_server">Editar servidor DNS</string>
     <string name="activity_edit_filter">Editar Filtro</string>
     <string name="notification_paused_title">DNS66 pausado</string>
