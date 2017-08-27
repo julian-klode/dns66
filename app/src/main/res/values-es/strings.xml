@@ -37,8 +37,7 @@
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits">Traducción al español: David López</string>
     <string name="app_version_info">Versión: %s</string>
-    <string name="missing_hosts_files_message">Faltan algunos de los archivos de hosts configurados (no ignorados). \n\nUtilice la acción 'Actualizar' para descargar los archivos hosts. \n\n¿Aún desea continuar?</string>
-    <string name="missing_hosts_files_title">Archivos hosts no encontrados</string>
+        <string name="missing_hosts_files_message">Faltan algunos de los archivos de hosts configurados (no ignorados). \n\nUtilice la acción \'Actualizar\' para descargar los archivos hosts. \n\n¿Aún desea continuar?</string><string name="missing_hosts_files_title">Archivos hosts no encontrados</string>
     <string name="button_no">No</string>
     <string name="button_yes">Si</string>
     <string name="whitelist_tab">Aplicaciones</string>
