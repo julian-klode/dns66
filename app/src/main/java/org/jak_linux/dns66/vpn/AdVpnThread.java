@@ -31,14 +31,11 @@ import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.pcap4j.packet.IpPacket;
-import org.pcap4j.packet.factory.PacketFactoryPropertiesLoader;
-import org.pcap4j.util.PropertiesLoader;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
@@ -76,10 +73,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     private final DnsPacketProxy dnsPacketProxy = new DnsPacketProxy(this);
     // Watch dog that checks our connection is alive.
     private final VpnWatchdog vpnWatchDog = new VpnWatchdog();
-    /**
-     * After how many iterations we should clear pcap4js packetfactory property cache
-     */
-    private final int PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY = 1024;
+
     private Thread thread = null;
     private FileDescriptor mBlockFd = null;
     private FileDescriptor mInterruptFd = null;
@@ -287,23 +281,6 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         if ((deviceFd.revents & OsConstants.POLLIN) != 0) {
             Log.d(TAG, "Read from device");
             readPacketFromDevice(inputStream, packet);
-        }
-
-        // pcap4j has some sort of properties cache in the packet factory. This cache leaks, so
-        // we need to clean it up.
-        if (++pcap4jFactoryClearCacheCounter % PCAP4J_FACTORY_CLEAR_NASTY_CACHE_EVERY == 0) {
-            try {
-                PacketFactoryPropertiesLoader l = PacketFactoryPropertiesLoader.getInstance();
-                Field field = l.getClass().getDeclaredField("loader");
-                field.setAccessible(true);
-                PropertiesLoader loader = (PropertiesLoader) field.get(l);
-                Log.d(TAG, "Cleaning cache");
-                loader.clearCache();
-            } catch (NoSuchFieldException e) {
-                Log.e(TAG, "Cannot find declared loader field", e);
-            } catch (IllegalAccessException e) {
-                Log.e(TAG, "Cannot get declared loader field", e);
-            }
         }
 
         return true;
