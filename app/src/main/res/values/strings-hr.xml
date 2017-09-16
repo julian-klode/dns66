@@ -1,0 +1,108 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">Blokiranje hostova i prilagođenih DNS servera</string>
+    <string name="custom_dns">Prilagođeni DNS serveri</string>
+    <string name="enable_hosts">Filtriraj hostove</string>
+    <string name="start_tab">Pokreni</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Izvezi postavke</string>
+    <string name="action_import">Uvezi postavke</string>
+    <string name="action_save">Gotovo</string>
+    <string name="load_defaults">Učitaj zadane postavke</string>
+    <string name="action_about">O aplikaciji</string>
+    <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="switch_onboot">Nastavi pri pokretanju sustava</string>
+    <string name="activity_edit">Uredi stavku</string>
+    <string name="title">Naziv</string>
+    <string name="location">Lokacija (URL ili host)</string>
+    <string name="action">Radnja</string>
+    <string name="cannot_restore_previous_config">Nije moguće vratiti prijašnju konfiguraciju: %s</string>
+    <string name="cannot_read_config">Nije moguće pročitati konfiguraciju: %s</string>
+    <string name="cannot_load_default_config">Nije moguće učitati zadane postavke: %s - Ovo se ne smije dogoditi</string>
+    <string name="cannot_write_config">Nije moguće napisati konfiguraciju: %s</string>
+    <string name="action_refresh">Osvježi host datoteke</string>
+    <string name="notification_starting">Pokretanje</string>
+    <string name="notification_running">Aktivno</string>
+    <string name="notification_stopping">Zaustavljanje</string>
+    <string name="notification_waiting_for_net">Čekanje na mrežu</string>
+    <string name="notification_reconnecting">Ponovno povezivanje</string>
+    <string name="notification_reconnecting_error">Pogreška u ponovnom povezivanju</string>
+    <string name="notification_stopped">Zaustavljeno</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Odbij</item>
+        <item>Dopusti</item>
+        <item>Ignoriraj</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits"/> Hrvatski prijevod: Ivan Krušlin
+    <string name="app_version_info">Verzija: %s</string>
+    <string name="missing_hosts_files_message">Neke od postavljenih (neignoriranih) host datoteka fale.\n\nKoristite ‘Osvježi’ radnju kako bi preuzeli host datoteke.\n\nŽelite li nastaviti?</string>
+    <string name="missing_hosts_files_title">Host datoteka fali</string>
+    <string name="button_no">Ne</string>
+    <string name="button_yes">Da</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
+    <string name="whitelist_tab">Aplikacije</string>
+    <string name="show_notification">Prikaži obavijest</string>
+    <string name="could_not_configure_vpn_service">Nije moguće postaviti VPN servis - Provjerite da li koristite VPN koji je uvijek uključen kao što je WiFi Assistant i onemogućite ga</string>
+    <string name="dns_description">Omogućite svoje preferirane DNS servere</string>
+    <string name="host_description">Crvena pravila blokiraju, a zelena dopuštaju</string>
+    <string name="disable_notification_title">Onemogućivanje obavijesti </string>
+    <string name="disable_notification_message">Onemogućavanje obavijesti može zaustaviti DNS66 prilikom manjka memorije.\n\nŽelite li onemogućiti obavijest?</string>
+    <string name="disable_notification_ack">Onemogući obavijest</string>
+    <string name="disable_notification_nak">Otkaži</string>
+    <string name="whitelist_description">Zaobiđi DNS66 za označene aplikacije</string>
+    <string name="switch_show_system_apps">Prikaži aplikacije sustava</string>
+    <string name="location_dns">IP adresa DNS servera (IPv4 or IPv6)</string>
+    <string name="state_dns_enabled">Omogućeno</string>
+    <string name="host_update_error_item">Pogreška %1$d: %2$s</string>
+    <string name="update_incomplete">Ažuriranje nije završeno</string>
+    <string name="update_incomplete_description">Neke host datoteke se ne mogu preuzeti. Ako su datoteke već preuzete, stare verzije će se nastaviti koristiti.</string>
+    <string name="updating_hostfiles">Ažuriranje host datoteka</string>
+    <string name="action_use_file">Koristi datoteku</string>
+    <string name="persistable_uri_permission_failed">Cannot use the requested file: Not permitted to persistently use requested file</string>
+    <string name="updating_n_host_files">Ažuriranje %1$d host datoteka</string>
+    <string name="could_not_update_all_hosts">Nije moguće ažurirati host datoteke</string>
+    <string name="permission_denied">Dopuštenje je odbijeno</string>
+    <string name="invalid_url_s">Nevažeći URL: %1$s</string>
+    <string name="file_not_found">Datoteka nije pronađena</string>
+    <string name="unknown_error_s">Neočekivana pogreška: %1$s</string>
+    <string name="requested_timed_out">Zahtjev je istekao</string>
+    <string name="action_delete">Izbriši</string>
+    <string name="night_mode">Tamna tema</string>
+    <string name="expand_bar_toggle_expand">Otvori ploču s detaljima</string>
+    <string name="expand_bar_toggle_close">Zatvori ploču s detaljima</string>
+    <string name="expand_bar_expanded">Otvoreno</string>
+    <string name="expand_bar_closed">Zatvoreno</string>
+    <string name="action_stop">Zaustavi</string>
+    <string name="action_start">Pokreni</string>
+    <string name="automatic_refresh">Dnevno osvježi</string>
+    <string name="automatic_refresh_description">Dnevna ažuriranja se događaju prilikom punjenja, stajanja, ili na neograničenoj mreži.</string>
+    <string name="watchdog">Promatraj vezu</string>
+    <string name="watchdog_description">Provjeravaj vezu u dužim intervalima i ponovno se poveži ako je prestala raditi</string>
+    <string name="legend_host_intro">Unosi su procesirani po redu. Ako više unosa sadrži isti host, zadnji unos će biti primjenjen. Radnje su:</string>
+    <string name="legend_host_ignore">Ignorirajte ovaj unos</string>
+    <string name="legend_host_allow">Dopustite pristup hostovima u ovom unosu</string>
+    <string name="legend_host_deny">Zabranite pristup hostovima u ovom unosu</string>
+    <string name="do_not_use_dns_server">Isključeno</string>
+    <string name="use_dns_server">Uključeno</string>
+    <string name="switch_onboot_description">Start DNS66 when the device is turned on if it was active when the device was turned off.</string>
+    <string name="activity_edit_dns_server">Uredi DNS server</string>
+    <string name="activity_edit_filter">Uredi filter</string>
+    <string name="notification_paused_title">DNS66 je pauziran</string>
+    <string name="notification_paused_text">Dodirnite za nastavak.</string>
+    <string name="notification_action_pause">Pauza</string>
+    <string name="whitelist_on_vpn">Nema aplikacija</string>
+    <string name="whitelist_not_on_vpn">Sve aplikacije</string>
+    <string name="whitelist_intelligent">Aplikacije sustava osim preglednika</string>
+    <string name="ipv6_support_description">Onemogućite ovo ako vaša mreža ne koristi IPv6 ili ne možete pokrenuti servis.</string>
+    <string name="ipv6_support">IPv6 podrška</string>
+    <string name="action_logcat">Logcat</string>
+    <string-array name="whitelist_defaults">
+        <item>Po zadanom bez zaobilaženja aplikacija</item>
+        <item>Po zadanom zaobilaženje svih aplikacija</item>
+        <item>Po zadanom zaobilaženje aplikacija sustava</item>
+    </string-array>
+</resources>
