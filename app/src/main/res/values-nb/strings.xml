@@ -103,6 +103,6 @@
     <string-array name="whitelist_defaults">
         <item>Ingen apper slipper gjennom som standard</item>
         <item>Alle apper slipper gjennom som standard</item>
-        <item>Systemer slipper gjennom som standard</item>
+        <item>Systemapper slipper gjennom som standard</item>
     </string-array>
 </resources>
