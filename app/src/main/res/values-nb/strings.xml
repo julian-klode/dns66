@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_shortdesc">Vertsblokkering og tilpassede DNS-tjenere</string>
+    <string name="custom_dns">Tilpassede DNS-tjenere</string>
+    <string name="enable_hosts">Filtrer verter</string>
+    <string name="start_tab">Start</string>
+    <string name="hosts_tab">Verter</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Eksporter innstillinger</string>
+    <string name="action_import">Importer innstillinger</string>
+    <string name="action_save">Ferdig</string>
+    <string name="load_defaults">Last standardinnstillingene</string>
+    <string name="action_about">Om DNS66</string>
+    <string name="info_app_license">Dette programmet er fri programvare: du kan distribuere det rundt og/eller modifisere den under betingelsene til GNU General Public License som publisert av Free Software Foundation, enten versjon 3 av den lisensen eller (Valgfritt) enhver senere versjon.</string>
+    <string name="switch_onboot">Fortsett ved systemoppstart</string>
+    <string name="activity_edit">Rediger gjenstand</string>
+    <string name="title">Tittel</string>
+    <string name="location">Plassering (Nettadresse eller vert)</string>
+    <string name="action">Handling</string>
+    <string name="cannot_restore_previous_config">Klarte ikke å gjenopprette det forrige oppsettet: %s</string>
+    <string name="cannot_read_config">Klarte ikke å lese inn oppsettet: %s</string>
+    <string name="cannot_load_default_config">Klarte ikke å lese inn standardinnstillingene: %s - Dette skal ikke kunne skje</string>
+    <string name="cannot_write_config">Klarte ikke å lagre oppsettet: %s</string>
+    <string name="action_refresh">Oppfrisk vertsfilene</string>
+    <string name="notification_starting">Starter opp</string>
+    <string name="notification_running">Aktiv</string>
+    <string name="notification_stopping">Stopper</string>
+    <string name="notification_waiting_for_net">Venter på nettverk</string>
+    <string name="notification_reconnecting">Kobler til på nytt</string>
+    <string name="notification_reconnecting_error">Feil under tilkobling på nytt</string>
+    <string name="notification_stopped">Stoppet</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Nekt</item>
+        <item>Tillat</item>
+        <item>Ignorer</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits"/>Norsk oversettelse: Imre Kristoffer Eilertsen
+    <string name="app_version_info">Versjon: %s</string>
+    <string name="missing_hosts_files_message">Noen av dine oppsatte (og ikke-ignorerte) vertsfiler mangler.\n\nBruk Oppfrisk-handlingen til å laste ned vertsfiler.\n\nVil du fortsette?</string>
+    <string name="missing_hosts_files_title">Manglende vertsfil</string>
+    <string name="button_no">Nei</string>
+    <string name="button_yes">Ja</string>
+    <string name="whitelist_tab">Apper</string>
+    <string name="show_notification">Vis notifikasjoner</string>
+    <string name="could_not_configure_vpn_service">Klarte ikke å sette opp VPN-tjenesten - Sjekk om du bruker en alltid-skrudd-på VPN-tjeneste som f.eks. WiFi Assistant, og skru den av.</string>
+    <string name="dns_description">Aktiver dine foretrukkede DNS-tjenere</string>
+    <string name="host_description">Røde regler blokkerer, mens grønne regler tillater.</string>
+    <string name="disable_notification_title">Skrur av notifikasjonen</string>
+    <string name="disable_notification_message">Å skru av notifikasjonen kan få DNS66 til å bli stoppet unner RAM-press.\n\nVil du skru av notifikasjonen?</string>
+    <string name="disable_notification_ack">Skru av notifikasjonen</string>
+    <string name="disable_notification_nak">Avbryt</string>
+    <string name="whitelist_description">Forbipasser DNS66 for de valgte appene</string>
+    <string name="switch_show_system_apps">Vis systemapper</string>
+    <string name="location_dns">IP-adressen til DNS-tjeneren (IPv6 eller IPv4)</string>
+    <string name="state_dns_enabled">Aktivert</string>
+    <string name="host_update_error_item">Feil %1$d: %2$s</string>
+    <string name="update_incomplete">Oppdateringen ble ikke fullført</string>
+    <string name="update_incomplete_description">Noen vertsfiler kunne ikke bli lastet ned. Dersom filene ble lastet ned tidligere, vil de gamle versjonene fortsatt bli brukt.</string>
+    <string name="updating_hostfiles">Oppdaterer vertsfiler</string>
+    <string name="action_use_file">Bruk fil</string>
+    <string name="persistable_uri_permission_failed">Kan ikke bruke den ønskede filen: Har ikke tillatelse til å kontinuerlig bruke den ønskede filen.</string>
+    <string name="updating_n_host_files">Oppdaterer %1$d vertsfiler</string>
+    <string name="could_not_update_all_hosts">Klarte ikke å oppdatere alle vertsfilene</string>
+    <string name="permission_denied">Tillatelse avslåttPermission denied</string>
+    <string name="invalid_url_s">Ugyldig nettadresse: %1$s</string>
+    <string name="file_not_found">Filen ble ikke funnet</string>
+    <string name="unknown_error_s">Uventet feil: %1$s</string>
+    <string name="requested_timed_out">Forespørselen brukte for lang tid</string>
+    <string name="action_delete">Slett</string>
+    <string name="night_mode">Mørkt tema</string>
+    <string name="expand_bar_toggle_expand">Åpne detaljpanelet</string>
+    <string name="expand_bar_toggle_close">Lukk detaljpanelet</string>
+    <string name="expand_bar_expanded">Åpnet</string>
+    <string name="expand_bar_closed">Lukket</string>
+    <string name="action_stop">Stopp</string>
+    <string name="action_start">Start</string>
+    <string name="automatic_refresh">Oppfrisk daglig</string>
+    <string name="automatic_refresh_description">Daglige oppdateringer skjer når enheten lader, ikke brukes, og er på et ikke-datamengdebegrenset nettverk.</string>
+    <string name="watchdog">Overvåk tilkoblingen</string>
+    <string name="watchdog_description">Sjekk tilkoblingen med stadig lengre intervaller, og koble til på nytt dersom den sluttet å fungere.</string>
+    <string name="legend_host_intro">Oppføringer behandles i rekkefølge. Dersom flere oppføringer inneholder den samme verten, brukes den siste oppføringen. Handlingene er:</string>
+    <string name="legend_host_ignore">Ignorer denne oppføringen</string>
+    <string name="legend_host_allow">Gi tilgang til vertene i denne oppføringen</string>
+    <string name="legend_host_deny">Nekt tilgang til vertene i denne oppføringen</string>
+    <string name="do_not_use_dns_server">Av</string>
+    <string name="use_dns_server">På</string>
+    <string name="switch_onboot_description">Start DNS66 når enheten skrues på, dersom DNS66 var aktiv når enheten ble skrudd av.</string>
+    <string name="activity_edit_dns_server">Rediger DNS-tjeneren</string>
+    <string name="activity_edit_filter">Rediger filteret</string>
+    <string name="notification_paused_title">DNS66 ble satt på pause.</string>
+    <string name="notification_paused_text">Trykk for å fortsette.</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="whitelist_on_vpn">Ingen apper</string>
+    <string name="whitelist_not_on_vpn">Alle apper</string>
+    <string name="whitelist_intelligent">Systemapper bortsett fra nettlesere</string>
+    <string name="ipv6_support_description">Skru av dette dersom nettverket ditt ikke bruker IPv6, eller hvis du ikke får startet tjenesten.</string>
+    <string name="ipv6_support">IPv6-støtte</string>
+    <string name="action_logcat">Logcat</string>
+    <string-array name="whitelist_defaults">
+        <item>Ingen apper slipper gjennom som standard</item>
+        <item>Alle apper slipper gjennom som standard</item>
+        <item>Systemapper slipper gjennom som standard</item>
+    </string-array>
+</resources>
