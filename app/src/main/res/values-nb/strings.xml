@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">DNS66</string>
     <string name="app_shortdesc">Vertsblokkering og tilpassede DNS-tjenere</string>
     <string name="custom_dns">Tilpassede DNS-tjenere</string>
     <string name="enable_hosts">Filtrer verter</string>
@@ -12,7 +11,6 @@
     <string name="load_defaults">Last standardinnstillingene</string>
     <string name="action_about">Om DNS66</string>
     <string name="info_app_license">Dette programmet er fri programvare: du kan distribuere det rundt og/eller modifisere den under betingelsene til GNU General Public License som publisert av Free Software Foundation, enten versjon 3 av den lisensen eller (Valgfritt) enhver senere versjon.</string>
-    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
     <string name="switch_onboot">Fortsett ved systemoppstart</string>
     <string name="activity_edit">Rediger gjenstand</string>
     <string name="title">Tittel</string>
@@ -39,11 +37,10 @@
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits"/>Norsk oversettelse: Imre Kristoffer Eilertsen
     <string name="app_version_info">Versjon: %s</string>
-    <string name="missing_hosts_files_message">Noen av dine oppsatte (og ikke-ignorerte) vertsfiler mangler.\n\nBruk 'Oppfrisk'-handlingen til å laste ned vertsfiler.\n\nVil du fortsette?</string>
+    <string name="missing_hosts_files_message">Noen av dine oppsatte (og ikke-ignorerte) vertsfiler mangler.\n\nBruk Oppfrisk-handlingen til å laste ned vertsfiler.\n\nVil du fortsette?</string>
     <string name="missing_hosts_files_title">Manglende vertsfil</string>
     <string name="button_no">Nei</string>
     <string name="button_yes">Ja</string>
-    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
     <string name="whitelist_tab">Apper</string>
     <string name="show_notification">Vis notifikasjoner</string>
     <string name="could_not_configure_vpn_service">Klarte ikke å sette opp VPN-tjenesten - Sjekk om du bruker en alltid-skrudd-på VPN-tjeneste som f.eks. WiFi Assistant, og skru den av.</string>
