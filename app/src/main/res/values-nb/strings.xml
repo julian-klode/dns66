@@ -37,7 +37,7 @@
         <item>Ignorer</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
-    <string name="translator_credits"/>Oversettelse: Imre Kristoffer Eilertsen
+    <string name="translator_credits"/>Norsk oversettelse: Imre Kristoffer Eilertsen
     <string name="app_version_info">Versjon: %s</string>
     <string name="missing_hosts_files_message">Noen av dine oppsatte (og ikke-ignorerte) vertsfiler mangler.\n\nBruk 'Oppfrisk'-handlingen til å laste ned vertsfiler.\n\nVil du fortsette?</string>
     <string name="missing_hosts_files_title">Manglende vertsfil</string>
