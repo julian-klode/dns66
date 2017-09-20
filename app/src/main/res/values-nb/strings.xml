@@ -9,7 +9,7 @@
     <string name="action_export">Eksporter innstillinger</string>
     <string name="action_import">Importer innstillinger</string>
     <string name="action_save">Ferdig</string>
-    <string name="load_defaults">Last inn standardinnstillingene</string>
+    <string name="load_defaults">Last standardinnstillingene</string>
     <string name="action_about">Om DNS66</string>
     <string name="info_app_license">Dette programmet er fri programvare: du kan distribuere det rundt og/eller modifisere den under betingelsene til GNU General Public License som publisert av Free Software Foundation, enten versjon 3 av den lisensen eller (Valgfritt) enhver senere versjon.</string>
     <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
@@ -84,8 +84,8 @@
     <string name="watchdog_description">Sjekk tilkoblingen med stadig lengre intervaller, og koble til på nytt dersom den sluttet å fungere.</string>
     <string name="legend_host_intro">Oppføringer behandles i rekkefølge. Dersom flere oppføringer inneholder den samme verten, brukes den siste oppføringen. Handlingene er:</string>
     <string name="legend_host_ignore">Ignorer denne oppføringen</string>
-    <string name="legend_host_allow">Tillat tilgang til vertene i denne oppføringen</string>
-    <string name="legend_host_deny">Avslå tilgang til vertene i denne oppføringen</string>
+    <string name="legend_host_allow">Gi tilgang til vertene i denne oppføringen</string>
+    <string name="legend_host_deny">Nekt tilgang til vertene i denne oppføringen</string>
     <string name="do_not_use_dns_server">Av</string>
     <string name="use_dns_server">På</string>
     <string name="switch_onboot_description">Start DNS66 når enheten skrues på, dersom DNS66 var aktiv når enheten ble skrudd av.</string>
