@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_shortdesc">Filtro hosts e server DNS personalizzati</string>
+    <string name="custom_dns">Server DNS personalizzati</string>
+    <string name="enable_hosts">Filtri hosts</string>
+    <string name="start_tab">Avvia</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Esporta impostazioni</string>
+    <string name="action_import">Importa impostazioni</string>
+    <string name="action_save">Fatto</string>
+    <string name="load_defaults">Carica impostazioni predefinite</string>
+    <string name="action_about">Informazioni su...</string>
+    <string name="info_app_license">Questo programma è un software libero: lo puoi redistribuire e/o modificare nei termini della GNU General Public License, come pubblicato dalla Free Software Foundation, nella versione 3 oppure (a discrezione) in ogni versione successiva.</string>
+    <string name="switch_onboot">Avvia automaticamente al riavvio del sistema</string>
+    <string name="activity_edit">Modifica elemento</string>
+    <string name="title">Titolo</string>
+    <string name="location">Posizione (URL o host)</string>
+    <string name="action">Azione</string>
+    <string name="cannot_restore_previous_config">Impossibile ripristinare la configurazione precedente: %s</string>
+    <string name="cannot_read_config">Impossibile leggere la configurazione: %s</string>
+    <string name="cannot_load_default_config">Impossibile leggere le impostazioni predefinite: %s - Ciò non dovrebbe accadere</string>
+    <string name="cannot_write_config">Impossibile scrivere la configurazione: %s</string>
+    <string name="action_refresh">Ricarica file hosts</string>
+    <string name="notification_starting">In avvio</string>
+    <string name="notification_running">Attivo</string>
+    <string name="notification_stopping">In arresto</string>
+    <string name="notification_waiting_for_net">In attesa della rete</string>
+    <string name="notification_reconnecting">Riconnessione</string>
+    <string name="notification_reconnecting_error">Errore di riconnessione</string>
+    <string name="notification_stopped">Arrestato</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Nega</item>
+        <item>Permetti</item>
+        <item>Ignora</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Traduzione italiana: TJL73 - http://tjl73.altervista.org/</string>
+    <string name="app_version_info">Versione: %s</string>
+    <string name="missing_hosts_files_message">Alcuni dei file hosts configurati (non ignorati) sono mancanti.\n\nUtilizzare la funzione \"Ricarica\" per scaricare gli hosts file aggiornati.\n\nVuoi continuare?</string>
+    <string name="missing_hosts_files_title">File hosts mancante</string>
+    <string name="button_no">No</string>
+    <string name="button_yes">Sì</string>
+    <string name="whitelist_tab">Apps</string>
+    <string name="show_notification">Mostra notifica</string>
+    <string name="could_not_configure_vpn_service">Impossibile configurare il servizio VPN - Controlla che non sia attivo un servizio di VPN sempre attiva (tipo: Assistente WiFi) e, nel caso, disattivalo</string>
+    <string name="dns_description">Abilita i tuoi server DNS preferiti</string>
+    <string name="host_description">Regola rossa: blocca; Regola verde: permette</string>
+    <string name="disable_notification_title">Disabilitazione della notifica</string>
+    <string name="disable_notification_message">La disabilitazione dell\'icona di notifica può causare la chiusura di DNS66, in caso di carenza di memoria.\n\nVuoi disabilitare comunque la notifica?</string>
+    <string name="disable_notification_ack">Disabilita notifica</string>
+    <string name="disable_notification_nak">Annulla</string>
+    <string name="whitelist_description">Applicazioni che ignorano DNS66</string>
+    <string name="switch_show_system_apps">Mostra app di sistema</string>
+    <string name="location_dns">Indirizzo IP del server DNS (IPv4 o IPv6)</string>
+    <string name="state_dns_enabled">Abilitato</string>
+    <string name="host_update_error_item">Errore %1$d: %2$s</string>
+    <string name="update_incomplete">Aggiornamento incompleto</string>
+    <string name="update_incomplete_description">Alcuni file hosts non possono essere scaricati. Di quelli già scaricati precedentemente, verrà utilizzata la vecchia versione.</string>
+    <string name="updating_hostfiles">Aggiornamento file hosts</string>
+    <string name="action_use_file">Usa il file</string>
+    <string name="persistable_uri_permission_failed">Impossibile utilizzare il file richiesto: Uso persistente del file richiesto non consentito</string>
+    <string name="updating_n_host_files">Aggiornamento del file hosts %1$d</string>
+    <string name="could_not_update_all_hosts">Impossibile aggiornare tutti i file hosts</string>
+    <string name="permission_denied">Permesso negato</string>
+    <string name="invalid_url_s">URL non valido: %1$s</string>
+    <string name="file_not_found">File non trovato</string>
+    <string name="unknown_error_s">Errore inatteso: %1$s</string>
+    <string name="requested_timed_out">Tempo scaduto</string>
+    <string name="action_delete">Elimina</string>
+    <string name="night_mode">Tema scuro</string>
+    <string name="expand_bar_toggle_expand">Apri pannello dei dettagli</string>
+    <string name="expand_bar_toggle_close">Chiudi pannello dei dettagli</string>
+    <string name="expand_bar_expanded">Aperto</string>
+    <string name="expand_bar_closed">Chiuso</string>
+    <string name="action_stop">Arresta</string>
+    <string name="action_start">Avvia</string>
+    <string name="automatic_refresh">Aggiorna quotidianamente</string>
+    <string name="automatic_refresh_description">L\'aggiornamento quotidiano avviene quando il terminale è in carica, inattivo e connesso ad una rete a traffico illimitato.</string>
+    <string name="watchdog">Verifica la connessione</string>
+    <string name="watchdog_description">Verifica la connessione ad intervalli incrementali e si riconnette nel caso abbia smesso di funzionare.</string>
+    <string name="legend_host_intro">Gli elementi sono gestiti in ordine. Se righe differenti contengono gli stessi host, viene applicato l\'ultimo elemento. Le azioni sono:</string>
+    <string name="legend_host_ignore">Ignora questo elemento</string>
+    <string name="legend_host_allow">Permetti accesso agli host in questo elemento</string>
+    <string name="legend_host_deny">Nega accesso agli host in questo elemento</string>
+    <string name="do_not_use_dns_server">Disattivato</string>
+    <string name="use_dns_server">Attivato</string>
+    <string name="switch_onboot_description">Avvia DNS66 quando il dispositivo viene acceso, se era attivo prima di essere spento.</string>
+    <string name="activity_edit_dns_server">Modifica server DNS</string>
+    <string name="activity_edit_filter">Modifica filtro</string>
+    <string name="notification_paused_title">DNS66 in pausa</string>
+    <string name="notification_paused_text">Tocca per riattivare.</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="whitelist_on_vpn">Nessuna app</string>
+    <string name="whitelist_not_on_vpn">Tutte le app</string>
+    <string name="whitelist_intelligent">App di sistema tranne i browser</string>
+    <string name="ipv6_support_description">Disabilita questa voce, se la tua rete non utilizza IPv6 o non è possibile avviare il servizio.</string>
+    <string name="ipv6_support">Supporto IPv6</string>
+    <string name="action_logcat">Logcat</string>
+    <string-array name="whitelist_defaults">
+        <item>Nessuna app esclusa per default</item>
+        <item>Tutte le app escluse per default</item>
+        <item>App di sistema escluse per default</item>
+    </string-array>
+</resources>
