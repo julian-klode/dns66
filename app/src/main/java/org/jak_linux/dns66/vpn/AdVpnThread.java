@@ -483,6 +483,9 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
 
         builder.setBlocking(true);
 
+        // Allow applications to bypass the VPN
+        builder.allowBypass();
+
         // Explictly allow both families, so we do not block
         // traffic for ones without DNS servers (issue 129).
         builder.allowFamily(OsConstants.AF_INET);
