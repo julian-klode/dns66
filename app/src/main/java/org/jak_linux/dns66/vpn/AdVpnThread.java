@@ -157,6 +157,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
                 runVpn();
 
                 Log.i(TAG, "Told to stop");
+                notify.run(AdVpnService.VPN_STATUS_STOPPING);
                 break;
             } catch (InterruptedException e) {
                 break;
@@ -192,7 +193,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
 
         if (notify != null)
-            notify.run(AdVpnService.VPN_STATUS_STOPPING);
+            notify.run(AdVpnService.VPN_STATUS_STOPPED);
         Log.i(TAG, "Exiting");
     }
 
