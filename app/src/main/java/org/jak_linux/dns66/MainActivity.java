@@ -223,8 +223,9 @@ public class MainActivity extends AppCompatActivity {
             eMailIntent.putExtra(Intent.EXTRA_TEXT, logcat.toString());
             eMailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(eMailIntent);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Not supported: " + e, Toast.LENGTH_LONG).show();
         } finally {
             if (proc != null)
                 proc.destroy();
