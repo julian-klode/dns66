@@ -126,6 +126,9 @@ public class Configuration {
                 webBrowserPackageNames.add(resolveInfo.activityInfo.packageName);
             }
 
+            webBrowserPackageNames.add("com.google.android.webview");
+            webBrowserPackageNames.add("com.android.htmlviewer");
+
             for (ApplicationInfo applicationInfo : pm.getInstalledApplications(0)) {
                 // We need to always keep ourselves using the VPN, otherwise our
                 // watchdog does not work.
