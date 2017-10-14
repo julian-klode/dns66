@@ -38,7 +38,7 @@ dependencies {
     compile 'org.pcap4j:pcap4j-packetfactory-static:1.7.2'
     compile 'dnsjava:dnsjava:2.1.8'
 
-    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.code.gson:gson:2.8.2'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
