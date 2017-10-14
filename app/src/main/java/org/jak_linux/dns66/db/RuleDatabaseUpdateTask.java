@@ -87,7 +87,7 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
         executor.shutdown();
         while (true) {
             try {
-                if (executor.awaitTermination(10, TimeUnit.SECONDS))
+                if (executor.awaitTermination(1, TimeUnit.HOURS))
                     break;
 
                 Log.d(TAG, "doInBackground: Waiting for completion");

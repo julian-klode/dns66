@@ -34,7 +34,7 @@ import java.util.Date;
  * Updates a single item.
  */
 class RuleDatabaseItemUpdateRunnable implements Runnable {
-    private static final int CONNECT_TIMEOUT_MILLIS = 10000;
+    private static final int CONNECT_TIMEOUT_MILLIS = 30000;
     private static final int READ_TIMEOUT_MILLIS = 10000;
     private static final String TAG = "RuleDbItemUpdate";
 
