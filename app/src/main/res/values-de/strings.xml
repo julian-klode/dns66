@@ -102,4 +102,12 @@
     <string name="ipv6_support_description">Deaktiviere dies, falls dein Netzwerk kein IPv6 benutzt oder der Dienst nicht gestartet werden kann.</string>
     <string name="update_incomplete_description">Einige Hosts-Dateien konnten nicht heruntergeladen werden. Falls Dateien früher bereits heruntergeladen wurden, werden die alten Versionen weiter verwendet.</string>
     <string name="action_logcat">Logcat erstellen</string>
+    <string name="notifications_running">Aktiver Dienst</string>
+    <string name="notifications_running_desc">Benachrichtigungen zur Interaktion mit dem laufendem Dienst</string>
+    <string name="notifications_update">Status</string>
+    <string name="notifications_update_desc">Informationen über Aktualisierung von Hosts-Dateien</string>
+    <string name="notifications_paused">Unterbrochener Dienst</string>
+    <string name="notifications_paused_desc">Benachrichtigung zum Fortsetzen nach Unterbrechung</string>
+    <string name="notifications_group_service">Dienstkontrolle</string>
+    <string name="notifications_group_updates">Aktualisierungen</string>
 </resources>

@@ -100,6 +100,14 @@
     <string name="ipv6_support_description">Disable this if your network does not use IPv6 or you cannot start the service.</string>
     <string name="ipv6_support">IPv6 support</string>
     <string name="action_logcat">Logcat</string>
+    <string name="notifications_running">Running service</string>
+    <string name="notifications_running_desc">Notifications to interact with running service</string>
+    <string name="notifications_update">Status</string>
+    <string name="notifications_update_desc">Notifications about updating hostfiles</string>
+    <string name="notifications_paused">Paused service</string>
+    <string name="notifications_paused_desc">Notifications to resume after pausing</string>
+    <string name="notifications_group_service">Service control</string>
+    <string name="notifications_group_updates">Updates</string>
     <string-array name="whitelist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>

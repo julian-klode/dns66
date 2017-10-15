@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NotificationChannels.onCreate(this);
 
         if (savedInstanceState == null || config == null) {
             config = FileHelper.loadCurrentSettings(this);

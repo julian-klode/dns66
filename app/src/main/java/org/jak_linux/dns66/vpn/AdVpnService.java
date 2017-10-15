@@ -33,6 +33,7 @@ import android.util.Log;
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
+import org.jak_linux.dns66.NotificationChannels;
 import org.jak_linux.dns66.R;
 
 import java.lang.ref.WeakReference;
@@ -85,7 +86,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
             handler.sendMessage(handler.obtainMessage(VPN_MSG_NETWORK_CHANGED, intent));
         }
     };
-    private final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+    private final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NotificationChannels.SERVICE_RUNNING)
             .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
             .setPriority(Notification.PRIORITY_MIN);
 
@@ -113,6 +114,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     @Override
     public void onCreate() {
         super.onCreate();
+        NotificationChannels.onCreate(this);
 
         notificationBuilder.addAction(R.drawable.ic_pause_black_24dp, getString(R.string.notification_action_pause),
                 PendingIntent.getService(this, REQUEST_CODE_PAUSE, new Intent(this, AdVpnService.class)
@@ -134,6 +136,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         }
 
         Log.i("BOOT", "Starting ad buster from boot");
+        NotificationChannels.onCreate(context);
 
         Intent intent = getStartIntent(context);
         context.startService(intent);
@@ -172,7 +175,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     private void pauseVpn() {
         stopVpn();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID_STATE, new NotificationCompat.Builder(this)
+        notificationManager.notify(NOTIFICATION_ID_STATE, new NotificationCompat.Builder(this, NotificationChannels.SERVICE_PAUSED)
                 .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
                 .setPriority(Notification.PRIORITY_LOW)
                 .setAutoCancel(true)

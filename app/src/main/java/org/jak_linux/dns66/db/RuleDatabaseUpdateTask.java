@@ -7,7 +7,6 @@
  */
 package org.jak_linux.dns66.db;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -17,10 +16,12 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.MainActivity;
+import org.jak_linux.dns66.NotificationChannels;
 import org.jak_linux.dns66.R;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
     List<String> pending = new ArrayList<>();
     List<String> done = new ArrayList<>();
     private NotificationManager notificationManager;
-    private Notification.Builder notificationBuilder;
+    private NotificationCompat.Builder notificationBuilder;
 
     public RuleDatabaseUpdateTask(Context context, Configuration configuration, boolean notifications) {
         Log.d(TAG, "RuleDatabaseUpdateTask: Begin");
@@ -62,7 +63,7 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
     private void setupNotificationBuilder() {
         notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationBuilder = new Notification.Builder(context);
+        notificationBuilder = new NotificationCompat.Builder(context, NotificationChannels.UPDATE_STATUS);
         notificationBuilder.setContentTitle(context.getString(R.string.updating_hostfiles))
                 .setContentText(context.getString(R.string.updating_hostfiles))
                 .setSmallIcon(R.drawable.ic_refresh);
@@ -151,7 +152,7 @@ public class RuleDatabaseUpdateTask extends AsyncTask<Void, Void, Void> {
 
         if (notificationBuilder != null) {
             notificationBuilder.setProgress(pending.size() + done.size(), done.size(), false);
-            notificationBuilder.setStyle(new Notification.BigTextStyle().bigText(builder.toString()));
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(builder.toString()));
             notificationBuilder.setContentText(context.getString(R.string.updating_n_host_files, pending.size()));
             notificationManager.notify(UPDATE_NOTIFICATION_ID, notificationBuilder.build());
         }
