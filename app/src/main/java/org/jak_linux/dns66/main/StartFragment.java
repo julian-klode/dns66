@@ -12,8 +12,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.net.VpnService;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -230,7 +230,12 @@ public class StartFragment extends Fragment {
             intent.putExtra("NOTIFICATION_INTENT",
                     PendingIntent.getActivity(getContext(), 0,
                             new Intent(getContext(), MainActivity.class), 0));
-            getContext().startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && MainActivity.config.showNotification) {
+                getContext().startForegroundService(intent);
+            } else {
+                getContext().startService(intent);
+            }
+
         }
     }
 }
