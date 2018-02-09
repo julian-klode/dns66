@@ -9,6 +9,7 @@ package org.jak_linux.dns66.db;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
@@ -106,7 +107,29 @@ public class RuleDatabase {
      * @return true if the host is blocked, false otherwise.
      */
     public boolean isBlocked(String host) {
-        return blockedHosts.get().contains(host);
+        // reject empty strings
+        if(null == host || host.length() == 0) {
+            return true;
+        }
+
+        // most likely the host name itself will be blocked, check it first
+        if (blockedHosts.get().contains(host)) {
+            return true;
+        };
+
+        int lastDotPosition = host.lastIndexOf('.');
+        // a domain name with no dot is probably some local machine, don't block it
+        if(lastDotPosition < 0) {
+            return false;
+        }
+        // check all subdomains starting from the second level
+        for(int i = host.lastIndexOf('.', lastDotPosition - 1); i > 0; i = host.lastIndexOf('.', i - 1)) {
+            if(blockedHosts.get().contains(host.substring(i + 1))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
