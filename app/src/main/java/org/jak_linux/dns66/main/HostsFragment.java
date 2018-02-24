@@ -62,6 +62,16 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
             }
         });
 
+        Switch extendedFilteringEnabled = (Switch) rootView.findViewById(R.id.extended_filtering_enabled);
+        extendedFilteringEnabled.setChecked(MainActivity.config.extendedFiltering.enabled);
+        extendedFilteringEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.extendedFiltering.enabled = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+
         Switch automaticRefresh = (Switch) rootView.findViewById(R.id.automatic_refresh);
         automaticRefresh.setChecked(MainActivity.config.hosts.automaticRefresh);
         automaticRefresh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

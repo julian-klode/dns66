@@ -36,6 +36,9 @@ public class RuleDatabase {
     private static final RuleDatabase instance = new RuleDatabase();
     final AtomicReference<HashSet<String>> blockedHosts = new AtomicReference<>(new HashSet<String>());
     HashSet<String> nextBlockedHosts = null;
+    final AtomicReference<HashSet<String>> allowedHosts = new AtomicReference<>(new HashSet<String>());
+    HashSet<String> nextAllowedHosts = null;
+    Configuration config = null;
 
     /**
      * Package-private constructor for instance and unit tests.
@@ -60,6 +63,26 @@ public class RuleDatabase {
      */
     @Nullable
     static String parseLine(String line) {
+        return parseLine(line, false);
+    }
+
+    /**
+     * Parse a single line in a hosts file
+     *
+     * @param line A line to parse
+     * @return A host
+     */
+    @Nullable
+    static String parseLine(String line, boolean extendedFiltering) {
+
+        // Reject AdBlock Plus filters like these
+        // www.google.com#@##videoads
+        // because otherwise, the filter exception (#@##videoads) would be treated as a comment
+        // and then www.google.com would be treated as a domain (presumably to block).
+        // This is as fast as using indexOf - https://stackoverflow.com/a/10714409.
+        if (line.contains("#@#"))
+            return null;
+
         int endOfLine = line.indexOf('#');
 
         if (endOfLine == -1)
@@ -87,14 +110,138 @@ public class RuleDatabase {
         while (startOfHost < endOfLine && Character.isWhitespace(line.charAt(startOfHost)))
             startOfHost++;
 
-        // Reject lines containing a space
-        for (int i = startOfHost; i < endOfLine; i++) {
-            if (Character.isWhitespace(line.charAt(i)))
-                return null;
+        // If the host is ||domain^, strip the || and ^ - AdBlock Plus syntax for whole domains
+        if ((line.charAt(endOfLine - 1) == '^') && (
+                (line.charAt(startOfHost) == '|') && (line.charAt(startOfHost + 1) == '|')
+        )) {
+            startOfHost += 2;
+            endOfLine--;
         }
 
         if (startOfHost >= endOfLine)
             return null;
+
+        // Given that there is already a loop that loops through the string, we can also count the
+        // dots without performance hit.
+        int numOfDots = 0;
+
+        // Reject strings containing a space or one of the symbols - that wouldn't be a single
+        // domain but some more complicated AdBlock plus filter and we want to ignore them
+        for (int i = startOfHost; i < endOfLine; i++) {
+            char testedChar = line.charAt(i);
+            if (Character.isWhitespace(testedChar))
+                return null;
+            if (testedChar == '#')
+                return null;
+            if (testedChar == '/')
+                return null;
+            if (testedChar == '?')
+                return null;
+            if (testedChar == ',')
+                return null;
+            if (testedChar == ';')
+                return null;
+            if (testedChar == ':')
+                return null;
+            if (testedChar == '!')
+                return null;
+            if (testedChar == '|')
+                return null;
+            if (testedChar == '[')
+                return null;
+            if (testedChar == '&')
+                return null;
+            if (testedChar == '$')
+                return null;
+            if (testedChar == '@')
+                return null;
+            if (testedChar == '=')
+                return null;
+            if (testedChar == '^')
+                return null;
+            if (testedChar == '+')
+                return null;
+
+            // count dots
+            if (testedChar == '.')
+                numOfDots++;
+        }
+
+        // Reject strings beginning with either of these chars:
+        // .  , ; ?  !  : - | / [ & $ @ _ = ^ + #
+        // (at this point, domains of format ||domain^ were already detected)
+        // these are control chars of the AdBlock Plus format and we want to ignore such lines
+        if (line.charAt(startOfHost) == '.') return null;
+        if (line.charAt(startOfHost) == '-') return null;
+        if (line.charAt(startOfHost) == '_') return null;
+
+        // already detected - if (line.charAt(startOfHost) == ',') return null;
+        // already detected - if (line.charAt(startOfHost) == ';') return null;
+        // already detected - if (line.charAt(startOfHost) == '?') return null;
+        // already detected - if (line.charAt(startOfHost) == '!') return null;
+        // already detected - if (line.charAt(startOfHost) == ':') return null;
+        // already detected - if (line.charAt(startOfHost) == '|') return null;
+        // already detected - if (line.charAt(startOfHost) == '/') return null;
+        // already detected - if (line.charAt(startOfHost) == '[') return null;
+        // already detected - if (line.charAt(startOfHost) == '&') return null;
+        // already detected - if (line.charAt(startOfHost) == '$') return null;
+        // already detected - if (line.charAt(startOfHost) == '@') return null;
+        // already detected - if (line.charAt(startOfHost) == '=') return null;
+        // already detected - if (line.charAt(startOfHost) == '^') return null;
+        // already detected - if (line.charAt(startOfHost) == '+') return null;
+        // already detected - if (line.charAt(startOfHost) == '#') return null;
+
+        // Also reject strings ending with those chars
+        if (line.charAt(endOfLine - 1) == '.') return null;
+        if (line.charAt(endOfLine - 1) == '-') return null;
+        if (line.charAt(endOfLine - 1) == '_') return null;
+
+        if (extendedFiltering) {
+            if (numOfDots > 2) {  // optimization - with less than 3 parts, it doesn't matter
+                // If the host address has more than 3 parts (e.g. en.analytics.example.com), it also adds
+                // the last 3 parts as another host (e.g. analytics.example.com), so that related subdomains
+                // are handled as well (e.g. de.analytics.example.com). This cannot be done for two parts
+                // because e.g. analytics.example.com would cause example.com and docs.example.com to be
+                // blocked as well and we don't want that. 3 parts is the best balance.
+                // If the public suffix is something else than one part (e.g. co.uk instead of com),
+                // it is adjusted accordingly.
+
+                int partsPublicSuffix = howManyPartsIsPublicSuffix(line.substring(startOfHost, endOfLine).toLowerCase(Locale.ENGLISH));
+
+                // how much to merge - 3 for sth.example.com, 4 for sth.example.co.uk
+                int resultPartsNum = 2 + partsPublicSuffix;
+
+                //    .        sth       .      example        .         com
+                //  dot 3    part 3    dot 2     part 2     dot 1       part 1
+
+
+                int currentDotCount = 0;
+                for (int i = endOfLine - 1; i >= startOfHost; i--) {
+                    if (line.charAt(i) == '.')
+                        currentDotCount++;
+                    if (currentDotCount == resultPartsNum) {
+                        // delete this dot and everything before it
+                        startOfHost = i + 1;
+                        break;
+                    }
+                }
+
+            }
+
+            // If the host address begins with "www." (e.g. www.badsite.com), it also adds the domain
+            // name without the leading "www." (e.g. badsite.com).
+            if (line.regionMatches(startOfHost, "www.", 0, 4))
+                startOfHost += 4;
+        }
+
+        // sanity checks again
+        if (startOfHost >= endOfLine)
+            return null;
+
+        // reject strings shorter than 1 character
+        if (startOfHost + 1 > (endOfLine - 1) )
+            return null;
+
 
         return line.substring(startOfHost, endOfLine).toLowerCase(Locale.ENGLISH);
     }
@@ -106,7 +253,49 @@ public class RuleDatabase {
      * @return true if the host is blocked, false otherwise.
      */
     public boolean isBlocked(String host) {
-        return blockedHosts.get().contains(host);
+
+        // example: host == server3389.de.beacon.tracking.badserver.com
+        if (allowedHosts.get().contains(host)) {
+            return false;
+        }
+
+        // example: host == server3389.de.beacon.tracking.badserver.com
+        if (blockedHosts.get().contains(host)) {
+            return true;
+        }
+
+        if ((null != config) && (config.extendedFiltering.enabled)) {
+            // example of chopping off:
+            // i == 0, host == de.beacon.tracking.badserver.com
+            // i == 1, host == beacon.tracking.badserver.com
+            // i == 2, host == tracking.badserver.com
+            // i == 3, host == badserver.com
+            // i == 4, host == com
+            // (yes, comparing even the top-level domain so that malicious TLDs can be present in the
+            //  blocklist and can be blocked)
+
+            // This is effectively like having a wildcard before every domain in the blacklist -
+            // *.example.com - but it is more efficient because it is faster to check the existence
+            // of a string in a hashset 1-10 times than to build and evaluate a huge regexp
+            // containing all the entries of the domain blacklist.
+
+            for (int i = 0; i < 10; i++) {
+                // strip up to 10 leading parts (so that there is an upper bound for performance reasons)
+                String[] split_host = host.split("\\.", 2);
+                if (split_host.length <= 1) {
+                    // there's nothing to chop off left
+                    break;
+                }
+                host = split_host[1];
+                if (allowedHosts.get().contains(host)) {
+                    return false;
+                }
+                if (blockedHosts.get().contains(host)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -126,9 +315,10 @@ public class RuleDatabase {
      *                              reading more host files than needed.
      */
     public synchronized void initialize(Context context) throws InterruptedException {
-        Configuration config = FileHelper.loadCurrentSettings(context);
+        config = FileHelper.loadCurrentSettings(context);
 
         nextBlockedHosts = new HashSet<>(blockedHosts.get().size());
+        nextAllowedHosts = new HashSet<>(allowedHosts.get().size());
 
         Log.i(TAG, "Loading block list");
 
@@ -143,6 +333,7 @@ public class RuleDatabase {
         }
 
         blockedHosts.set(nextBlockedHosts);
+        allowedHosts.set(nextAllowedHosts);
         Runtime.getRuntime().gc();
     }
 
@@ -166,23 +357,38 @@ public class RuleDatabase {
         }
 
         if (reader == null) {
-            addHost(item, item.location);
-            return;
+            boolean extendedFiltering = false;
+            if ((null != config) && (config.extendedFiltering.enabled)) {
+                extendedFiltering = true;
+            }
+            String host = parseLine(item.location, extendedFiltering);
+            if (host != null) {
+                addHost(item, item.location);
+            }
         } else {
             loadReader(item, reader);
         }
     }
 
     /**
-     * Add a single host for an item.
+     * Add a host for an item.
+     * If the host address has more than 3 parts (e.g. en.analytics.example.com), it also adds
+     * the last 3 parts as another host (e.g. analytics.example.com), so that related subdomains
+     * are handled as well (e.g. de.analytics.example.com). This cannot be done for two parts
+     * because e.g. analytics.example.com would cause example.com and docs.example.com to be
+     * blocked as well and we don't want that. 3 parts is the best balance.
+     * If the public suffix is something else than one part (e.g. co.uk instead of com),
+     * it is adjusted accordingly.
+     * If the host address begins with "www." (e.g. www.badsite.com), it also adds the domain
+     * name without the leading "www." (e.g. badsite.com).
      *
      * @param item The item the host belongs to
      * @param host The host
      */
     private void addHost(Configuration.Item item, String host) {
-        // Single address to block
         if (item.state == Configuration.Item.STATE_ALLOW) {
             nextBlockedHosts.remove(host);
+            nextAllowedHosts.add(host);
         } else if (item.state == Configuration.Item.STATE_DENY) {
             nextBlockedHosts.add(host);
         }
@@ -196,6 +402,10 @@ public class RuleDatabase {
      * @throws InterruptedException If thread was interrupted
      */
     boolean loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
+        boolean extendedFiltering = false;
+        if ((null != config) && (config.extendedFiltering.enabled)) {
+            extendedFiltering = true;
+        }
         int count = 0;
         try {
             Log.d(TAG, "loadBlockedHosts: Reading: " + item.location);
@@ -204,7 +414,7 @@ public class RuleDatabase {
                 while ((line = br.readLine()) != null) {
                     if (Thread.interrupted())
                         throw new InterruptedException("Interrupted");
-                    String host = parseLine(line);
+                    String host = parseLine(line, extendedFiltering);
                     if (host != null) {
                         count += 1;
                         addHost(item, host);
@@ -220,4 +430,65 @@ public class RuleDatabase {
             FileHelper.closeOrWarn(reader, TAG, "loadBlockedHosts: Error closing " + item.location);
         }
     }
+
+    /**
+     * Returns number of parts (those strings in domain names joined by dots) of the public suffix
+     * of the given domain name.
+     * @param domain
+     * @return Number of parts of the public suffix, e.g. 1 for .com and 2 for .co.uk
+     */
+    protected static int howManyPartsIsPublicSuffix(String domain) {
+        // A dumb and simple algorithm for determining public prefixes from the beginning of
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=252342
+        // Remember that the goal of publicsuffix.org is to allow safe handling of cookies,
+        // while in DNS66, it is just about minimizing too coarse blocking of fourth-level
+        // domains - if there is a misdetection, it won't have a security impact, just a
+        // different granularity of blocking for the particular domain. Therefore, misdetections
+        // like co.com generally don't matter - it would only mean that anything under .co.com
+        // would coalesce one subdomain deeper, but all explicitly listed domains in a blocklist
+        // would still be properly blocked.
+        
+        // positions
+        int lastDot = -1;
+        int secondLastDot = -1;
+
+        for (int i = domain.length() - 1; i >= 0; i--) {
+            if (domain.charAt(i) == '.') {
+                if (-1 == lastDot) {
+                    lastDot = i;
+                } else {
+                    secondLastDot = i;
+                    break;
+                }
+            }
+        }
+
+        if (-1 == secondLastDot)
+            return 1;
+
+        String secondLevelPart = domain.substring(secondLastDot + 1, lastDot).toLowerCase(Locale.ENGLISH);
+
+        if (secondLevelPart.equals("co")) return 2;
+        if (secondLevelPart.equals("com")) return 2;
+        if (secondLevelPart.equals("org")) return 2;
+        if (secondLevelPart.equals("net")) return 2;
+        if (secondLevelPart.equals("ed")) return 2;
+        if (secondLevelPart.equals("edu")) return 2;
+        if (secondLevelPart.equals("gov")) return 2;
+        if (secondLevelPart.equals("ac")) return 2;
+        if (secondLevelPart.equals("me")) return 2;
+        if (secondLevelPart.equals("police")) return 2;
+        if (secondLevelPart.equals("nhs")) return 2;
+        if (secondLevelPart.equals("ltd")) return 2;
+
+        if (secondLevelPart.equals("plc")) return 2;
+        if (secondLevelPart.equals("sch")) return 2;
+        if (secondLevelPart.equals("mod")) return 2;
+        if (secondLevelPart.equals("mil")) return 2;
+        if (secondLevelPart.equals("int")) return 2;
+
+        return 1;
+    }
+
+
 }
