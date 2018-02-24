@@ -150,14 +150,33 @@ public class RuleDatabaseTest {
         assertTrue(db.isEmpty());
         assertFalse(db.isBlocked("example.com"));
 
+        assertTrue(db.loadReader(item, new StringReader("whitelisted.www.foo.com")));
+        assertTrue(db.loadReader(item, new StringReader("whitelisted.foo.com")));
+        assertTrue(db.loadReader(item, new StringReader("whitelisted.bad.foo.com")));
+
+
         // Check multiple lines
         item.state = Configuration.Item.STATE_DENY;
         assertFalse(db.isBlocked("example.com"));
         assertFalse(db.isBlocked("foo.com"));
-        assertTrue(db.loadReader(item, new StringReader("example.com\n127.0.0.1 foo.com")));
+        assertTrue(db.loadReader(item, new StringReader("example.com\n127.0.0.1 foo.com\nbad.foo.com")));
         assertFalse(db.isEmpty());
         assertFalse(db.isBlocked("example.com"));  // it has been explicitly whitelisted above
         assertTrue(db.isBlocked("foo.com"));
+        assertFalse(db.isBlocked("www.foo.com"));
+
+        db.config = new Configuration();
+        db.config.extendedFiltering.enabled = true;
+
+        assertTrue(db.isBlocked("www.foo.com"));
+        assertTrue(db.isBlocked("bar.foo.com"));
+        assertTrue(db.isBlocked("bad.foo.com"));
+        assertFalse(db.isBlocked("whitelisted.www.foo.com"));
+        assertFalse(db.isBlocked("whitelisted.foo.com"));
+        assertFalse(db.isBlocked("whitelisted.bad.foo.com"));
+        assertFalse(db.isBlocked("foobar.whitelisted.bad.foo.com"));
+        assertTrue(db.isBlocked("foobar.baz.foo.com"));
+        assertTrue(db.isBlocked("baz.bad.foo.com"));
 
         // Interrupted test
         Thread.currentThread().interrupt();
