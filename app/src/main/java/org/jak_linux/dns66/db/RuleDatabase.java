@@ -283,7 +283,7 @@ public class RuleDatabase {
             // containing all the entries of the domain blacklist.
 
             for (int i = 0; i < 50; i++) {
-                // strip up to 10 leading parts (so that there is an upper bound for performance reasons)
+                // strip up to 50 leading parts (so that there is an upper bound for performance reasons)
                 String[] split_host = host.split("\\.", 2);
                 if (split_host.length <= 1) {
                     // there's nothing to chop off left
