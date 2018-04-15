@@ -77,10 +77,13 @@ public class RuleDatabase {
 
         // Reject AdBlock Plus filters like these
         // www.google.com#@##videoads
+        // youtube.com###companion
         // because otherwise, the filter exception (#@##videoads) would be treated as a comment
         // and then www.google.com would be treated as a domain (presumably to block).
         // This is as fast as using indexOf - https://stackoverflow.com/a/10714409.
         if (line.contains("#@#"))
+            return null;
+        if (line.contains("###"))
             return null;
 
         int endOfLine = line.indexOf('#');
@@ -279,7 +282,7 @@ public class RuleDatabase {
             // of a string in a hashset 1-10 times than to build and evaluate a huge regexp
             // containing all the entries of the domain blacklist.
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 50; i++) {
                 // strip up to 10 leading parts (so that there is an upper bound for performance reasons)
                 String[] split_host = host.split("\\.", 2);
                 if (split_host.length <= 1) {
@@ -294,6 +297,8 @@ public class RuleDatabase {
                     return true;
                 }
             }
+            // A domain name with 50 components is a pathological case, let's block it
+            return true;
         }
         return false;
     }
