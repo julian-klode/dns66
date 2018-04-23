@@ -106,6 +106,22 @@
         </LinearLayout>
 
         <Switch
+            android:id="@+id/extended_filtering_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:saveEnabled="false"
+            android:text="@string/extended_filtering"/>
+
+        <TextView
+            android:id="@+id/extended_filtering_enabled_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/extended_filtering_description"/>
+
+        <Switch
             android:id="@+id/automatic_refresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

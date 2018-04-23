@@ -34,6 +34,7 @@ public class Configuration {
     public int version = 1;
     public boolean autoStart;
     public Hosts hosts = new Hosts();
+    public ExtendedFiltering extendedFiltering = new ExtendedFiltering();
     public DnsServers dnsServers = new DnsServers();
     public Whitelist whitelist = new Whitelist();
     public boolean showNotification = true;
@@ -76,6 +77,10 @@ public class Configuration {
         public boolean enabled;
         public boolean automaticRefresh = false;
         public List<Item> items = new ArrayList<>();
+    }
+
+    public static class ExtendedFiltering {
+        public boolean enabled;
     }
 
     public static class DnsServers {

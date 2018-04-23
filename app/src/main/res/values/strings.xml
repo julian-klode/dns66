@@ -78,6 +78,8 @@
     <string name="expand_bar_closed">Closed</string>
     <string name="action_stop">Stop</string>
     <string name="action_start">Start</string>
+    <string name="extended_filtering">Extensive filtering</string>
+    <string name="extended_filtering_description">Assume wildcard in front of all domains in lists, merge subdomains below third-level domains (fourth for .co.uk and similar), strip www. from domains in lists.</string>
     <string name="automatic_refresh">Refresh daily</string>
     <string name="automatic_refresh_description">Daily updates occur when charging, idle, and on an unmetered network.</string>
     <string name="watchdog">Watch connection</string>
