@@ -296,9 +296,11 @@ public class RuleDatabase {
                 if (blockedHosts.get().contains(host)) {
                     return true;
                 }
+                if (i == 49) {
+                    // A domain name with 50 components is a pathological case, let's block it
+                    return true;
+                }
             }
-            // A domain name with 50 components is a pathological case, let's block it
-            return true;
         }
         return false;
     }
