@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,14 +29,21 @@ import java.io.Writer;
 
 public final class FileHelper {
 
+    private static String systemDefaultsPath = "/system/etc/dns66/";
+
     /**
-     * Try open the file with {@link Context#openFileInput(String)}, falling back to a file of
-     * the same name in the assets.
+     * Try open the file with {@link Context#openFileInput(String)}. If not available /system is
+     * checked for a version, and if not there the local app assets are checked. All files are
+     * assumed to always be available in the app assets.
      */
     public static InputStream openRead(Context context, String filename) throws IOException {
         try {
             return context.openFileInput(filename);
         } catch (FileNotFoundException e) {
+            File systemVersion = isSystemVersionAvailable(filename);
+            if(systemVersion != null) {
+                return new FileInputStream(systemVersion);
+            }
             return context.getAssets().open(filename);
         }
     }
@@ -59,10 +67,16 @@ public final class FileHelper {
 
     private static Configuration readConfigFile(Context context, String name, boolean defaultsOnly) throws IOException {
         InputStream stream;
-        if (defaultsOnly)
-            stream = context.getAssets().open(name);
-        else
+        if (defaultsOnly) {
+            File systemVersion = isSystemVersionAvailable(name);
+            if(systemVersion != null) {
+                stream = new FileInputStream(systemVersion);
+            } else {
+                stream = context.getAssets().open(name);
+            }
+        } else {
             stream = FileHelper.openRead(context, name);
+        }
 
         return Configuration.read(new InputStreamReader(stream));
     }
@@ -92,6 +106,14 @@ public final class FileHelper {
             Toast.makeText(context, context.getString(R.string.cannot_load_default_config, e.getLocalizedMessage()), Toast.LENGTH_LONG).show();
             return null;
         }
+    }
+
+    public static File isSystemVersionAvailable(String name) {
+        File file = new File(systemDefaultsPath + name);
+        if (file.exists() && file.canRead()) {
+            return file;
+        }
+        return null;
     }
 
     public static void writeSettings(Context context, Configuration config) {
