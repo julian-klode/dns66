@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.jak_linux.dns66">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -36,6 +37,7 @@
             android:label="@string/activity_edit"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
+
         <service
             android:name=".vpn.AdVpnService"
             android:permission="android.permission.BIND_VPN_SERVICE">
@@ -56,6 +58,36 @@
             </intent-filter>
         </receiver>
 
+        <!-- Tasker Related -->
+        <activity
+            android:name=".tasker.LocaleEdit"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/tasker_label"
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="ExportedActivity">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".TaskerVpnActivity"
+            android:parentActivityName=".TaskerVpnActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <receiver
+            android:name=".tasker.FireReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
+            </intent-filter>
+        </receiver>
+
+        <!-- End Tasker Related -->
     </application>
 
 </manifest>

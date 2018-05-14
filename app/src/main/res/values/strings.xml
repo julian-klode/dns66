@@ -113,4 +113,15 @@
         <item>All apps bypass by default</item>
         <item>System apps bypass by default</item>
     </string-array>
+
+    <!-- tasker related strings -->
+    <string name="twofortyfouram_locale_breadcrumb_format">%1$s%2$s%3$s</string>
+    <string name="twofortyfouram_locale_breadcrumb_separator">\u0020&gt;\u0020</string>
+    <string name="twofortyfouram_locale_menu_dontsave">Cancel</string>
+    <string name="twofortyfouram_locale_menu_help">Help</string>
+    <string name="twofortyfouram_locale_menu_save">Save</string>
+    <string name="tasker_label">DNS66 Plugin</string>
+    <string name="tasker_enable">Enable DNS66</string>
+    <string name="tasker_disable">Disable DNS66</string>
+
 </resources>

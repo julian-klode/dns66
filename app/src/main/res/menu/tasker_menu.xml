@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources">
+
+    <item
+        android:id="@id/twofortyfouram_locale_menu_dontsave"
+        android:icon="@drawable/twofortyfouram_locale_ic_menu_dontsave"
+        android:title="@string/twofortyfouram_locale_menu_dontsave"
+        app:showAsAction="ifRoom|withText" />
+
+
+    <item
+        android:id="@id/twofortyfouram_locale_menu_save"
+        android:icon="@drawable/twofortyfouram_locale_ic_menu_save"
+        android:title="@string/twofortyfouram_locale_menu_save"
+        app:showAsAction="ifRoom|withText" />
+
+</menu>
