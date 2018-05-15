@@ -76,7 +76,7 @@ public final class FireReceiver extends BroadcastReceiver {
             String status = bundle.getString(PluginBundleManager.BUNDLE_EXTRA_STRING_MESSAGE);
             Intent intent2 = new Intent(context, TaskerVpnActivity.class);
             intent2.putExtra("STATUS", status);
-            intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent2);
         }
     }
