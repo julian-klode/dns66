@@ -84,6 +84,9 @@ class RuleDatabaseItemUpdateRunnable implements Runnable {
         try {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
         } catch (UnsatisfiedLinkError e) {
+        } catch (RuntimeException e) {
+            if (!e.toString().contains("not mocked"))
+                throw e;
         }
 
         if (item.location.startsWith("content:/")) {
