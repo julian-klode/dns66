@@ -161,13 +161,7 @@ public class DnsPacketProxy {
 
 
         if (parsedUdp.getPayload() == null) {
-            Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
-
-            // Let's be nice to Firefox. Firefox uses an empty UDP packet to
-            // the gateway to reduce the RTT. For further details, please see
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
-            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            eventLoop.forwardPacket(outPacket, null);
+            sendWithoutPayload(destAddr, parsedUdp);
             return;
         }
 
@@ -195,6 +189,16 @@ public class DnsPacketProxy {
             dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
+    }
+
+    private void sendWithoutPayload(InetAddress destAddr, UdpPacket parsedUdp) throws AdVpnThread.VpnNetworkException {
+        Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
+
+        // Let's be nice to Firefox. Firefox uses an empty UDP packet to
+        // the gateway to reduce the RTT. For further details, please see
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
+        DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
+        eventLoop.forwardPacket(outPacket, null);
     }
 
     /**
