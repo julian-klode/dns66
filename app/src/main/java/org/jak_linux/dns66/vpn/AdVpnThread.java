@@ -420,41 +420,11 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // Configure a builder while parsing the parameters.
         VpnService.Builder builder = vpnService.new Builder();
 
-        String format = null;
+        String ipv4Format = genereateIpV4Format(builder);
+        byte[] ipv6Template = generateIpv6Template(config, dnsServers, builder);
 
-        // Determine a prefix we can use. These are all reserved prefixes for example
-        // use, so it's possible they might be blocked.
-        for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
-            try {
-                builder.addAddress(prefix + ".1", 24);
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
 
-            format = prefix + ".%d";
-            break;
-        }
-
-        // For fancy reasons, this is the 2001:db8::/120 subnet of the /32 subnet reserved for
-        // documentation purposes. We should do this differently. Anyone have a free /120 subnet
-        // for us to use?
-        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-        if (hasIpV6Servers(config, dnsServers)) {
-            try {
-                InetAddress addr = Inet6Address.getByAddress(ipv6Template);
-                Log.d(TAG, "configure: Adding IPv6 address" + addr);
-                builder.addAddress(addr, 120);
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                ipv6Template = null;
-            }
-        } else {
-            ipv6Template = null;
-        }
-
-        if (format == null) {
+        if (ipv4Format == null) {
             Log.w(TAG, "configure: Could not find a prefix to use, directly using DNS servers");
             builder.addAddress("192.168.50.1", 24);
         }
@@ -465,7 +435,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             for (Configuration.Item item : config.dnsServers.items) {
                 if (item.state == item.STATE_ALLOW) {
                     try {
-                        newDNSServer(builder, format, ipv6Template, InetAddress.getByName(item.location));
+                        newDNSServer(builder, ipv4Format, ipv6Template, InetAddress.getByName(item.location));
                     } catch (Exception e) {
                         Log.e(TAG, "configure: Cannot add custom DNS server", e);
                     }
@@ -475,7 +445,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
             try {
-                newDNSServer(builder, format, ipv6Template, addr);
+                newDNSServer(builder, ipv4Format, ipv6Template, addr);
             } catch (Exception e) {
                 Log.e(TAG, "configure: Cannot add server:", e);
             }
@@ -501,6 +471,46 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
                                 PendingIntent.FLAG_CANCEL_CURRENT)).establish();
         Log.i(TAG, "Configured");
         return pfd;
+    }
+
+    private String genereateIpV4Format(VpnService.Builder builder) {
+        String format = null;
+
+        // Determine a prefix we can use. These are all reserved prefixes for example
+        // use, so it's possible they might be blocked.
+        for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
+            try {
+                builder.addAddress(prefix + ".1", 24);
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+
+            format = prefix + ".%d";
+            break;
+        }
+        return format;
+    }
+
+    private byte[] generateIpv6Template(Configuration config, Set<InetAddress> dnsServers, VpnService.Builder builder) {
+        // For fancy reasons, this is the 2001:db8::/120 subnet of the /32 subnet reserved for
+        // documentation purposes. We should do this differently. Anyone have a free /120 subnet
+        // for us to use?
+        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        if (hasIpV6Servers(config, dnsServers)) {
+            try {
+                InetAddress addr = Inet6Address.getByAddress(ipv6Template);
+                Log.d(TAG, "configure: Adding IPv6 address" + addr);
+                builder.addAddress(addr, 120);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                ipv6Template = null;
+            }
+        } else {
+            ipv6Template = null;
+        }
+        return ipv6Template;
     }
 
     boolean hasIpV6Servers(Configuration config, Set<InetAddress> dnsServers) {
