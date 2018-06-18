@@ -85,15 +85,15 @@ public class ItemActivity extends AppCompatActivity {
 
         findViewsByIds();
 
-        updateViewsByIntent(intent);
+        setupViewsByIntent(intent);
 
         if (stateSpinner != null) {
-            setStateOnItemSelectedListener();
+            setupOnItemSelectedListenerForStateSpinner();
         }
 
         // We have an attachment icon for host files
         if (intent.getIntExtra("STATE_CHOICES", 3) == 3) {
-            setLocationOnTouchListener();
+            setupOnTouchListenerForLocationText();
 
             // Tint the attachment icon, if any.
             setLocationTint();
@@ -101,7 +101,7 @@ public class ItemActivity extends AppCompatActivity {
 
     }
 
-    private void setStateOnItemSelectedListener() {
+    private void setupOnItemSelectedListenerForStateSpinner() {
         stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -125,7 +125,7 @@ public class ItemActivity extends AppCompatActivity {
         });
     }
 
-    private void updateViewsByIntent(Intent intent) {
+    private void setupViewsByIntent(Intent intent) {
         if (intent.hasExtra("ITEM_TITLE"))
             titleText.setText(intent.getStringExtra("ITEM_TITLE"));
         if (intent.hasExtra("ITEM_LOCATION"))
@@ -144,7 +144,7 @@ public class ItemActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.image_view);
     }
 
-    private void setLocationOnTouchListener() {
+    private void setupOnTouchListenerForLocationText() {
         locationText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
