@@ -52,8 +52,25 @@ public class StartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_start, container, false);
-        Switch switchOnBoot = (Switch) rootView.findViewById(R.id.switch_onboot);
 
+        setupStateImageView(rootView);
+
+        setupStartButton(rootView);
+
+        updateStatus(rootView, AdVpnService.vpnStatus);
+
+        setupSwitchOnBootView(rootView);
+
+        setupWatchDogView(rootView);
+
+        setupIpV6SupportView(rootView);
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "start");
+
+        return rootView;
+    }
+
+    private void setupStateImageView(View rootView) {
         ImageView view = (ImageView) rootView.findViewById(R.id.state_image);
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -62,17 +79,10 @@ public class StartFragment extends Fragment {
                 return startStopService();
             }
         });
+    }
 
-        Button startButton = (Button) rootView.findViewById(R.id.start_button);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startStopService();
-            }
-        });
-
-        updateStatus(rootView, AdVpnService.vpnStatus);
-
+    private void setupSwitchOnBootView(View rootView) {
+        Switch switchOnBoot = (Switch) rootView.findViewById(R.id.switch_onboot);
         switchOnBoot.setChecked(MainActivity.config.autoStart);
         switchOnBoot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -81,7 +91,19 @@ public class StartFragment extends Fragment {
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
+    }
 
+    private void setupStartButton(View rootView) {
+        Button startButton = (Button) rootView.findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStopService();
+            }
+        });
+    }
+
+    private void setupWatchDogView(View rootView) {
         Switch watchDog = (Switch) rootView.findViewById(R.id.watchdog);
         watchDog.setChecked(MainActivity.config.watchDog);
         watchDog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -91,7 +113,9 @@ public class StartFragment extends Fragment {
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
+    }
 
+    private void setupIpV6SupportView(View rootView) {
         Switch ipV6Support = (Switch) rootView.findViewById(R.id.ipv6_support);
         ipV6Support.setChecked(MainActivity.config.ipV6Support);
         ipV6Support.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -101,10 +125,6 @@ public class StartFragment extends Fragment {
                 FileHelper.writeSettings(getContext(), MainActivity.config);
             }
         });
-
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "start");
-
-        return rootView;
     }
 
     private boolean startStopService() {
