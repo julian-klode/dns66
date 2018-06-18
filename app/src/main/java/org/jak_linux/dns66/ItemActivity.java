@@ -83,12 +83,49 @@ public class ItemActivity extends AppCompatActivity {
             setTitle(R.string.activity_edit_filter);
         }
 
-        titleText = (TextInputEditText) findViewById(R.id.title);
-        locationText = (TextInputEditText) findViewById(R.id.location);
-        stateSpinner = (Spinner) findViewById(R.id.state_spinner);
-        stateSwitch = (Switch) findViewById(R.id.state_switch);
-        imageView = (ImageView) findViewById(R.id.image_view);
+        findViewsByIds();
 
+        updateViewsByIntent(intent);
+
+        if (stateSpinner != null) {
+            setStateOnItemSelectedListener();
+        }
+
+        // We have an attachment icon for host files
+        if (intent.getIntExtra("STATE_CHOICES", 3) == 3) {
+            setLocationOnTouchListener();
+
+            // Tint the attachment icon, if any.
+            setLocationTint();
+        }
+
+    }
+
+    private void setStateOnItemSelectedListener() {
+        stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case Configuration.Item.STATE_ALLOW:
+                        imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_allow));
+                        break;
+                    case Configuration.Item.STATE_DENY:
+                        imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_deny));
+                        break;
+                    case Configuration.Item.STATE_IGNORE:
+                        imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_ignore));
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void updateViewsByIntent(Intent intent) {
         if (intent.hasExtra("ITEM_TITLE"))
             titleText.setText(intent.getStringExtra("ITEM_TITLE"));
         if (intent.hasExtra("ITEM_LOCATION"))
@@ -97,66 +134,49 @@ public class ItemActivity extends AppCompatActivity {
             stateSpinner.setSelection(intent.getIntExtra("ITEM_STATE", 0));
         if (intent.hasExtra("ITEM_STATE") && stateSwitch != null)
             stateSwitch.setChecked(intent.getIntExtra("ITEM_STATE", 0) % 2 != 0);
+    }
 
-        if (stateSpinner != null) {
-            stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
-                        case Configuration.Item.STATE_ALLOW:
-                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_allow));
-                            break;
-                        case Configuration.Item.STATE_DENY:
-                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_deny));
-                            break;
-                        case Configuration.Item.STATE_IGNORE:
-                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_ignore));
-                            break;
+    private void findViewsByIds() {
+        titleText = (TextInputEditText) findViewById(R.id.title);
+        locationText = (TextInputEditText) findViewById(R.id.location);
+        stateSpinner = (Spinner) findViewById(R.id.state_spinner);
+        stateSwitch = (Switch) findViewById(R.id.state_switch);
+        imageView = (ImageView) findViewById(R.id.image_view);
+    }
+
+    private void setLocationOnTouchListener() {
+        locationText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    boolean isAttachIcon;
+                    if (locationText.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR)
+                        isAttachIcon = event.getRawX() >= locationText.getRight() - locationText.getTotalPaddingRight();
+                    else
+                        isAttachIcon = event.getRawX() <= locationText.getTotalPaddingLeft() - locationText.getLeft();
+
+                    if (isAttachIcon) {
+                        performFileSearch();
+                        return true;
                     }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
 
                 }
-            });
-        }
+                return false;
+            }
+        });
+    }
 
-        // We have an attachment icon for host files
-        if (intent.getIntExtra("STATE_CHOICES", 3) == 3) {
-            locationText.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        boolean isAttachIcon;
-                        if (locationText.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR)
-                            isAttachIcon = event.getRawX() >= locationText.getRight() - locationText.getTotalPaddingRight();
-                        else
-                            isAttachIcon = event.getRawX() <= locationText.getTotalPaddingLeft() - locationText.getLeft();
+    private void setLocationTint() {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
 
-                        if (isAttachIcon) {
-                            performFileSearch();
-                            return true;
-                        }
-
-                    }
-                    return false;
-                }
-            });
-
-            // Tint the attachment icon, if any.
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-
-            Drawable[] compoundDrawables = locationText.getCompoundDrawablesRelative();
-            for (Drawable drawable : compoundDrawables) {
-                if (drawable != null) {
-                    drawable.setTint(ContextCompat.getColor(this, typedValue.resourceId));
-                    Log.d(TAG, "onCreate: Setting tint");
-                }
+        Drawable[] compoundDrawables = locationText.getCompoundDrawablesRelative();
+        for (Drawable drawable : compoundDrawables) {
+            if (drawable != null) {
+                drawable.setTint(ContextCompat.getColor(this, typedValue.resourceId));
+                Log.d(TAG, "onCreate: Setting tint");
             }
         }
-
     }
 
     @Override
