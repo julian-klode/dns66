@@ -61,41 +61,24 @@ public class WhitelistFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.activity_whitelist, container, false);
 
-        appList = (RecyclerView) rootView.findViewById(R.id.list);
-        appList.setHasFixedSize(true);
+        setupAppList(rootView);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        appList.setLayoutManager(layoutManager);
+        setupSwipeRefresh(rootView);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(appList.getContext(),
-                DividerItemDecoration.VERTICAL);
-        appList.addItemDecoration(dividerItemDecoration);
+        setupShowSystemApps(rootView);
+
+        setupWhiteListText(rootView);
+
+        appListGenerator = new AppListGenerator(getContext());
+        appListGenerator.execute();
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "whitelist");
 
 
-        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
-        swipeRefresh.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        appListGenerator = new AppListGenerator(getContext());
-                        appListGenerator.execute();
-                    }
-                }
-        );
-        swipeRefresh.setRefreshing(true);
+        return rootView;
+    }
 
-        Switch switchShowSystemApps = (Switch) rootView.findViewById(R.id.switch_show_system_apps);
-        switchShowSystemApps.setChecked(MainActivity.config.whitelist.showSystemApps);
-        switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.config.whitelist.showSystemApps = isChecked;
-                FileHelper.writeSettings(getContext(), MainActivity.config);
-                appListGenerator = new AppListGenerator(getContext());
-                appListGenerator.execute();
-            }
-        });
-
+    private void setupWhiteListText(View rootView) {
         final TextView whitelistDefaultText = (TextView) rootView.findViewById(R.id.whitelist_default_text);
         whitelistDefaultText.setText(getResources().getStringArray(R.array.whitelist_defaults)[MainActivity.config.whitelist.defaultMode]);
         View.OnClickListener onDefaultChangeClicked = new View.OnClickListener() {
@@ -136,14 +119,46 @@ public class WhitelistFragment extends Fragment {
 
         rootView.findViewById(R.id.change_default).setOnClickListener(onDefaultChangeClicked);
         whitelistDefaultText.setOnClickListener(onDefaultChangeClicked);
+    }
 
-        appListGenerator = new AppListGenerator(getContext());
-        appListGenerator.execute();
+    private void setupShowSystemApps(View rootView) {
+        Switch switchShowSystemApps = (Switch) rootView.findViewById(R.id.switch_show_system_apps);
+        switchShowSystemApps.setChecked(MainActivity.config.whitelist.showSystemApps);
+        switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.whitelist.showSystemApps = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+                appListGenerator = new AppListGenerator(getContext());
+                appListGenerator.execute();
+            }
+        });
+    }
 
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "whitelist");
+    private void setupSwipeRefresh(View rootView) {
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+        swipeRefresh.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        appListGenerator = new AppListGenerator(getContext());
+                        appListGenerator.execute();
+                    }
+                }
+        );
+        swipeRefresh.setRefreshing(true);
+    }
 
+    private void setupAppList(View rootView) {
+        appList = (RecyclerView) rootView.findViewById(R.id.list);
+        appList.setHasFixedSize(true);
 
-        return rootView;
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        appList.setLayoutManager(layoutManager);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(appList.getContext(),
+                DividerItemDecoration.VERTICAL);
+        appList.addItemDecoration(dividerItemDecoration);
     }
 
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
