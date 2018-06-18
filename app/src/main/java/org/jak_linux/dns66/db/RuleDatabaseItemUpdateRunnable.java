@@ -81,32 +81,17 @@ class RuleDatabaseItemUpdateRunnable implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        } catch (UnsatisfiedLinkError e) {
-        } catch (RuntimeException e) {
-            if (!e.toString().contains("not mocked"))
-                throw e;
-        }
+        setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
         if (item.location.startsWith("content:/")) {
-            try {
-                Uri uri = parseUri(item.location);
-                context.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                context.getContentResolver().openInputStream(uri).close();
-                Log.d(TAG, "run: Permission requested for " + item.location);
-            } catch (SecurityException e) {
-                Log.d(TAG, "doInBackground: Error taking permission: ", e);
-                parentTask.addError(item, context.getString(R.string.permission_denied));
-            } catch (FileNotFoundException e) {
-                parentTask.addError(item, context.getString(R.string.file_not_found));
-            } catch (IOException e) {
-                parentTask.addError(item, context.getString(R.string.unknown_error_s, e.getLocalizedMessage()));
-            }
+            takeUriPermission();
             return;
         }
 
+        downloadFile();
+    }
+
+    private void downloadFile() {
         SingleWriterMultipleReaderFile singleWriterMultipleReaderFile = new SingleWriterMultipleReaderFile(file);
         HttpURLConnection connection = null;
         parentTask.addBegin(item);
@@ -124,6 +109,33 @@ class RuleDatabaseItemUpdateRunnable implements Runnable {
             parentTask.addDone(item);
             if (connection != null)
                 connection.disconnect();
+        }
+    }
+
+    private void setThreadPriority(int priority) {
+        try {
+            android.os.Process.setThreadPriority(priority);
+        } catch (UnsatisfiedLinkError e) {
+        } catch (RuntimeException e) {
+            if (!e.toString().contains("not mocked"))
+                throw e;
+        }
+    }
+
+    private void takeUriPermission() {
+        try {
+            Uri uri = parseUri(item.location);
+            context.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            context.getContentResolver().openInputStream(uri).close();
+            Log.d(TAG, "run: Permission requested for " + item.location);
+        } catch (SecurityException e) {
+            Log.d(TAG, "doInBackground: Error taking permission: ", e);
+            parentTask.addError(item, context.getString(R.string.permission_denied));
+        } catch (FileNotFoundException e) {
+            parentTask.addError(item, context.getString(R.string.file_not_found));
+        } catch (IOException e) {
+            parentTask.addError(item, context.getString(R.string.unknown_error_s, e.getLocalizedMessage()));
         }
     }
 
