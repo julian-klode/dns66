@@ -38,6 +38,44 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_hosts, container, false);
 
+        updateRecyclerView(rootView);
+
+        updateHostEnabledView(rootView);
+
+        updateAutomaticRefreshView(rootView);
+
+
+        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "hosts");
+
+        return rootView;
+    }
+
+    private void updateAutomaticRefreshView(View rootView) {
+        Switch automaticRefresh = (Switch) rootView.findViewById(R.id.automatic_refresh);
+        automaticRefresh.setChecked(MainActivity.config.hosts.automaticRefresh);
+        automaticRefresh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.hosts.automaticRefresh = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+                RuleDatabaseUpdateJobService.scheduleOrCancel(getContext(), MainActivity.config);
+            }
+        });
+    }
+
+    private void updateHostEnabledView(View rootView) {
+        Switch hostEnabled = (Switch) rootView.findViewById(R.id.host_enabled);
+        hostEnabled.setChecked(MainActivity.config.hosts.enabled);
+        hostEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                MainActivity.config.hosts.enabled = isChecked;
+                FileHelper.writeSettings(getContext(), MainActivity.config);
+            }
+        });
+    }
+
+    private void updateRecyclerView(View rootView) {
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.host_entries);
 
         mRecyclerView.setHasFixedSize(true);
@@ -51,32 +89,6 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mAdapter));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-        Switch hostEnabled = (Switch) rootView.findViewById(R.id.host_enabled);
-        hostEnabled.setChecked(MainActivity.config.hosts.enabled);
-        hostEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.config.hosts.enabled = isChecked;
-                FileHelper.writeSettings(getContext(), MainActivity.config);
-            }
-        });
-
-        Switch automaticRefresh = (Switch) rootView.findViewById(R.id.automatic_refresh);
-        automaticRefresh.setChecked(MainActivity.config.hosts.automaticRefresh);
-        automaticRefresh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.config.hosts.automaticRefresh = isChecked;
-                FileHelper.writeSettings(getContext(), MainActivity.config);
-                RuleDatabaseUpdateJobService.scheduleOrCancel(getContext(), MainActivity.config);
-            }
-        });
-
-
-        ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "hosts");
-
-        return rootView;
     }
 
     public void setupFloatingActionButton(FloatingActionButton fab) {
