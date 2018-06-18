@@ -31,21 +31,21 @@ public class NotificationChannels {
         notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(GROUP_SERVICE, context.getString(R.string.notifications_group_service)));
         notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(GROUP_UPDATE, context.getString(R.string.notifications_group_updates)));
 
-        NotificationChannel runningChannel = new NotificationChannel(SERVICE_RUNNING, context.getString(R.string.notifications_running), NotificationManager.IMPORTANCE_MIN);
-        runningChannel.setDescription(context.getString(R.string.notifications_running_desc));
-        runningChannel.setGroup(GROUP_SERVICE);
-        runningChannel.setShowBadge(false);
-        notificationManager.createNotificationChannel(runningChannel);
+        createChannel(notificationManager, SERVICE_RUNNING, NotificationManager.IMPORTANCE_MIN, GROUP_SERVICE,
+                context.getString(R.string.notifications_running), context.getString(R.string.notifications_running_desc));
 
-        NotificationChannel pausedChannel = new NotificationChannel(SERVICE_PAUSED, context.getString(R.string.notifications_paused), NotificationManager.IMPORTANCE_LOW);
-        pausedChannel.setDescription(context.getString(R.string.notifications_paused_desc));
-        pausedChannel.setGroup(GROUP_SERVICE);
-        pausedChannel.setShowBadge(false);
-        notificationManager.createNotificationChannel(pausedChannel);
+        createChannel(notificationManager, SERVICE_PAUSED, NotificationManager.IMPORTANCE_LOW, GROUP_SERVICE,
+                context.getString(R.string.notifications_paused), context.getString(R.string.notifications_paused_desc));
 
-        NotificationChannel updateChannel = new NotificationChannel(UPDATE_STATUS, context.getString(R.string.notifications_update), NotificationManager.IMPORTANCE_LOW);
-        updateChannel.setDescription(context.getString(R.string.notifications_update_desc));
-        updateChannel.setGroup(GROUP_UPDATE);
+        createChannel(notificationManager, UPDATE_STATUS, NotificationManager.IMPORTANCE_LOW, GROUP_UPDATE,
+                context.getString(R.string.notifications_update), context.getString(R.string.notifications_update_desc));
+    }
+
+    private static void createChannel(NotificationManager notificationManager, String channelId, int channelImportance,
+                                      String groupId, String channelName, String description) {
+        NotificationChannel updateChannel = new NotificationChannel(channelId, channelName, channelImportance);
+        updateChannel.setDescription(description);
+        updateChannel.setGroup(groupId);
         updateChannel.setShowBadge(false);
         notificationManager.createNotificationChannel(updateChannel);
     }
