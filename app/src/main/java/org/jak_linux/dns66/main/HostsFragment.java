@@ -38,11 +38,11 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_hosts, container, false);
 
-        updateRecyclerView(rootView);
+        setupRecyclerView(rootView);
 
-        updateHostEnabledView(rootView);
+        setupHostEnabledView(rootView);
 
-        updateAutomaticRefreshView(rootView);
+        setupAutomaticRefreshView(rootView);
 
 
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "hosts");
@@ -50,7 +50,7 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
         return rootView;
     }
 
-    private void updateAutomaticRefreshView(View rootView) {
+    private void setupAutomaticRefreshView(View rootView) {
         Switch automaticRefresh = (Switch) rootView.findViewById(R.id.automatic_refresh);
         automaticRefresh.setChecked(MainActivity.config.hosts.automaticRefresh);
         automaticRefresh.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -63,7 +63,7 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
         });
     }
 
-    private void updateHostEnabledView(View rootView) {
+    private void setupHostEnabledView(View rootView) {
         Switch hostEnabled = (Switch) rootView.findViewById(R.id.host_enabled);
         hostEnabled.setChecked(MainActivity.config.hosts.enabled);
         hostEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -75,7 +75,7 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
         });
     }
 
-    private void updateRecyclerView(View rootView) {
+    private void setupRecyclerView(View rootView) {
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.host_entries);
 
         mRecyclerView.setHasFixedSize(true);
