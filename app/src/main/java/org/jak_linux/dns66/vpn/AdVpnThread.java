@@ -479,11 +479,9 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
             try {
                 builder.addAddress(prefix + ".1", 24);
-            } catch (IllegalArgumentException e) {
-                continue;
+                return prefix + ".%d";
+            } catch (IllegalArgumentException ignored) {
             }
-
-            return prefix + ".%d";
         }
         return null;
     }
