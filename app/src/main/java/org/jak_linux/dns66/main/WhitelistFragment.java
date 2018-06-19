@@ -78,7 +78,7 @@ public class WhitelistFragment extends Fragment {
         return rootView;
     }
 
-    private void setupWhiteListText(final View rootView) {
+    private void setupWhiteListText(View rootView) {
         final TextView whitelistDefaultText = (TextView) rootView.findViewById(R.id.whitelist_default_text);
         whitelistDefaultText.setText(getResources().getStringArray(R.array.whitelist_defaults)[MainActivity.config.whitelist.defaultMode]);
         View.OnClickListener onDefaultChangeClicked = new View.OnClickListener() {
