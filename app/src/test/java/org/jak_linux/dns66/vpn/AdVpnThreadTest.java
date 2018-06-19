@@ -16,10 +16,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.net.UnknownHostException;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Matchers.*;
@@ -32,6 +30,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest(Log.class)
 public class AdVpnThreadTest {
 
+    private static final byte[] IPV_6_TEMPLATE = {32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private static final String[] CONFIGURED_ALLOWED_LOCATIONS = new String[]{"0.1.2.3", "5.6.7.8"};
     private AdVpnService service;
     private AdVpnThread thread;
     private Configuration config;
@@ -45,15 +45,7 @@ public class AdVpnThreadTest {
         thread = new AdVpnThread(service, null);
         builder = mock(VpnService.Builder.class);
 
-        config = new Configuration();
-        config.dnsServers = new Configuration.DnsServers();
-        config.whitelist = new Configuration.Whitelist() {
-            @Override
-            public void resolve(PackageManager pm, Set<String> onVpn, Set<String> notOnVpn) {
-                onVpn.add("onVpn");
-                notOnVpn.add("notOnVpn");
-            }
-        };
+        setupConfiguration();
 
         serversAdded = new ArrayList<>();
 
@@ -71,6 +63,34 @@ public class AdVpnThreadTest {
                 return builder;
             }
         });
+    }
+
+    private void setupConfiguration() {
+        config = new Configuration();
+        config.dnsServers = new Configuration.DnsServers();
+        config.whitelist = new Configuration.Whitelist() {
+            @Override
+            public void resolve(PackageManager pm, Set<String> onVpn, Set<String> notOnVpn) {
+                onVpn.add("onVpn");
+                notOnVpn.add("notOnVpn");
+            }
+        };
+    }
+
+    private Configuration.Item createAllowedItem(String location) {
+        return createItem("", location, Configuration.Item.STATE_ALLOW);
+    }
+
+    private Configuration.Item createDeniedItem(String location) {
+        return createItem("", location, Configuration.Item.STATE_DENY);
+    }
+
+    private Configuration.Item createItem(String title, String location, int stateDeny) {
+        Configuration.Item result = new Configuration.Item();
+        result.location = location;
+        result.title = title;
+        result.state = stateDeny;
+        return result;
     }
 
     @Test
@@ -115,7 +135,6 @@ public class AdVpnThreadTest {
         thread.configurePackages(builder, config);
         assertTrue(disallowed.contains("notOnVpn"));
         assertEquals(new ArrayList<String>(), allowed);
-
     }
 
     @Test
@@ -151,7 +170,7 @@ public class AdVpnThreadTest {
     // Everything works fine, everyone gets through.
     public void testNewDNSServer() throws Exception {
         String format = "192.168.0.%d";
-        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] ipv6Template = IPV_6_TEMPLATE;
 
         InetAddress i6addr = Inet6Address.getByName("::1");
         InetAddress i4addr = Inet4Address.getByName("127.0.0.1");
@@ -169,7 +188,6 @@ public class AdVpnThreadTest {
     @Test
     // IPv6 is disabled: We only get IPv4 servers through
     public void testNewDNSServer_ipv6disabled() throws Exception {
-        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         InetAddress i6addr = Inet6Address.getByName("::1");
 
         thread.newDNSServer(builder, "192.168.0.%d", null, i6addr);
@@ -186,7 +204,7 @@ public class AdVpnThreadTest {
     // IPv4 is disabled: We only get IPv6 servers through
     public void testNewDNSServer_ipv4disabled() throws Exception {
         String format = "192.168.0.%d";
-        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        byte[] ipv6Template = IPV_6_TEMPLATE;
 
         InetAddress i6addr = Inet6Address.getByName("::1");
         InetAddress i4addr = Inet4Address.getByName("127.0.0.1");
@@ -199,6 +217,27 @@ public class AdVpnThreadTest {
         assertTrue(thread.upstreamDnsServers.contains(i6addr));
         assertEquals(2, ipv6Template[ipv6Template.length - 1]);
         assertTrue(serversAdded.contains(InetAddress.getByAddress(ipv6Template)));
+    }
+
+
+    @Test
+    public void testAddConfiguredDNSServersToUpstream() throws UnknownHostException {
+        config.dnsServers.items.addAll(
+                Arrays.asList(
+                        createAllowedItem(CONFIGURED_ALLOWED_LOCATIONS[0]),
+                        createAllowedItem(CONFIGURED_ALLOWED_LOCATIONS[1]),
+                        createDeniedItem("4.3.2.1")));
+        config.dnsServers.enabled = false;
+        thread.addConfiguredDNSServersToUpstream(config, builder, "192.168.0.%d", IPV_6_TEMPLATE);
+        assertEquals(0, thread.upstreamDnsServers.size());
+        config.dnsServers.enabled = true;
+        thread.addConfiguredDNSServersToUpstream(config, builder, "192.168.0.%d", IPV_6_TEMPLATE);
+
+        for(String location: CONFIGURED_ALLOWED_LOCATIONS) {
+            assertTrue(thread.upstreamDnsServers.contains(InetAddress.getByName(location)));
+        }
+
+        assertEquals(CONFIGURED_ALLOWED_LOCATIONS.length, thread.upstreamDnsServers.size());
     }
 
 }
