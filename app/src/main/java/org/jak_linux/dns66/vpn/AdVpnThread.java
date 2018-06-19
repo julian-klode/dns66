@@ -61,6 +61,10 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     /* Maximum number of responses we want to wait for */
     private static final int DNS_MAXIMUM_WAITING = 1024;
     private static final long DNS_TIMEOUT_SEC = 10;
+    // For fancy reasons, this is the 2001:db8::/120 subnet of the /32 subnet reserved for
+    // documentation purposes. We should do this differently. Anyone have a free /120 subnet
+    // for us to use?
+    private static final byte[] FREE_IPV_6_SUBNET = {32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     /* Upstream DNS servers, indexed by our IP */
     final ArrayList<InetAddress> upstreamDnsServers = new ArrayList<>();
     private final VpnService vpnService;
@@ -100,8 +104,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             if (ni == null || !ni.isConnected() || ni.getType() != activeInfo.getType()
                     || ni.getSubtype() != activeInfo.getSubtype())
                 continue;
-            for (InetAddress address : cm.getLinkProperties(nw).getDnsServers())
-                out.add(address);
+            out.addAll(cm.getLinkProperties(nw).getDnsServers());
         }
         return out;
     }
@@ -357,21 +360,35 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         deviceWrites.add(ipOutPacket.getRawData());
     }
 
-    void newDNSServer(VpnService.Builder builder, String format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
+    void newDNSServer(VpnService.Builder builder, String ipv4Format, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
         // Optimally we'd allow either one, but the forwarder checks if upstream size is empty, so
         // we really need to acquire both an ipv6 and an ipv4 subnet.
-        if (addr instanceof Inet6Address && ipv6Template == null) {
+        if (addr instanceof Inet6Address) {
+            newIPv6DNSServer(builder, ipv6Template, addr);
+        } else if(addr instanceof Inet4Address){
+            newIpv4DNSServer(builder, ipv4Format, addr);
+        }
+    }
+
+    void newIpv4DNSServer(VpnService.Builder builder, String format, InetAddress addr) throws UnknownHostException {
+        assert addr instanceof Inet4Address;
+        if (format == null) {
             Log.i(TAG, "newDNSServer: Ignoring DNS server " + addr);
-        } else if (addr instanceof Inet4Address && format == null) {
-            Log.i(TAG, "newDNSServer: Ignoring DNS server " + addr);
-        } else if (addr instanceof Inet4Address) {
+        } else {
             upstreamDnsServers.add(addr);
             String alias = String.format(format, upstreamDnsServers.size() + 1);
             Log.i(TAG, "configure: Adding DNS Server " + addr + " as " + alias);
             builder.addDnsServer(alias);
             builder.addRoute(alias, 32);
             vpnWatchDog.setTarget(InetAddress.getByName(alias));
-        } else if (addr instanceof Inet6Address) {
+        }
+    }
+
+    void newIPv6DNSServer(VpnService.Builder builder, byte[] ipv6Template, InetAddress addr) throws UnknownHostException {
+        assert addr instanceof Inet6Address;
+        if (ipv6Template == null) {
+            Log.i(TAG, "newDNSServer: Ignoring DNS server " + addr);
+        } else {
             upstreamDnsServers.add(addr);
             ipv6Template[ipv6Template.length - 1] = (byte) (upstreamDnsServers.size() + 1);
             InetAddress i6addr = Inet6Address.getByAddress(ipv6Template);
@@ -430,18 +447,8 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         }
 
         // Add configured DNS servers
-        upstreamDnsServers.clear();
-        if (config.dnsServers.enabled) {
-            for (Configuration.Item item : config.dnsServers.items) {
-                if (item.state == item.STATE_ALLOW) {
-                    try {
-                        newDNSServer(builder, ipv4Format, ipv6Template, InetAddress.getByName(item.location));
-                    } catch (Exception e) {
-                        Log.e(TAG, "configure: Cannot add custom DNS server", e);
-                    }
-                }
-            }
-        }
+        addConfiguredDNSServersToUpstream(config, builder, ipv4Format, ipv6Template);
+
         // Add all knows DNS servers
         for (InetAddress addr : dnsServers) {
             try {
@@ -473,6 +480,21 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         return pfd;
     }
 
+    void addConfiguredDNSServersToUpstream(Configuration config, VpnService.Builder builder, String ipv4Format, byte[] ipv6Template) {
+        upstreamDnsServers.clear();
+        if (config.dnsServers.enabled) {
+            for (Configuration.Item item : config.dnsServers.items) {
+                if (item.state == item.STATE_ALLOW) {
+                    try {
+                        newDNSServer(builder, ipv4Format, ipv6Template, InetAddress.getByName(item.location));
+                    } catch (Exception e) {
+                        Log.e(TAG, "configure: Cannot add custom DNS server", e);
+                    }
+                }
+            }
+        }
+    }
+
     private String genereateIpV4Format(VpnService.Builder builder) {
         // Determine a prefix we can use. These are all reserved prefixes for example
         // use, so it's possible they might be blocked.
@@ -487,17 +509,12 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     }
 
     private byte[] generateIpv6Template(Configuration config, Set<InetAddress> dnsServers, VpnService.Builder builder) {
-        // For fancy reasons, this is the 2001:db8::/120 subnet of the /32 subnet reserved for
-        // documentation purposes. We should do this differently. Anyone have a free /120 subnet
-        // for us to use?
-        byte[] ipv6Template = new byte[]{32, 1, 13, (byte) (184 & 0xFF), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
         if (hasIpV6Servers(config, dnsServers)) {
             try {
-                InetAddress addr = Inet6Address.getByAddress(ipv6Template);
+                InetAddress addr = Inet6Address.getByAddress(FREE_IPV_6_SUBNET);
                 Log.d(TAG, "configure: Adding IPv6 address" + addr);
                 builder.addAddress(addr, 120);
-                return ipv6Template;
+                return FREE_IPV_6_SUBNET;
             } catch (Exception e) {
                 e.printStackTrace();
             }
