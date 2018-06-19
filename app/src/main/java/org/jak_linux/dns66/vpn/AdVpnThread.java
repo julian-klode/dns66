@@ -474,8 +474,6 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
     }
 
     private String genereateIpV4Format(VpnService.Builder builder) {
-        String format = null;
-
         // Determine a prefix we can use. These are all reserved prefixes for example
         // use, so it's possible they might be blocked.
         for (String prefix : new String[]{"192.0.2", "198.51.100", "203.0.113"}) {
@@ -485,10 +483,9 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
                 continue;
             }
 
-            format = prefix + ".%d";
-            break;
+            return prefix + ".%d";
         }
-        return format;
+        return null;
     }
 
     private byte[] generateIpv6Template(Configuration config, Set<InetAddress> dnsServers, VpnService.Builder builder) {
@@ -502,15 +499,12 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
                 InetAddress addr = Inet6Address.getByAddress(ipv6Template);
                 Log.d(TAG, "configure: Adding IPv6 address" + addr);
                 builder.addAddress(addr, 120);
+                return ipv6Template;
             } catch (Exception e) {
                 e.printStackTrace();
-
-                ipv6Template = null;
             }
-        } else {
-            ipv6Template = null;
         }
-        return ipv6Template;
+        return null;
     }
 
     boolean hasIpV6Servers(Configuration config, Set<InetAddress> dnsServers) {
