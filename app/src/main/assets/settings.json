@@ -83,6 +83,11 @@
         "title": "Peter Lowe’s Ad server list",
         "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
         "state": 0
+      },
+      {
+        "title": "Unified hosts file with base extensions",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+        "state": 2
       }
     ]
   },
