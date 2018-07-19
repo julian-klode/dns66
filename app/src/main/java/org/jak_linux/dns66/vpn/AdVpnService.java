@@ -184,7 +184,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
                 .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
                 .setPriority(Notification.PRIORITY_LOW)
                 .setAutoCancel(true)
-                .setContentTitle(getString(R.string.notification_paused_title))
+                .setContentTitle("Paused")
                 .setContentText(getString(R.string.notification_paused_text))
                 .setContentIntent(PendingIntent.getService(this, REQUEST_CODE_START, getStartIntent(this), PendingIntent.FLAG_ONE_SHOT))
                 .build());
@@ -193,7 +193,9 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     private void updateVpnStatus(int status) {
         vpnStatus = status;
         int notificationTextId = vpnStatusToTextId(status);
-        notificationBuilder.setContentText(getString(notificationTextId));
+        notificationBuilder
+                .setContentTitle(getString(notificationTextId))
+                .setShowWhen(false);
 
         if (FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
             startForeground(NOTIFICATION_ID_STATE, notificationBuilder.build());
