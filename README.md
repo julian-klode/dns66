@@ -104,6 +104,11 @@ is licensed under the MIT license, and dnsjava, which uses a 3 clause BSD
 license. See
 the file [copyright.libraries](app/src/main/assets/copyright.libraries) for further (machine-readable) information.
 
+Code of Conduct
+---------------
+Please note that this project is released with a Contributor Code of
+Conduct. By participating in this project you agree to abide by its terms.
+
 Authors
 -------
 Julian Andres Klode <jak@jak-linux.org>

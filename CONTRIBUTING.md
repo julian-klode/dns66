@@ -33,3 +33,8 @@ to the GPL 3.
 Icons are welcome too. Modifications of existing icons shall have the same
 license as the modified file. New icons may be contributed under the GPL,
 version 3 or later (as below), or the Apache license, version 2.
+
+## Code of Conduct
+Please note that this project is released with a Contributor Code of
+Conduct. By participating in this project you agree to abide by its terms.
+
