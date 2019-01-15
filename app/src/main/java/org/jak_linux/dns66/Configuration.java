@@ -58,7 +58,6 @@ public class Configuration {
             throw new IOException("Unhandled file format version");
 
         for (int i = config.minorVersion + 1; i <= MINOR_VERSION; i++) {
-            Log.i("Configuration", String.format("read: Update to version %d", i));
             config.runUpdate(i);
         }
 
