@@ -182,6 +182,9 @@ public class Configuration {
 
             webBrowserPackageNames.add("com.google.android.webview");
             webBrowserPackageNames.add("com.android.htmlviewer");
+            webBrowserPackageNames.add("com.google.android.backuptransport");
+            webBrowserPackageNames.add("com.google.android.gms");
+            webBrowserPackageNames.add("com.google.android.gsf");
 
             for (ApplicationInfo applicationInfo : pm.getInstalledApplications(0)) {
                 // We need to always keep ourselves using the VPN, otherwise our
