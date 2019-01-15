@@ -70,6 +70,7 @@ public class Configuration {
             case 1:
                 updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts");
                 removeURL("http://winhelp2002.mvps.org/hosts.txt");
+                updateDNS("85.214.20.141", "46.182.19.48");
                 break;
         }
         this.minorVersion = level;
@@ -79,6 +80,13 @@ public class Configuration {
         for (Item host : hosts.items) {
             if (host.location.equals(oldURL))
                 host.location = newURL;
+        }
+    }
+
+    public void updateDNS(String oldIP, String newIP) {
+        for (Item host : dnsServers.items) {
+            if (host.location.equals(oldIP))
+                host.location = newIP;
         }
     }
 
