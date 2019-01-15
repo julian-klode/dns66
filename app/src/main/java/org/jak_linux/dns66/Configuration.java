@@ -60,6 +60,8 @@ public class Configuration {
         for (int i = config.minorVersion + 1; i <= MINOR_VERSION; i++) {
             config.runUpdate(i);
         }
+        config.updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts", 0);
+
 
         return config;
     }
@@ -67,8 +69,22 @@ public class Configuration {
     public void runUpdate(int level) {
         switch (level) {
             case 1:
-                updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts");
+                /* Switch someonewhocares to https */
+                updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts", -1);
+
+                /* Switch to StevenBlack's host file */
+                addURL(0,   "StevenBlack's hosts file (includes all others)",
+                        "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+                        Item.STATE_DENY);
+                updateURL("https://someonewhocares.org/hosts/hosts", null, Item.STATE_IGNORE);
+                updateURL("https://adaway.org/hosts.txt", null, Item.STATE_IGNORE);
+                updateURL("https://www.malwaredomainlist.com/hostslist/hosts.txt", null, Item.STATE_IGNORE);
+                updateURL("https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext", null, Item.STATE_IGNORE);
+
+                /* Remove broken host */
                 removeURL("http://winhelp2002.mvps.org/hosts.txt");
+
+                /* Update digitalcourage dns and add cloudflare */
                 updateDNS("85.214.20.141", "46.182.19.48");
                 addDNS("CloudFlare DNS (1)", "1.1.1.1", false);
                 addDNS("CloudFlare DNS (2)", "1.0.0.1", false);
@@ -77,10 +93,14 @@ public class Configuration {
         this.minorVersion = level;
     }
 
-    public void updateURL(String oldURL, String newURL) {
+    public void updateURL(String oldURL, String newURL, int newState) {
         for (Item host : hosts.items) {
-            if (host.location.equals(oldURL))
-                host.location = newURL;
+            if (host.location.equals(oldURL)) {
+                if (newURL != null)
+                    host.location = newURL;
+                if (newState >= 0)
+                    host.state = newState;
+            }
         }
     }
 
@@ -96,6 +116,14 @@ public class Configuration {
         item.location = location;
         item.state = isEnabled ? 1 : 0;
         dnsServers.items.add(item);
+    }
+
+    public void addURL(int index, String title, String location, int state) {
+        Item item = new Item();
+        item.title = title;
+        item.location = location;
+        item.state = state;
+        hosts.items.add(index, item);
     }
 
     public void removeURL(String oldURL) {

@@ -56,14 +56,19 @@
     "automaticRefresh": false,
     "items": [
       {
+        "title": "StevenBlack's hosts file (includes all others)",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+        "state": 0
+      },
+      {
         "title": "Adaway hosts file",
         "location": "https://adaway.org/hosts.txt",
-        "state": 0
+        "state": 2
       },
       {
         "title": "Dan Pollock's hosts file",
         "location": "https://someonewhocares.org/hosts/hosts",
-        "state": 0
+        "state": 2
       },
       {
         "title": "hpHosts’s Ad and tracking servers",
@@ -78,7 +83,7 @@
       {
         "title": "Malware Domain List",
         "location": "https://www.malwaredomainlist.com/hostslist/hosts.txt",
-        "state": 0
+        "state": 2
       },
       {
         "title": "Malware domains.com",
@@ -88,7 +93,7 @@
       {
         "title": "Peter Lowe’s Ad server list",
         "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
-        "state": 0
+        "state": 2
       }
     ]
   },
