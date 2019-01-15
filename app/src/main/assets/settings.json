@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "minorVersion": 1,
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
@@ -15,7 +16,7 @@
       },
       {
         "title": "Digitalcourage e.V. (DE)",
-        "location": "85.214.20.141",
+        "location": "46.182.19.48",
         "state": 1
       },
       {
@@ -37,6 +38,16 @@
         "title": "ISC (US)",
         "location": "204.152.184.76",
         "state": 0
+      },
+      {
+        "title": "CloudFlare DNS (1)",
+        "location": "1.1.1.1",
+        "state": 0
+      },
+      {
+        "title": "CloudFlare DNS (2)",
+        "location": "1.0.0.1",
+        "state": 0
       }
     ]
   },
@@ -45,14 +56,19 @@
     "automaticRefresh": false,
     "items": [
       {
-        "title": "Adaway hosts file",
-        "location": "https://adaway.org/hosts.txt",
+        "title": "StevenBlack's hosts file (includes all others)",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
         "state": 0
       },
       {
+        "title": "Adaway hosts file",
+        "location": "https://adaway.org/hosts.txt",
+        "state": 2
+      },
+      {
         "title": "Dan Pollock's hosts file",
-        "location": "http://someonewhocares.org/hosts/hosts",
-        "state": 0
+        "location": "https://someonewhocares.org/hosts/hosts",
+        "state": 2
       },
       {
         "title": "hpHosts’s Ad and tracking servers",
@@ -67,7 +83,7 @@
       {
         "title": "Malware Domain List",
         "location": "https://www.malwaredomainlist.com/hostslist/hosts.txt",
-        "state": 0
+        "state": 2
       },
       {
         "title": "Malware domains.com",
@@ -75,14 +91,9 @@
         "state": 2
       },
       {
-        "title": "MVPS HOSTS",
-        "location": "http://winhelp2002.mvps.org/hosts.txt",
-        "state": 0
-      },
-      {
         "title": "Peter Lowe’s Ad server list",
         "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
-        "state": 0
+        "state": 2
       }
     ]
   },
