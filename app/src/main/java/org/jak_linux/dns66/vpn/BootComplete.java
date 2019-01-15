@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Julian Andres Klode <jak@jak-linux.org>
+/* Copyright (C) 2016-2019 Julian Andres Klode <jak@jak-linux.org>
  *
  * Derived from AdBuster:
  * Copyright (C) 2016 Daniel Brodie <dbrodie@gmail.com>

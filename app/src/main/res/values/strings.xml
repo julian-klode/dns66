@@ -12,7 +12,7 @@
     <string name="load_defaults">Load default settings</string>
     <string name="action_about">About</string>
     <string name="info_app_license">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
-    <string name="info_app_copyright" translatable="false">© 2016 Julian Andres Klode</string>
+    <string name="info_app_copyright" translatable="false">© 2016-2019 Julian Andres Klode</string>
     <string name="switch_onboot">Resume on system start-up</string>
     <string name="activity_edit">Edit Item</string>
     <string name="title">Title</string>

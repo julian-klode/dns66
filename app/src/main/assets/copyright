@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: 2016 Julian Andres Klode <jak@jak-linux.org>
+Copyright: 2016-2019 Julian Andres Klode <jak@jak-linux.org>
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ License: GPL-3+
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Files: app/src/main/java/org/jak_linux/dns66/vpn/*.java
-Copyright: 2016 Julian Andres Klode <jak@jak-linux.org>
+Copyright: 2016-2019 Julian Andres Klode <jak@jak-linux.org>
            2016 Daniel Brodie <dbrodie@gmail.com>
 License: GPL-3
  This program is free software: you can redistribute it and/or modify
