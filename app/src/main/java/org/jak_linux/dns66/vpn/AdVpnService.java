@@ -157,10 +157,24 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         return intent;
     }
 
+    @NonNull
+    private static Intent getResumeIntent(Context context) {
+        Intent intent = new Intent(context, AdVpnService.class);
+        intent.putExtra("COMMAND", Command.RESUME.ordinal());
+        intent.putExtra("NOTIFICATION_INTENT",
+                PendingIntent.getActivity(context, 0,
+                        new Intent(context, MainActivity.class), 0));
+        return intent;
+    }
+
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand" + intent);
         switch (intent == null ? Command.START : Command.values()[intent.getIntExtra("COMMAND", Command.START.ordinal())]) {
+            case RESUME:
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancelAll();
+                // fallthrough
             case START:
                 getSharedPreferences("state", MODE_PRIVATE).edit().putBoolean("isActive", true).apply();
                 startVpn(intent == null ? null : (PendingIntent) intent.getParcelableExtra("NOTIFICATION_INTENT"));
@@ -183,10 +197,9 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         notificationManager.notify(NOTIFICATION_ID_STATE, new NotificationCompat.Builder(this, NotificationChannels.SERVICE_PAUSED)
                 .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
                 .setPriority(Notification.PRIORITY_LOW)
-                .setAutoCancel(true)
                 .setContentTitle(getString(R.string.notification_paused_title))
                 .setContentText(getString(R.string.notification_paused_text))
-                .setContentIntent(PendingIntent.getService(this, REQUEST_CODE_START, getStartIntent(this), PendingIntent.FLAG_ONE_SHOT))
+                .setContentIntent(PendingIntent.getService(this, REQUEST_CODE_START, getResumeIntent(this), PendingIntent.FLAG_ONE_SHOT))
                 .build());
     }
 
