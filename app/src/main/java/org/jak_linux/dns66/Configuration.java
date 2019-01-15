@@ -12,6 +12,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -20,6 +21,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +33,10 @@ import java.util.Set;
 public class Configuration {
     public static final Gson GSON = new Gson();
     static final int VERSION = 1;
+    /* Default tweak level */
+    static final int MINOR_VERSION = 1;
     public int version = 1;
+    public int minorVersion = 0;
     public boolean autoStart;
     public Hosts hosts = new Hosts();
     public DnsServers dnsServers = new DnsServers();
@@ -52,7 +57,39 @@ public class Configuration {
         if (config.version > VERSION)
             throw new IOException("Unhandled file format version");
 
+        for (int i = config.minorVersion + 1; i <= MINOR_VERSION; i++) {
+            Log.i("Configuration", String.format("read: Update to version %d", i));
+            config.runUpdate(i);
+        }
+
         return config;
+    }
+
+    public void runUpdate(int level) {
+        switch (level) {
+            case 1:
+                updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts");
+                removeURL("http://winhelp2002.mvps.org/hosts.txt");
+                break;
+        }
+        this.minorVersion = level;
+    }
+
+    public void updateURL(String oldURL, String newURL) {
+        for (Item host : hosts.items) {
+            if (host.location.equals(oldURL))
+                host.location = newURL;
+        }
+    }
+
+    public void removeURL(String oldURL) {
+
+        Iterator itr = hosts.items.iterator();
+        while (itr.hasNext()) {
+            Item host = (Item) itr.next();
+            if (host.location.equals(oldURL))
+                itr.remove();
+        }
     }
 
     public void write(Writer writer) throws IOException {

@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "minorVersion": 1,
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
@@ -51,7 +52,7 @@
       },
       {
         "title": "Dan Pollock's hosts file",
-        "location": "http://someonewhocares.org/hosts/hosts",
+        "location": "https://someonewhocares.org/hosts/hosts",
         "state": 0
       },
       {
@@ -73,11 +74,6 @@
         "title": "Malware domains.com",
         "location": "https://mirror.cedia.org.ec/malwaredomains/justdomains",
         "state": 2
-      },
-      {
-        "title": "MVPS HOSTS",
-        "location": "http://winhelp2002.mvps.org/hosts.txt",
-        "state": 0
       },
       {
         "title": "Peter Lowe’s Ad server list",
