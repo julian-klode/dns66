@@ -71,6 +71,8 @@ public class Configuration {
                 updateURL("http://someonewhocares.org/hosts/hosts", "https://someonewhocares.org/hosts/hosts");
                 removeURL("http://winhelp2002.mvps.org/hosts.txt");
                 updateDNS("85.214.20.141", "46.182.19.48");
+                addDNS("CloudFlare DNS (1)", "1.1.1.1", false);
+                addDNS("CloudFlare DNS (2)", "1.0.0.1", false);
                 break;
         }
         this.minorVersion = level;
@@ -88,6 +90,13 @@ public class Configuration {
             if (host.location.equals(oldIP))
                 host.location = newIP;
         }
+    }
+    public void addDNS(String title, String location, boolean isEnabled) {
+        Item item = new Item();
+        item.title = title;
+        item.location = location;
+        item.state = isEnabled ? 1 : 0;
+        dnsServers.items.add(item);
     }
 
     public void removeURL(String oldURL) {

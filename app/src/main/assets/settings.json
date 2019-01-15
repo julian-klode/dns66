@@ -38,6 +38,16 @@
         "title": "ISC (US)",
         "location": "204.152.184.76",
         "state": 0
+      },
+      {
+        "title": "CloudFlare DNS (1)",
+        "location": "1.1.1.1",
+        "state": 0
+      },
+      {
+        "title": "CloudFlare DNS (2)",
+        "location": "1.0.0.1",
+        "state": 0
       }
     ]
   },
