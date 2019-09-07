@@ -33,8 +33,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     // Proxy stuff
-    implementation 'org.pcap4j:pcap4j-core:1.7.5'
-    implementation 'org.pcap4j:pcap4j-packetfactory-static:1.7.5'
+    implementation 'org.pcap4j:pcap4j-core:1.8.2'
+    implementation 'org.pcap4j:pcap4j-packetfactory-static:1.8.2'
     implementation 'dnsjava:dnsjava:2.1.8'
 
     implementation 'com.google.code.gson:gson:2.8.5'
