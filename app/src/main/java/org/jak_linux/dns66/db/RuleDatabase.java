@@ -8,7 +8,7 @@
 package org.jak_linux.dns66.db;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;

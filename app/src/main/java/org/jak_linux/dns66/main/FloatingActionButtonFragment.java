@@ -1,6 +1,6 @@
 package org.jak_linux.dns66.main;
 
-import android.support.design.widget.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Created by jak on 14/04/17.

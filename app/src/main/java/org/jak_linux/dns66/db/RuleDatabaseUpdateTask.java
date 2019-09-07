@@ -15,8 +15,8 @@ import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
