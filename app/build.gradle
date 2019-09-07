@@ -40,7 +40,7 @@ dependencies {
     // Proxy stuff
     implementation 'org.pcap4j:pcap4j-core:1.8.2'
     implementation 'org.pcap4j:pcap4j-packetfactory-static:1.8.2'
-    implementation 'dnsjava:dnsjava:2.1.8'
+    implementation 'dnsjava:dnsjava:2.1.9'
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
