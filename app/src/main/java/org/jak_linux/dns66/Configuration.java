@@ -74,7 +74,7 @@ public class Configuration {
 
                 /* Switch to StevenBlack's host file */
                 addURL(0,   "StevenBlack's hosts file (includes all others)",
-                        "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+                        "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts",
                         Item.STATE_DENY);
                 updateURL("https://someonewhocares.org/hosts/hosts", null, Item.STATE_IGNORE);
                 updateURL("https://adaway.org/hosts.txt", null, Item.STATE_IGNORE);

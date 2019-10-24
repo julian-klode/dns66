@@ -57,7 +57,7 @@
     "items": [
       {
         "title": "StevenBlack's hosts file (includes all others)",
-        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts",
         "state": 0
       },
       {
