@@ -140,7 +140,7 @@ public class DnsPacketProxy {
      */
     void handleDnsRequest(byte[] packetData) throws AdVpnThread.VpnNetworkException {
 
-        IpPacket parsedPacket = null;
+        IpPacket parsedPacket;
         try {
             parsedPacket = (IpPacket) IpSelector.newPacket(packetData, 0, packetData.length);
         } catch (Exception e) {
@@ -148,8 +148,10 @@ public class DnsPacketProxy {
             return;
         }
 
-        if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
-            Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getPayload());
+        try {
+            UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
+        } catch (Exception e) {
+            Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getHeader(), e);
             return;
         }
 
@@ -158,7 +160,6 @@ public class DnsPacketProxy {
             return;
 
         UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
-
 
         if (parsedUdp.getPayload() == null) {
             Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
@@ -184,7 +185,7 @@ public class DnsPacketProxy {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-        if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
+        if (dnsQueryName.contains(".") && !ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             eventLoop.forwardPacket(outPacket, parsedPacket);
