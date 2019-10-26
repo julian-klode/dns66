@@ -185,6 +185,10 @@ public class DnsPacketProxy {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
+        if (!dnsQueryName.contains(".")) {
+            Log.d(TAG, "handleDnsRequest: Invalid DNS query: " + dnsMsg);
+        }
+        Log.d(TAG, "handleDnsRequest: IpPacket: " + parsedPacket);
         if (dnsQueryName.contains(".") && !ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
