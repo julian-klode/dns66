@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -125,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
         menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
+
+        // On Android O, require users to configure notifications via notification channels.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            menu.findItem(R.id.setting_show_notification).setVisible(false);
+        }
         return true;
     }
 

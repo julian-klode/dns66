@@ -140,7 +140,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         NotificationChannels.onCreate(context);
 
         Intent intent = getStartIntent(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && config.showNotification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || config.showNotification) {
             context.startForegroundService(intent);
         } else {
             context.startService(intent);
