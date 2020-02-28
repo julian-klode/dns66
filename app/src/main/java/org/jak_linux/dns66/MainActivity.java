@@ -16,16 +16,20 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -78,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
             config = FileHelper.loadCurrentSettings(this);
         }
 
-        if (config.nightMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        } else if (config.nightMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -127,8 +133,11 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
         menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            menu.findItem(R.id.setting_night_mode).setVisible(false);
+        }
         // On Android O, require users to configure notifications via notification channels.
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             menu.findItem(R.id.setting_show_notification).setVisible(false);
         }
         return true;
@@ -224,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent eMailIntent = new Intent(Intent.ACTION_SEND);
             eMailIntent.setType("text/plain");
-            eMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"jak@jak-linux.org"});
+            eMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"jak@jak-linux.org"});
             eMailIntent.putExtra(Intent.EXTRA_SUBJECT, "DNS66 Logcat");
             eMailIntent.putExtra(Intent.EXTRA_TEXT, logcat.toString());
             eMailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
