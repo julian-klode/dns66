@@ -149,12 +149,14 @@ public class WhitelistFragment extends Fragment {
     private class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
 
         public ArrayList<ListEntry> list;
+        public PackageManager pm;
 
         Set<String> onVpn = new HashSet<>();
         Set<String> notOnVpn = new HashSet<>();
 
         public AppListAdapter(PackageManager pm, ArrayList<ListEntry> list) {
             this.list = list;
+            this.pm = pm;
             MainActivity.config.whitelist.resolve(pm, onVpn, notOnVpn);
         }
 
@@ -181,7 +183,7 @@ public class WhitelistFragment extends Fragment {
                 holder.task = new AsyncTask<ListEntry, Void, Drawable>() {
                     @Override
                     protected Drawable doInBackground(ListEntry... entries) {
-                        return entries[0].loadIcon(getContext().getPackageManager());
+                        return entries[0].loadIcon(pm);
                     }
 
                     @Override
