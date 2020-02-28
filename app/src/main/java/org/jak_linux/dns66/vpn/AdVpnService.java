@@ -229,6 +229,11 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     }
 
     private void restartVpnThread() {
+        if (vpnThread == null) {
+            Log.i(TAG, "restartVpnThread: Not restarting thread, could not find thread.");
+            return;
+        }
+
         vpnThread.stopThread();
         vpnThread.startThread();
     }
