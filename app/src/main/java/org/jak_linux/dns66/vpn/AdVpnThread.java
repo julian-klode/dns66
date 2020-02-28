@@ -25,6 +25,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructPollfd;
+import android.util.ArraySet;
 import android.util.Log;
 
 import org.jak_linux.dns66.Configuration;
@@ -48,6 +49,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -87,8 +89,9 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         this.notify = notify;
     }
 
-    private static Set<InetAddress> getDnsServers(Context context) throws VpnNetworkException {
-        Set<InetAddress> out = new HashSet<>();
+    private static List<InetAddress> getDnsServers(Context context) throws VpnNetworkException {
+        Set<InetAddress> known = new HashSet<>();
+        List<InetAddress> out = new ArrayList<>();
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(VpnService.CONNECTIVITY_SERVICE);
         // Seriously, Android? Seriously?
         NetworkInfo activeInfo = cm.getActiveNetworkInfo();
@@ -100,8 +103,10 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
             if (ni == null || !ni.isConnected() || ni.getType() != activeInfo.getType()
                     || ni.getSubtype() != activeInfo.getSubtype())
                 continue;
-            for (InetAddress address : cm.getLinkProperties(nw).getDnsServers())
-                out.add(address);
+            for (InetAddress address : cm.getLinkProperties(nw).getDnsServers()) {
+                if (known.add(address))
+                    out.add(address);
+            }
         }
         return out;
     }
@@ -414,7 +419,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         Configuration config = FileHelper.loadCurrentSettings(vpnService);
 
         // Get the current DNS servers before starting the VPN
-        Set<InetAddress> dnsServers = getDnsServers(vpnService);
+        List<InetAddress> dnsServers = getDnsServers(vpnService);
         Log.i(TAG, "Got DNS servers = " + dnsServers);
 
         // Configure a builder while parsing the parameters.
@@ -503,7 +508,7 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         return pfd;
     }
 
-    boolean hasIpV6Servers(Configuration config, Set<InetAddress> dnsServers) {
+    boolean hasIpV6Servers(Configuration config, List<InetAddress> dnsServers) {
         if (!config.ipV6Support)
             return false;
 

@@ -130,7 +130,7 @@ public class AdVpnThreadTest {
         item0.state = Configuration.Item.STATE_ALLOW;
         item1.location = "127.0.0.1";
         item1.state = Configuration.Item.STATE_ALLOW;
-        Set<InetAddress> servers = new HashSet<>();
+        List<InetAddress> servers = new ArrayList<>();
 
         assertTrue(thread.hasIpV6Servers(config, servers));
         config.ipV6Support = false;
