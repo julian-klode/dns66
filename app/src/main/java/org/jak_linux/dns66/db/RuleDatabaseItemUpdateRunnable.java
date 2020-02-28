@@ -146,6 +146,7 @@ class RuleDatabaseItemUpdateRunnable implements Runnable {
     @NonNull
     HttpURLConnection getHttpURLConnection(File file, SingleWriterMultipleReaderFile singleWriterMultipleReaderFile, URL url) throws IOException {
         HttpURLConnection connection = internalOpenHttpConnection(url);
+        connection.setInstanceFollowRedirects(true);
         connection.setConnectTimeout(CONNECT_TIMEOUT_MILLIS);
         connection.setReadTimeout(READ_TIMEOUT_MILLIS);
         try {
