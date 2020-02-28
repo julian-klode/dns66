@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             config = FileHelper.loadCurrentSettings(this);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         } else if (config.nightMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.setting_show_notification).setChecked(config.showNotification);
         menu.findItem(R.id.setting_night_mode).setChecked(config.nightMode);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             menu.findItem(R.id.setting_night_mode).setVisible(false);
         }
         // On Android O, require users to configure notifications via notification channels.
