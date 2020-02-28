@@ -20,6 +20,7 @@ import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.IpV6Packet;
+import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
 import org.xbill.DNS.DClass;
@@ -148,7 +149,13 @@ public class DnsPacketProxy {
             return;
         }
 
-        if (!(parsedPacket.getPayload() instanceof UdpPacket)) {
+        UdpPacket parsedUdp;
+        Packet udpPayload;
+
+        try {
+            parsedUdp = (UdpPacket) parsedPacket.getPayload();
+            udpPayload = parsedUdp.getPayload();
+        } catch (Exception e) {
             Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getPayload());
             return;
         }
@@ -157,10 +164,7 @@ public class DnsPacketProxy {
         if (destAddr == null)
             return;
 
-        UdpPacket parsedUdp = (UdpPacket) parsedPacket.getPayload();
-
-
-        if (parsedUdp.getPayload() == null) {
+        if (udpPayload == null) {
             Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
 
             // Let's be nice to Firefox. Firefox uses an empty UDP packet to
@@ -171,7 +175,7 @@ public class DnsPacketProxy {
             return;
         }
 
-        byte[] dnsRawData = (parsedUdp).getPayload().getRawData();
+        byte[] dnsRawData = udpPayload.getRawData();
         Message dnsMsg;
         try {
             dnsMsg = new Message(dnsRawData);
