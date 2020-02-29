@@ -230,7 +230,7 @@ public class StartFragment extends Fragment {
             intent.putExtra("NOTIFICATION_INTENT",
                     PendingIntent.getActivity(getContext(), 0,
                             new Intent(getContext(), MainActivity.class), 0));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || MainActivity.config.showNotification) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getContext().startForegroundService(intent);
             } else {
                 getContext().startService(intent);

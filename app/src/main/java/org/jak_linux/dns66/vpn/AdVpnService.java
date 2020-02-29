@@ -140,7 +140,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         NotificationChannels.onCreate(context);
 
         Intent intent = getStartIntent(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || config.showNotification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent);
         } else {
             context.startService(intent);
@@ -208,7 +208,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         int notificationTextId = vpnStatusToTextId(status);
         notificationBuilder.setContentText(getString(notificationTextId));
 
-        if (FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
             startForeground(NOTIFICATION_ID_STATE, notificationBuilder.build());
 
         Intent intent = new Intent(VPN_UPDATE_STATUS_INTENT);
