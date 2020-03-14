@@ -73,6 +73,14 @@ public class HostsFragment extends Fragment implements FloatingActionButtonFragm
             }
         });
 
+        // Initialize StevenBlack configuration wizard button
+        StevenBlackWizard wizard = new StevenBlackWizard(getActivity(), mAdapter);
+        rootView.findViewById(R.id.button_host_wizard).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizard.showWizard();
+            }
+        });
 
         ExtraBar.setup(rootView.findViewById(R.id.extra_bar), "hosts");
 

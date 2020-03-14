@@ -108,9 +108,19 @@
     <string name="notifications_paused_desc">Notifications to resume after pausing</string>
     <string name="notifications_group_service">Service control</string>
     <string name="notifications_group_updates">Updates</string>
+    <string name="stevenblack_config">StevenBlack configuration</string>
+    <string name="button_apply">Apply</string>
+    <string name="button_cancel">Cancel</string>
     <string-array name="whitelist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>
         <item>System apps bypass by default</item>
+    </string-array>
+    <string-array name="stevenblack_items">
+        <item>Ads and Malware</item>
+        <item>Fake News</item>
+        <item>Gambling</item>
+        <item>Porn</item>
+        <item>Social network</item>
     </string-array>
 </resources>
