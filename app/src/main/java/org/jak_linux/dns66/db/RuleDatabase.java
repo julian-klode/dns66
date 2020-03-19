@@ -179,9 +179,25 @@ public class RuleDatabase {
         }
     }
 
-    private static Pattern generate_host_pattern(String host) {
-	// TODO: Translate wildcards to regex
-	return Pattern.compile(Pattern.quote(host), Pattern.CASE_INSENSITIVE);
+    /**
+     * Generate a host pattern from host.
+     * Expand wildcards (*) into (.*) patterns.
+     */
+    private static Pattern generateHostPattern(String host) {
+	String[] non_wildcard_parts = host.split("\\*");
+	StringBuilder regexBuilder = new StringBuilder();
+
+	boolean first = true;
+	for (String part : non_wildcard_parts) {
+	    if (first) {
+		first = false;
+	    } else {
+		regexBuilder.append(".*");
+	    }
+	    regexBuilder.append(Pattern.quote(part));
+	}
+
+	return Pattern.compile(regexBuilder.toString(), Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -191,7 +207,7 @@ public class RuleDatabase {
      * @param host The host
      */
     private void addHost(Configuration.Item item, String host) {
-	Pattern hostp = RuleDatabase.generate_host_pattern(host);
+	Pattern hostp = RuleDatabase.generateHostPattern(host);
         // Single address to block
         if (item.state == Configuration.Item.STATE_ALLOW) {
 	    for (Pattern blockedHost : this.nextBlockedHosts) {

@@ -154,6 +154,46 @@ public class RuleDatabaseTest {
     }
 
     @Test
+    public void testWildCard() throws Exception {
+        RuleDatabase db = new RuleDatabase();
+        db.nextBlockedHosts = db.blockedHosts.get();
+
+        Configuration.Item item = new Configuration.Item();
+
+        item.location = "<some random file>";
+        item.state = Configuration.Item.STATE_DENY;
+
+	assertTrue(db.loadReader(item, new StringReader("*example*.com")));
+	assertFalse(db.isEmpty());
+
+	// Hosts that match the wildcard.
+	assertTrue(db.isBlocked("example.com"));
+	assertTrue(db.isBlocked("moreexample.com"));
+	assertTrue(db.isBlocked("examplemore.com"));
+	assertTrue(db.isBlocked("ads.example.com"));
+	assertTrue(db.isBlocked("ads.EXample.com"));
+
+	// Host that doesn't match the wildcard.
+	assertFalse(db.isBlocked("ixample.com"));
+	assertFalse(db.isBlocked("example.com.fake"));
+
+	// Remove host.
+	item.state = Configuration.Item.STATE_ALLOW;
+	assertTrue(db.loadReader(item, new StringReader("*example*.com")));
+	assertTrue(db.isEmpty());
+
+	// Add a host without any wild cards.
+	item.state = Configuration.Item.STATE_DENY;
+	assertTrue(db.loadReader(item, new StringReader("example.com")));
+	assertFalse(db.isEmpty());
+	assertTrue(db.isBlocked("example.com"));
+	assertFalse(db.isBlocked("moreexample.com"));
+	assertFalse(db.isBlocked("examplemore.com"));
+	assertFalse(db.isBlocked("ads.example.com"));
+	assertFalse(db.isBlocked("ads.EXample.com"));
+    }
+
+    @Test
     @PrepareForTest({Log.class, FileHelper.class})
     public void testInitialize_host() throws Exception {
         RuleDatabase ruleDatabase = spy(new RuleDatabase());
