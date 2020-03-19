@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 /**
  * Represents hosts that are blocked.
@@ -34,8 +35,8 @@ public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
     private static final RuleDatabase instance = new RuleDatabase();
-    final AtomicReference<HashSet<String>> blockedHosts = new AtomicReference<>(new HashSet<String>());
-    HashSet<String> nextBlockedHosts = null;
+    final AtomicReference<HashSet<Pattern>> blockedHosts = new AtomicReference<>(new HashSet<Pattern>());
+    HashSet<Pattern> nextBlockedHosts = null;
 
     /**
      * Package-private constructor for instance and unit tests.
@@ -106,7 +107,12 @@ public class RuleDatabase {
      * @return true if the host is blocked, false otherwise.
      */
     public boolean isBlocked(String host) {
-        return blockedHosts.get().contains(host);
+	for (Pattern blockedHost: blockedHosts.get()) {
+	    if (blockedHost.matcher(host).matches()) {
+		return true;
+	    }
+	}
+	return false;
     }
 
     /**
@@ -173,6 +179,11 @@ public class RuleDatabase {
         }
     }
 
+    private static Pattern generate_host_pattern(String host) {
+	// TODO: Translate wildcards to regex
+	return Pattern.compile(Pattern.quote(host), Pattern.CASE_INSENSITIVE);
+    }
+
     /**
      * Add a single host for an item.
      *
@@ -180,11 +191,17 @@ public class RuleDatabase {
      * @param host The host
      */
     private void addHost(Configuration.Item item, String host) {
+	Pattern hostp = RuleDatabase.generate_host_pattern(host);
         // Single address to block
         if (item.state == Configuration.Item.STATE_ALLOW) {
-            nextBlockedHosts.remove(host);
+	    for (Pattern blockedHost : this.nextBlockedHosts) {
+		if (blockedHost.pattern().equals(hostp.pattern())) {
+		    this.nextBlockedHosts.remove(blockedHost);
+		    break;
+		}
+	    }
         } else if (item.state == Configuration.Item.STATE_DENY) {
-            nextBlockedHosts.add(host);
+            this.nextBlockedHosts.add(hostp);
         }
     }
 
