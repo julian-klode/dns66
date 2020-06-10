@@ -56,7 +56,7 @@
     "automaticRefresh": false,
     "items": [
       {
-        "title": "StevenBlack's hosts file (includes all others)",
+        "title": "StevenBlack’s hosts file (includes all others)",
         "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
         "state": 0
       },
@@ -81,7 +81,7 @@
         "state": 2
       },
       {
-        "title": "Malware Domain List",
+        "title": "Malware Domain List — All domains on this list should be considered dangerous.",
         "location": "https://www.malwaredomainlist.com/hostslist/hosts.txt",
         "state": 2
       },
@@ -93,6 +93,186 @@
       {
         "title": "Peter Lowe’s Ad server list",
         "location": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
+        "state": 2
+      },
+      {
+        "title": "GoodbyeAds — Blocks Ads, Trackers & Analytics from all apps & websites, also blocks YouTube ads and device manufactures Tracking /Ads (Miui, samsung UI etc)",
+        "location": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
+        "state": 2
+      },
+      {
+        "title": "GoodbyeAds YouTube AdBlock — Blocks 90% of YouTube Ads, both app & website. You wont see any ads at the starting / middle / end of the video. (Homepage ads are not blocked. blocking will break the entire app).",
+        "location": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-YouTube-AdBlock.txt",
+        "state": 2
+      },
+      {
+        "title": "GoodbyeAds Samsung AdBlock — Blocks all Samsung UI Ads, Trackers & Analytics in the Samsung device.",
+        "location": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-Samsung-AdBlock.txt",
+        "state": 2
+      },
+      {
+        "title": "GoodbyeAds Xiaomi AdBlock — Blocks all MIUI Ads, Trackers & Analytics in the Xiaomi device.",
+        "location": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-Xiaomi-Extension.txt",
+        "state": 2
+      },
+      {
+        "title": "GoodbyeAds LeEco AdBlock — Blocks all LeEco Ads, Trackers & Analytics in the LeEco device.",
+        "location": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-LeEco-Extension.txt",
+        "state": 2
+      },
+      {
+        "title": "Energized Basic — All-Rounder For Balanced Protection",
+        "location": "https://block.energized.pro/basic/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized Spark — True Lightweight Protection",
+        "location": "https://block.energized.pro/spark/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized Blu — Mid Range Lightweight Protection",
+        "location": "https://block.energized.pro/blu/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized Ultimate — Flagship Protection",
+        "location": "https://block.energized.pro/ultimate/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized extension/Social — Social Sites and Apps Blocking",
+        "location": "https://block.energized.pro/extensions/social/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized extension/Regional — Regional annoyance blocking",
+        "location": "https://block.energized.pro/extensions/regional/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "Energized extension/Xtreme — Privacy protection a its best",
+        "location": "https://block.energized.pro/extensions/xtreme/formats/hosts",
+        "state": 2
+      },
+      {
+        "title": "DuckDuckGo Tracker Radar",
+        "location": "https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt",
+        "state": 2
+      },
+      {
+        "title": "winhelp2002’s MVPS HOSTS",
+        "location": "https://winhelp2002.mvps.org/hosts.txt",
+        "state": 2
+      },
+      {
+        "title": "Phishing Army’s Blocklist to filter Phishing",
+        "location": "https://phishing.army/download/phishing_army_blocklist_extended.txt",
+        "state": 2
+      },
+      {
+        "title": "StevenBlack’s hosts file with fakenews, gambling and porn extensions",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts",
+        "state": 2
+      },
+      {
+        "title": "StevenBlack’s hosts file with porn extension",
+        "location": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts",
+        "state": 2
+      },
+      {
+        "title": "badmojr’s 1Hosts list — Protect your ‘data’ & eyeballs from being auctioned to the highest bidder. Also blocks Facebook.",
+        "location": "https://raw.githubusercontent.com/badmojr/1Hosts/master/complete/domains.txt",
+        "state": 2
+      },
+      {
+        "title": "URLhaus’ Malicious URL Blocklist — blocklist of malicious websites that are being used for malware distribution, based on the Database dump (CSV) of Abuse.ch",
+        "location": "https://gitlab.com/curben/urlhaus-filter/raw/master/urlhaus-filter-online.txt",
+        "state": 2
+      },
+      {
+        "title": "280blocker adblock domain lists (mainly Japanese hosts)",
+        "location": "https://280blocker.net/files/280blocker_domain.txt",
+        "state": 2
+      },
+      {
+        "title": "EasyList Germany",
+        "location": "https://gist.githubusercontent.com/BBcan177/2a9fc2548c3c5a5e2dc86e580b5795d2/raw/2f5c90ffb3bd02199ace1b16a0bd9f53b29f0879/EasyList_DE",
+        "state": 2
+      },
+      {
+        "title": "Akamaru’s Cryptomine Blocklist",
+        "location": "https://raw.githubusercontent.com/Akamaru/Pi-Hole-Lists/master/cryptomine.txt",
+        "state": 2
+      },
+      {
+        "title": "Akamaru’s FakeNews Blocklist (Germany)",
+        "location": "https://raw.githubusercontent.com/Akamaru/Pi-Hole-Lists/master/fakenewsde.txt",
+        "state": 2
+      },
+      {
+        "title": "Akamaru’s Mobile Blocklist",
+        "location": "https://raw.githubusercontent.com/Akamaru/Pi-Hole-Lists/master/mobile.txt",
+        "state": 2
+      },
+      {
+        "title": "Akamaru’s Microsoft Blocklist",
+        "location": "https://raw.githubusercontent.com/Akamaru/Pi-Hole-Lists/master/nomsdata.txt",
+        "state": 2
+      },
+      {
+        "title": "Akamaru’s SmartTV Blocklist",
+        "location": "https://raw.githubusercontent.com/Akamaru/Pi-Hole-Lists/master/smarttv.txt",
+        "state": 2
+      },
+      {
+        "title": "HostsFile.org’s Blocklist",
+        "location": "http://hostsfile.org/Downloads/hosts.txt",
+        "state": 2
+      },
+      {
+        "title": "Evil Domains that are usually not present in any other lists",
+        "location": "https://raw.githubusercontent.com/hell-sh/Evil-Domains/master/evil-domains.txt",
+        "state": 2
+      },
+      {
+        "title": "Badd-Boyz / Mitchell Krog’s Blocklist",
+        "location": "https://raw.githubusercontent.com/mitchellkrogza/Badd-Boyz-Hosts/master/hosts",
+        "state": 2
+      },
+      {
+        "title": "Pirat28’s Blocklist",
+        "location": "https://raw.githubusercontent.com/pirat28/IHateTracker/master/iHateTracker.txt",
+        "state": 2
+      },
+      {
+        "title": "RooneyMcNibNug’s Blocklist",
+        "location": "https://raw.githubusercontent.com/RooneyMcNibNug/pihole-stuff/master/SNAFU.txt",
+        "state": 2
+      },
+      {
+        "title": "UnluckyLuke’s BlockUnderRadar List",
+        "location": "https://raw.githubusercontent.com/UnluckyLuke/BlockUnderRadarJunk/master/blockunderradarjunk-list.txt",
+        "state": 2
+      },
+      {
+        "title": "Lightswitch05’s ads and tracking List",
+        "location": "https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt",
+        "state": 2
+      },
+      {
+        "title": "jawz101’s MobileAdTracker List — Domains of mobile ad trackers taken from DNS log",
+        "location": "https://raw.githubusercontent.com/jawz101/MobileAdTrackers/master/hosts",
+        "state": 2
+      },
+      {
+        "title": "Anudeep’s Blocklist — A list of adserving and tracking sites",
+        "location": "https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt",
+        "state": 2
+      },
+      {
+        "title": "ZeroDot1’s CoinBlocker List — Block hosts known for Cryptojacking attacks",
+        "location": "https://zerodot1.gitlab.io/CoinBlockerLists/hosts",
         "state": 2
       }
     ]
