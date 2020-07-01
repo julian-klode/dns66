@@ -28,6 +28,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -119,7 +120,8 @@ public class AdVpnService extends VpnService implements Handler.Callback {
 
         notificationBuilder.addAction(R.drawable.ic_pause_black_24dp, getString(R.string.notification_action_pause),
                 PendingIntent.getService(this, REQUEST_CODE_PAUSE, new Intent(this, AdVpnService.class)
-                                .putExtra("COMMAND", Command.PAUSE.ordinal()), 0));
+                                .putExtra("COMMAND", Command.PAUSE.ordinal()), 0))
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
     }
 
     public static void checkStartVpnOnBoot(Context context) {
@@ -197,6 +199,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
         notificationManager.notify(NOTIFICATION_ID_STATE, new NotificationCompat.Builder(this, NotificationChannels.SERVICE_PAUSED)
                 .setSmallIcon(R.drawable.ic_state_deny) // TODO: Notification icon
                 .setPriority(Notification.PRIORITY_LOW)
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
                 .setContentTitle(getString(R.string.notification_paused_title))
                 .setContentText(getString(R.string.notification_paused_text))
                 .setContentIntent(PendingIntent.getService(this, REQUEST_CODE_START, getResumeIntent(this), PendingIntent.FLAG_ONE_SHOT))
@@ -206,7 +209,7 @@ public class AdVpnService extends VpnService implements Handler.Callback {
     private void updateVpnStatus(int status) {
         vpnStatus = status;
         int notificationTextId = vpnStatusToTextId(status);
-        notificationBuilder.setContentText(getString(notificationTextId));
+        notificationBuilder.setContentTitle(getString(notificationTextId));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || FileHelper.loadCurrentSettings(getApplicationContext()).showNotification)
             startForeground(NOTIFICATION_ID_STATE, notificationBuilder.build());
