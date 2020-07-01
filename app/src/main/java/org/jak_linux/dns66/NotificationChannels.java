@@ -25,8 +25,9 @@ public class NotificationChannels {
 
     public static void onCreate(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || notificationManager == null) {
             return;
+        }
 
         notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(GROUP_SERVICE, context.getString(R.string.notifications_group_service)));
         notificationManager.createNotificationChannelGroup(new NotificationChannelGroup(GROUP_UPDATE, context.getString(R.string.notifications_group_updates)));
