@@ -169,13 +169,21 @@ public class DnsPacketProxy {
             return;
 
         if (udpPayload == null) {
-            Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
+            try {
+                Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload: " + parsedUdp);
+            } catch (Exception e1) {
+                Log.i(TAG, "handleDnsRequest: Sending UDP packet without payload");
+            }
 
             // Let's be nice to Firefox. Firefox uses an empty UDP packet to
             // the gateway to reduce the RTT. For further details, please see
             // https://bugzilla.mozilla.org/show_bug.cgi?id=888268
-            DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            eventLoop.forwardPacket(outPacket, null);
+            try {
+                DatagramPacket outPacket = new DatagramPacket(new byte[0], 0, 0 /* length */, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
+                eventLoop.forwardPacket(outPacket, null);
+            } catch (Exception e) {
+                Log.i(TAG, "handleDnsRequest: Could not send empty UDP packet", e);
+            }
             return;
         }
 
