@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco-android'
+apply plugin: "com.hiya.jacoco-android"
 
 android {
     compileSdkVersion 29
@@ -29,18 +29,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.3.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // Proxy stuff
     implementation 'org.pcap4j:pcap4j-core:1.8.2'
     implementation 'org.pcap4j:pcap4j-packetfactory-static:1.8.2'
-    implementation 'dnsjava:dnsjava:3.0.0'
+    implementation 'dnsjava:dnsjava:3.2.2'
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
