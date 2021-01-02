@@ -61,6 +61,11 @@
         "state": 0
       },
       {
+        "title": "DuckDuckGo Tracker List (provided by Blokada)",
+        "location": "https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt",
+        "state": 0
+      },
+      {
         "title": "Adaway hosts file",
         "location": "https://adaway.org/hosts.txt",
         "state": 2
