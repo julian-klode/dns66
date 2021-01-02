@@ -110,4 +110,8 @@
     <string name="notifications_paused_desc">Benachrichtigung zum Fortsetzen nach Unterbrechung</string>
     <string name="notifications_group_service">Dienstkontrolle</string>
     <string name="notifications_group_updates">Aktualisierungen</string>
+    <string name="unstable_feature">Instabiles Feature</string>
+    <string name="unstable_watchdog_message">Die Überwachungsfunktion kann dazu führen, dass die Verbindung zurückgesetzt wird oder aufhört zu funktionieren</string>
+    <string name="button_cancel">Abbrechen</string>
+    <string name="button_continue">Fortfahren</string>
 </resources>

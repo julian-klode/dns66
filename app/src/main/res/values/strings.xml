@@ -108,6 +108,10 @@
     <string name="notifications_paused_desc">Notifications to resume after pausing</string>
     <string name="notifications_group_service">Service control</string>
     <string name="notifications_group_updates">Updates</string>
+    <string name="unstable_feature">Unstable feature</string>
+    <string name="unstable_watchdog_message">Watching the connection may cause reconnects and the connection to get stuck</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_continue">Continue</string>
     <string-array name="whitelist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>

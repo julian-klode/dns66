@@ -89,6 +89,30 @@ public class StartFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 MainActivity.config.watchDog = isChecked;
                 FileHelper.writeSettings(getContext(), MainActivity.config);
+
+                if (isChecked) {
+                    new AlertDialog.Builder(getActivity())
+                            .setIcon(R.drawable.ic_warning)
+                            .setTitle(R.string.unstable_feature)
+                            .setMessage(R.string.unstable_watchdog_message)
+                            .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    watchDog.setChecked(false);
+                                    MainActivity.config.watchDog = false;
+                                    FileHelper.writeSettings(getContext(), MainActivity.config);
+                                }
+                            })
+                            .setPositiveButton(R.string.button_continue, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    /* Do nothing */
+                                }
+                            })
+                            .show();
+                    return;
+                } else {
+                }
             }
         });
 
