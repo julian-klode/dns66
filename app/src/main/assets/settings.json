@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "minorVersion": 1,
+  "minorVersion": 2,
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
@@ -68,11 +68,6 @@
       {
         "title": "Dan Pollock's hosts file",
         "location": "https://someonewhocares.org/hosts/hosts",
-        "state": 2
-      },
-      {
-        "title": "hpHosts’s Ad and tracking servers",
-        "location": "https://hosts-file.net/ad_servers.txt",
         "state": 2
       },
       {

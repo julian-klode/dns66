@@ -34,7 +34,7 @@ public class Configuration {
     public static final Gson GSON = new Gson();
     static final int VERSION = 1;
     /* Default tweak level */
-    static final int MINOR_VERSION = 1;
+    static final int MINOR_VERSION = 2;
     public int version = 1;
     public int minorVersion = 0;
     public boolean autoStart;
@@ -83,6 +83,9 @@ public class Configuration {
                 updateDNS("85.214.20.141", "46.182.19.48");
                 addDNS("CloudFlare DNS (1)", "1.1.1.1", false);
                 addDNS("CloudFlare DNS (2)", "1.0.0.1", false);
+                break;
+            case 2:
+                removeURL("https://hosts-file.net/ad_servers.txt");
                 break;
         }
         this.minorVersion = level;
