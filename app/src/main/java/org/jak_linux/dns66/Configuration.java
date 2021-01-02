@@ -49,11 +49,6 @@ public class Configuration {
     public static Configuration read(Reader reader) throws IOException {
         Configuration config = GSON.fromJson(reader, Configuration.class);
 
-        if (config.whitelist.items.isEmpty()) {
-            config.whitelist = new Whitelist();
-            config.whitelist.items.add("com.android.vending");
-        }
-
         if (config.version > VERSION)
             throw new IOException("Unhandled file format version");
 
