@@ -20,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.VpnService;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.system.ErrnoException;
 import android.system.Os;
@@ -495,6 +496,10 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         // traffic for ones without DNS servers (issue 129).
         builder.allowFamily(OsConstants.AF_INET);
         builder.allowFamily(OsConstants.AF_INET6);
+
+        // Set the VPN to unmetered
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            builder.setMetered(false);
 
         configurePackages(builder, config);
 
