@@ -5,7 +5,7 @@ several widely-respected host files are used to block ads, malware, and other
 weird stuff.
 
 [![codecov](https://codecov.io/gh/julian-klode/dns66/branch/master/graph/badge.svg)](https://codecov.io/gh/julian-klode/dns66)
-[![Build Status](https://travis-ci.org/julian-klode/dns66.svg?branch=master)](https://travis-ci.org/julian-klode/dns66)
+[![Build Status](https://travis-ci.com/julian-klode/dns66.svg?branch=master)](https://travis-ci.com/julian-klode/dns66)
 
 Installing
 ----------
