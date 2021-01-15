@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name" translatable="false">DNS66</string>
+    <string name="app_shortdesc">Bloqueio de hosts e servidores personalizados de DNS</string>
+    <string name="custom_dns">Servidores personalizados de DNS</string>
+    <string name="enable_hosts">Filtrar hosts</string>
+    <string name="start_tab">Iniciar</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Exportar as configurações</string>
+    <string name="action_import">Importar as configurações</string>
+    <string name="action_save">Feito!</string>
+    <string name="load_defaults">Carregar as configurações padrão</string>
+    <string name="action_about">Sobre</string>
+    <string name="info_app_license">Este App é de software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos do GNU General Public License conforme publicada pelo Free Software Foundation, seja a versão 3 da Licença, ou (a seu critério) qualquer versão posterior.</string>
+    <string name="info_app_copyright" translatable="false">© 2016-2019 Julian Andres Klode</string>
+    <string name="switch_onboot">Ativar ao iniciar o Android</string>
+    <string name="activity_edit">Editar item</string>
+    <string name="title">Título</string>
+    <string name="location">Endereço (URL ou host)</string>
+    <string name="action">Ação</string>
+    <string name="cannot_restore_previous_config">Não foi possível restaurar a configuração anterior: %s</string>
+    <string name="cannot_read_config">Não foi possível carregar a configuração: %s</string>
+    <string name="cannot_load_default_config">Não foi possível carregar a configuração padrão: %s - Isso não deveria acontecer</string>
+    <string name="cannot_write_config">Não foi possível salvar a configuração: %s</string>
+    <string name="action_refresh">Atualizar os arquivos do host</string>
+    <string name="notification_starting">Iniciando</string>
+    <string name="notification_running">Ativo</string>
+    <string name="notification_stopping">Parando</string>
+    <string name="notification_waiting_for_net">Aguardando a conexão</string>
+    <string name="notification_reconnecting">Conectando de novo</string>
+    <string name="notification_reconnecting_error">Falha de conexão</string>
+    <string name="notification_stopped">Parou</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Negar</item>
+        <item>Permitir</item>
+        <item>Ignorar</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits"/>
+    <string name="app_version_info">Versão: %s</string>
+    <string name="missing_hosts_files_message">Alguns arquivos host configurados (não-ignorados) estão faltando.\n\nUtilize o botão "Atualizar" para baixar os arquivos host.\n\nQuer continuar mesmo assim?</string>
+    <string name="missing_hosts_files_title">Faltando os arquivos host</string>
+    <string name="button_no">Não</string>
+    <string name="button_yes">Sim</string>
+    <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
+    <string name="whitelist_tab">Apps</string>
+    <string name="show_notification">Mostrar a notificação</string>
+    <string name="could_not_configure_vpn_service">Não foi possível configurar o serviço de VPN - Verifique se você não usa um serviço de VPN sempre ativo como o Assistente do WiFi e o desative</string>
+    <string name="dns_description">Habilitar seus servidores DNS preferidos</string>
+    <string name="host_description">Regras vermelhas bloqueiam, regras verdes permitem</string>
+    <string name="disable_notification_title">Desativar notificação</string>
+    <string name="disable_notification_message">Ao desativar a notificação o Dns66 pode ser interrompido sob pressão de memória.\n\nDesativar a notificação mesmo assim?</string>
+    <string name="disable_notification_ack">Desativar notificação</string>
+    <string name="disable_notification_nak">Cancelar</string>
+    <string name="whitelist_description">Permitir que o Dns66 libere os Apps selecionados</string>
+    <string name="switch_show_system_apps">Mostrar Apps do sistema</string>
+    <string name="location_dns">Endereço IP do servidor DNS (IPv4 or IPv6)</string>
+    <string name="state_dns_enabled">Ativo</string>
+    <string name="host_update_error_item">Erro %1$d: %2$s</string>
+    <string name="update_incomplete">Atualização incompleta</string>
+    <string name="update_incomplete_description">Alguns arquivos do host não puderam ser baixados. Se os arquivos fossem baixados anteriormente, as versões antigas continuarão a ser utilizadas.</string>
+    <string name="updating_hostfiles">Atualizando os arquivos host</string>
+    <string name="action_use_file">Usar arquivo</string>
+    <string name="persistable_uri_permission_failed">Não foi possível utilizar o arquivo solicitado: Não é permitido utilizar persistentemente o arquivo solicitado</string>
+    <string name="updating_n_host_files">Atualizado %1$d arquivos host</string>
+    <string name="could_not_update_all_hosts">Não foi possível atualizar todos os arquivos host</string>
+    <string name="permission_denied">Permissão negada</string>
+    <string name="invalid_url_s">URL inválido: %1$s</string>
+    <string name="file_not_found">Arquivo não encontrado</string>
+    <string name="unknown_error_s">Erro inesperado: %1$s</string>
+    <string name="requested_timed_out">Tempo excedido para o pedido</string>
+    <string name="action_delete">Excluir</string>
+    <string name="night_mode">Tema escuro</string>
+    <string name="expand_bar_toggle_expand">Abrir o painel com detalhes</string>
+    <string name="expand_bar_toggle_close">Fechar o painel com detalhes</string>
+    <string name="expand_bar_expanded">Aberto</string>
+    <string name="expand_bar_closed">Fechado</string>
+    <string name="action_stop">Parar</string>
+    <string name="action_start">Iniciar</string>
+    <string name="automatic_refresh">Atualizar diariamente</string>
+    <string name="automatic_refresh_description">As atualizações diárias ocorrem ao carregar o celular, enquanto inativo e usando uma rede fixa</string>
+    <string name="watchdog">Observar a conexão</string>
+    <string name="watchdog_description">Verifique a conexão em intervalos cada vez mais longos, e reconecte, se parar de funcionar</string>
+    <string name="legend_host_intro">As entradas são processadas em ordem. Se várias entradas contêm o mesmo host, a última entrada é aplicada. As ações são:</string>
+    <string name="legend_host_ignore">Ignorar esta entrada</string>
+    <string name="legend_host_allow">Permitir o acesso ao host nesta entrada</string>
+    <string name="legend_host_deny">Negar o acesso ao host nesta entrada</string>
+    <string name="do_not_use_dns_server">Desligado</string>
+    <string name="use_dns_server">Ligado</string>
+    <string name="switch_onboot_description">Iniciar o Dns66 automaticamente quando o Android for reiniciado (se o App estava ativo quando o dispositivo foi desligado).</string>
+    <string name="activity_edit_dns_server">Editar o servidor DNS</string>
+    <string name="activity_edit_filter">Editar o filtro</string>
+    <string name="notification_paused_title">Dns66 pausado</string>
+    <string name="notification_paused_text">Toque para retomar.</string>
+    <string name="notification_action_pause">Pausar</string>
+    <string name="whitelist_on_vpn">Não há Apps</string>
+    <string name="whitelist_not_on_vpn">Todos os Apps</string>
+    <string name="whitelist_intelligent">Apps do sistema exceto navegadores</string>
+    <string name="ipv6_support_description">Desativar isto se a sua rede não utiliza IPv6 ou se você não pode iniciar o serviço.</string>
+    <string name="ipv6_support">IPv6 suportado</string>
+    <string name="action_logcat">Logcat</string>
+    <string name="notifications_running">Serviços em funcionamento</string>
+    <string name="notifications_running_desc">Notificações para interagir com o serviço em funcionamento</string>
+    <string name="notifications_update">Estado</string>
+    <string name="notifications_update_desc">Notificações sobre as actualizações de arquivos host</string>
+    <string name="notifications_paused">Serviços pausados</string>
+    <string name="notifications_paused_desc">Notificações para retomar após pausar</string>
+    <string name="notifications_group_service">Controle de serviços</string>
+    <string name="notifications_group_updates">Atualizações</string>
+    <string-array name="whitelist_defaults">
+        <item>Nenhum App liberado por padrão
+</item>
+        <item>Todos os Apps liberados por padrão</item>
+        <item>Apps do sistema liberados por padrão</item>
+    </string-array>
+</resources>
