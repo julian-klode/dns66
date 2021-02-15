@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_shortdesc">Verkkotunnusten estot ja DNS-palvelimien muokkaus</string>
+    <string name="custom_dns">Mukautetut DNS-palvelimet</string>
+    <string name="enable_hosts">Suodata verkkotunnuksia</string>
+    <string name="start_tab">Aloita</string>
+    <string name="hosts_tab">Hosts</string>
+    <string name="dns_tab">DNS</string>
+    <string name="action_export">Vie asetukset</string>
+    <string name="action_import">Tuo asetukset</string>
+    <string name="action_save">Valmis</string>
+    <string name="load_defaults">Käytä oletusasetuksia</string>
+    <string name="action_about">Tietoja</string>
+    <string name="info_app_license">Tämä sovellus on vapaa ohjelmisto: voit jakaa ja/tai muokata sitä GNU General Public License -lisenssin ehtojen mukaisesti, niin kuin se on julkaistu Free Software Foundationin toimesta, käyttäen 3. versiota, tai halutessasi mitä vain myöhempää versiota.</string>
+    <string name="switch_onboot">Jatka järjestelmän käynnistyessä</string>
+    <string name="activity_edit">Muokkaa kohtaa</string>
+    <string name="title">Nimi</string>
+    <string name="location">Sijainti (URL tai verkkotunnus)</string>
+    <string name="action">Toiminto</string>
+    <string name="cannot_restore_previous_config">Ei voida palauttaa aiempia asetuksia: %s</string>
+    <string name="cannot_read_config">Ei voida lukea asetuksia: %s</string>
+    <string name="cannot_load_default_config">Ei voida lukea oletusasetuksia: %s - Näin ei pitäisi käydä!</string>
+    <string name="cannot_write_config">Ei voida kirjoittaa asetuksia: %s</string>
+    <string name="action_refresh">Päivitä hosts-tiedostot</string>
+    <string name="notification_starting">Käynnistyy</string>
+    <string name="notification_running">Aktiivinen</string>
+    <string name="notification_stopping">Suljetaan</string>
+    <string name="notification_waiting_for_net">Odotetaan verkkoa</string>
+    <string name="notification_reconnecting">Yhdistetään uudelleen</string>
+    <string name="notification_reconnecting_error">Ongelma uudelleen yhdistämisessä</string>
+    <string name="notification_stopped">Pysäytetty</string>
+    <string name="notification_title">DNS66</string>
+    <string-array name="item_states">
+        <item>Kiellä</item>
+        <item>Salli</item>
+        <item>Ohita</item>
+    </string-array>
+    <!-- Translate with something like <Language> Translation: Your Name -->
+    <string name="translator_credits">Suomeksi kääntänyt: Ilmari Jaaranen</string>
+    <string name="app_version_info">Versio: %s</string>
+    <string name="missing_hosts_files_message">Jotkut asetetuista (ei-ohitetuista) hosts-tiedostoista puuttuvat.\n\nKäytä ‘Virkistä’ toimintoa lataaksesi hosts-tiedostot.\n\nHaluatko silti jatkaa?</string>
+    <string name="missing_hosts_files_title">Hosts-tiedosto puuttuu</string>
+    <string name="button_no">Ei</string>
+    <string name="button_yes">Kyllä</string>
+    <string name="whitelist_tab">Apps</string>
+    <string name="show_notification">Näytä ilmoitus</string>
+    <string name="could_not_configure_vpn_service">Ei voitu konfiguroida VPN-palvelua - Tarkista, onko käytössä aina päällä oleva VPN-palvelu, kuten WiFi-apuri, ja sammuta se.</string>
+    <string name="dns_description">Aktivoi haluamasi DNS-palvelimet</string>
+    <string name="host_description">Punaiset säännöt estävät, vihreät säännöt sallivat</string>
+    <string name="disable_notification_title">Poistetaan ilmoitus käytöstä</string>
+    <string name="disable_notification_message">Ilmoituksen poistaminen saattaa aiheuttaa DNS66:n pysähtymisen muistin käydessä vähiin.\n\nHaluatko poistaa ilmoituksen käytöstä?</string>
+    <string name="disable_notification_ack">Poista ilmoitus käytöstä</string>
+    <string name="disable_notification_nak">Keskeytä</string>
+    <string name="whitelist_description">Ohita DNS66 valituille sovelluksille</string>
+    <string name="switch_show_system_apps">Näytä järjestelmä-sovellukset</string>
+    <string name="location_dns">DNS-palvelimen IP-osoite (IPv4 tai IPv6)</string>
+    <string name="state_dns_enabled">Käytössä</string>
+    <string name="host_update_error_item">Virhe %1$d: %2$s</string>
+    <string name="update_incomplete">Päivitys puutteellinen</string>
+    <string name="update_incomplete_description">Joitakin hosts-tiedostoista ei pystytty lataamaan. Jatketaan käyttämällä vanhoja tiedostoja, mikäli ne ladattiin aiemmin.</string>
+    <string name="updating_hostfiles">Päivitetään hosts-tiedostoja</string>
+    <string name="action_use_file">Käytä tiedostoa</string>
+    <string name="persistable_uri_permission_failed">Ei voida käyttää pyydettyä tiedostoa: Ei sallittu käyttää pyydettyä tiedostoa pysyvästi</string>
+    <string name="updating_n_host_files">Päivitetään %1$d hosts-tiedostoja</string>
+    <string name="could_not_update_all_hosts">Ei kyetty päivittämään kaikkia hosts-tiedostoja</string>
+    <string name="permission_denied">Pääsy estetty</string>
+    <string name="invalid_url_s">Virheellinen URL: %1$s</string>
+    <string name="file_not_found">Tiedostoa ei löytynyt</string>
+    <string name="unknown_error_s">Odottamaton virhe: %1$s</string>
+    <string name="requested_timed_out">Pyyntö vanhentui</string>
+    <string name="action_delete">Poista</string>
+    <string name="night_mode">Tumma teema</string>
+    <string name="expand_bar_toggle_expand">Avaa seikkaperäinen paneeli</string>
+    <string name="expand_bar_toggle_close">Sulje seikkaperäinen paneeli</string>
+    <string name="expand_bar_expanded">Avattu</string>
+    <string name="expand_bar_closed">Suljettu</string>
+    <string name="action_stop">Lopeta</string>
+    <string name="action_start">Aloita</string>
+    <string name="automatic_refresh">Virkistä päivittäin</string>
+    <string name="automatic_refresh_description">Päivitykset tehdään kun laite on latauksessa, jouten ja rajoittamattomassa verkossa.</string>
+    <string name="watchdog">Vahdi yhteyttä</string>
+    <string name="watchdog_description">Tarkkaile yhteyttä kasvavin väliajoin ja yhdistä uudelleen, jos yhteys lakkaa toimimasta.</string>
+    <string name="legend_host_intro">Kohdat prosessoidaan järjestyksessä. Jos useammat kohdat sisältävät saman verkkotunnuksen, käytetään jälkimmäistä kohtaa. Toiminnot ovat:</string>
+    <string name="legend_host_ignore">Ohita tämä kohta</string>
+    <string name="legend_host_allow">Salli pääsy tämän kohdan verkkotunnuksiin</string>
+    <string name="legend_host_deny">Evää pääsy tämän kohdan verkkotunnuksiin</string>
+    <string name="do_not_use_dns_server">Pois</string>
+    <string name="use_dns_server">Päällä</string>
+    <string name="switch_onboot_description">Aja DNS66 laitteen käynnistyessä, mikäli se oli käytössä kun laite suljettiin.</string>
+    <string name="activity_edit_dns_server">Muokkaa DNS-palvelinta</string>
+    <string name="activity_edit_filter">Muokkaa suodatinta</string>
+    <string name="notification_paused_title">DNS66 tauolla</string>
+    <string name="notification_paused_text">Näpäytä jatkaaksesi.</string>
+    <string name="notification_action_pause">Tauota</string>
+    <string name="whitelist_on_vpn">Ei sovelluksia</string>
+    <string name="whitelist_not_on_vpn">Kaikki sovellukset</string>
+    <string name="whitelist_intelligent">Järjestelmä-sovellukset paitsi selaimet</string>
+    <string name="ipv6_support_description">Kytke pois päältä jos verkkosi ei käytä IPv6:ta tai palvelun käynnistäminen ei onnistu.</string>
+    <string name="ipv6_support">IPv6-tuki</string>
+    <string name="action_logcat">Logcat</string>
+    <string name="notifications_running">Palvelu käynnissä</string>
+    <string name="notifications_update">Tila</string>
+    <string name="notifications_update_desc">Ilmoitukset hosts-tiedostojen päivittämisestä</string>
+    <string name="notifications_paused">Palvelu tauolla</string>
+    <string name="notifications_paused_desc">Ilmoituksia jatketaan tauon jälkeen</string>
+    <string name="notifications_group_service">Palvelun hallinta</string>
+    <string name="notifications_group_updates">Päivitykset</string>
+    <string name="unstable_feature">Epävakaa ominaisuus</string>
+    <string name="unstable_watchdog_message">Yhteyden tarkkailu saattaa aiheuttaa ongelmia yhteydessä</string>
+    <string name="button_cancel">Peruuta</string>
+    <string name="button_continue">Jatka</string>
+    <string-array name="whitelist_defaults">
+        <item>Mikään sovellus ei ohita estoja oletuksena.</item>
+        <item>Kaikki sovellukset ohittavat estot oletuksena.</item>
+        <item>Järjestelmä-sovellukset ohittavat estot oletuksena.</item>
+    </string-array>
+</resources>
