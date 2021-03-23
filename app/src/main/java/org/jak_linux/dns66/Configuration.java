@@ -86,9 +86,6 @@ public class Configuration {
                 break;
             case 2:
                 removeURL("https://hosts-file.net/ad_servers.txt");
-                addURL(1, "DuckDuckGo Tracker List (provided by Blokada)",
-                        "https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt",
-                        Item.STATE_IGNORE);
                 break;
         }
         this.minorVersion = level;
