@@ -34,7 +34,8 @@ public class Configuration {
     public static final Gson GSON = new Gson();
     static final int VERSION = 1;
     /* Default tweak level */
-    static final int MINOR_VERSION = 2;
+    static final int MINOR_VERSION = 3;
+    private static final String TAG = "Configuration";
     public int version = 1;
     public int minorVersion = 0;
     public boolean autoStart;
@@ -87,6 +88,8 @@ public class Configuration {
             case 2:
                 removeURL("https://hosts-file.net/ad_servers.txt");
                 break;
+            case 3:
+                disableURL("https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt");
         }
         this.minorVersion = level;
     }
@@ -131,6 +134,17 @@ public class Configuration {
             Item host = (Item) itr.next();
             if (host.location.equals(oldURL))
                 itr.remove();
+        }
+    }
+
+
+    public void disableURL(String oldURL) {
+        Log.d(TAG, String.format("disableURL: Disabling %s", oldURL));
+        Iterator itr = hosts.items.iterator();
+        while (itr.hasNext()) {
+            Item host = (Item) itr.next();
+            if (host.location.equals(oldURL))
+                host.state = Item.STATE_IGNORE;
         }
     }
 

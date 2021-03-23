@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "minorVersion": 2,
+  "minorVersion": 3,
   "autoStart": true,
   "showNotification": true,
   "nightMode": false,
