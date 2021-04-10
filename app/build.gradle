@@ -19,6 +19,7 @@ android {
     }
     lintOptions {
         warning "MissingTranslation"
+        abortOnError false
     }
     compileOptions {
         sourceCompatibility = 1.8
