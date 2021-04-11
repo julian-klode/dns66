@@ -124,7 +124,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
         Message dnsMsg;
         try {
             dnsMsg = new Message(responsePayload);
-            Log.i(TAG, "got dns response " + dnsMsg.toString());
+            Log.i(TAG, "THROMER handleDnsResponse: got dns response " + dnsMsg.toString());
         } catch (IOException e) {
             Log.i(TAG, "handleDnsResponse: non-DNS or invalid packet", e);
         }
@@ -233,7 +233,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
         if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
 	    if (dnsQueryName.equals("us.edge.bamgrid.com")) {
-	      Log.i(TAG, "handleDnsRequest: mapping " + dnsQueryName + " to " + HARD_CODED_A_RECORD.toString());
+	      Log.i(TAG, "THROMER handleDnsRequest: mapping " + dnsQueryName + " to " + HARD_CODED_A_RECORD.toString());
               dnsMsg.getHeader().setFlag(Flags.QR);
 	      dnsMsg.getHeader().setRcode(Rcode.NOERROR);
 	      dnsMsg.addRecord(HARD_CODED_A_RECORD, Section.AUTHORITY);
