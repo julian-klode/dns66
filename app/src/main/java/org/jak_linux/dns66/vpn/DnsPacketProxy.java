@@ -40,6 +40,7 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -77,7 +78,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
             Name name = new Name("dns66.dns66.invalid.");
             NEGATIVE_CACHE_SOA_RECORD = new SOARecord(name, DClass.IN, NEGATIVE_CACHE_TTL_SECONDS,
                     name, name, 0, 0, 0, 0, NEGATIVE_CACHE_TTL_SECONDS);
-	    HARD_CODED_A_RECORD = new ARecord(new Name("d2j0obo0llnl7l.cloudfront.net."), Type.A, 59,
+	    HARD_CODED_A_RECORD = new ARecord(new Name("us.edge.bamgrid.com."), Type.A, 59,
 			    	              InetAddress.getByAddress(new byte[]{(byte)162, (byte)211, 67, (byte)251}));
         } catch (TextParseException e) {
             throw new RuntimeException(e);
@@ -121,6 +122,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
      * @param responsePayload The payload of the response
      */
     void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
+	Log.i(TAG, "THROMER handleDnsResponse raw bytes: " + Arrays.toString(responsePayload));
         Message dnsMsg;
         try {
             dnsMsg = new Message(responsePayload);
@@ -171,7 +173,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
      * @throws AdVpnThread.VpnNetworkException If some network error occurred
      */
     void handleDnsRequest(byte[] packetData) throws AdVpnThread.VpnNetworkException {
-
+        Log.i(TAG, "THROMER handleDnsRequest raw packetData: " + Arrays.toString(packetData));
         IpPacket parsedPacket = null;
         try {
             parsedPacket = (IpPacket) IpSelector.newPacket(packetData, 0, packetData.length);
@@ -222,6 +224,7 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
         Message dnsMsg;
         try {
             dnsMsg = new Message(dnsRawData);
+	    Log.i(TAG, "THROMER handleDnsRequest: got dns request" + dnsMsg.toString());
         } catch (IOException e) {
             Log.i(TAG, "handleDnsRequest: Discarding non-DNS or invalid packet", e);
             return;
@@ -236,10 +239,10 @@ d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
 	      Log.i(TAG, "THROMER handleDnsRequest: mapping " + dnsQueryName + " to " + HARD_CODED_A_RECORD.toString());
               dnsMsg.getHeader().setFlag(Flags.QR);
 	      dnsMsg.getHeader().setRcode(Rcode.NOERROR);
-	      dnsMsg.addRecord(HARD_CODED_A_RECORD, Section.AUTHORITY);
+	      dnsMsg.addRecord(HARD_CODED_A_RECORD, Section.ANSWER);
 	      handleDnsResponse(parsedPacket, dnsMsg.toWire());
 	    } else {
-              Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
+              Log.i(TAG, "THROMER handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
               DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
               eventLoop.forwardPacket(outPacket, parsedPacket);
 	    }
