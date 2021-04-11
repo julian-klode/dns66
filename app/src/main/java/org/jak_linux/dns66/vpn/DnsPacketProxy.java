@@ -23,15 +23,17 @@ import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
+import org.xbill.DNS.ARecord;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
+import org.xbill.DNS.InetAddress;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Rcode;
 import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.Section;
 import org.xbill.DNS.TextParseException;
-
+import org.xbill.DNS.Type;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
@@ -50,6 +52,22 @@ public class DnsPacketProxy {
     // Choose a value that is smaller than the time needed to unblock a host.
     private static final int NEGATIVE_CACHE_TTL_SECONDS = 5;
     private static final SOARecord NEGATIVE_CACHE_SOA_RECORD;
+    private static final SOARecord HARD_CODED_A_RECORD;
+
+    /*
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 27656
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;d2j0obo0llnl7l.cloudfront.net. IN      A
+
+;; ANSWER SECTION:
+d2j0obo0llnl7l.cloudfront.net. 59 IN    A       13.224.10.9
+*/
 
     static {
         try {
@@ -58,6 +76,8 @@ public class DnsPacketProxy {
             Name name = new Name("dns66.dns66.invalid.");
             NEGATIVE_CACHE_SOA_RECORD = new SOARecord(name, DClass.IN, NEGATIVE_CACHE_TTL_SECONDS,
                     name, name, 0, 0, 0, 0, NEGATIVE_CACHE_TTL_SECONDS);
+	    HARD_CODED_A_RECORD = new ARecord(new Name("d2j0obo0llnl7l.cloudfront.net."), Type.A, 59,
+			    	              InetAddress.getByAddress(new byte[]{162, 211, 67, 251}));
         } catch (TextParseException e) {
             throw new RuntimeException(e);
         }
@@ -97,6 +117,13 @@ public class DnsPacketProxy {
      * @param responsePayload The payload of the response
      */
     void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
+        Message dnsMsg;
+        try {
+            dnsMsg = new Message(responsePayload);
+            Log.i(TAG, "got dns response " + dnsMsg.toString());
+        } catch (IOException e) {
+            Log.i(TAG, "handleDnsResponse: non-DNS or invalid packet", e);
+        }
         UdpPacket udpOutPacket = (UdpPacket) requestPacket.getPayload();
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
                 .srcPort(udpOutPacket.getHeader().getDstPort())
@@ -201,9 +228,17 @@ public class DnsPacketProxy {
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
         if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
-            DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
-            eventLoop.forwardPacket(outPacket, parsedPacket);
+	    if (dnsQueryName.eq("us.edge.bamgrid.com")) {
+	      Log.i(TAG, "handleDnsRequest: mapping " + dnsQueryName + " to " + HARD_CODED_A_RECORD.toString());
+              dnsMsg.getHeader().setFlag(Flags.QR);
+	      dnsMsg.getHeader().setRCode(Rcode.NOERROR);
+	      dnsMsg.addRecord(HARD_CODED_A_RECORD, Section.AUTHORITY);
+	      handleDnsResponse(parsedPacket, dnsMsg.toWire());
+	    } else {
+              Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
+              DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
+              eventLoop.forwardPacket(outPacket, parsedPacket);
+	    }
         } else {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);

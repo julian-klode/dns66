@@ -33,6 +33,7 @@ import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
 import org.jak_linux.dns66.MainActivity;
 import org.pcap4j.packet.IpPacket;
+import org.xbill.DNS.Message;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -354,6 +355,16 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
 
     private void handleRawDnsResponse(IpPacket parsedPacket, DatagramSocket dnsSocket) throws IOException {
         byte[] datagramData = new byte[1024];
+	/*
+	Message dnsMsg;
+        try {
+            dnsMsg = new Message(datagramData);
+	    Log.i(TAG, "got dns response " + dnsMsg.toString());
+        } catch (IOException e) {
+            Log.i(TAG, "handleRawDnsResponse: non-DNS or invalid packet", e);
+            return;
+        }
+	*/
         DatagramPacket replyPacket = new DatagramPacket(datagramData, datagramData.length);
         dnsSocket.receive(replyPacket);
         dnsPacketProxy.handleDnsResponse(parsedPacket, datagramData);
