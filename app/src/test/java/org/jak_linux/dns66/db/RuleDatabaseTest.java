@@ -38,13 +38,15 @@ public class RuleDatabaseTest {
         //Mockito.when(Log.d(tag, msg, throwable)).thenReturn(0);
     }
 
+    // TODO(thromer) More tests
+
     @Test
     public void testGetInstance() throws Exception {
         RuleDatabase instance = RuleDatabase.getInstance();
 
         assertNotNull(instance);
         assertTrue(instance.isEmpty());
-        assertFalse(instance.isBlocked("example.com"));
+        assertNull(instance.lookup("example.com"));
     }
 
     @Test
@@ -92,7 +94,7 @@ public class RuleDatabaseTest {
     @Test
     public void testLoadReader() throws Exception {
         RuleDatabase db = new RuleDatabase();
-        db.nextBlockedHosts = db.blockedHosts.get();
+        db.nextRules = db.rules.get();
 
         Configuration.Item item = new Configuration.Item();
 
@@ -102,28 +104,28 @@ public class RuleDatabaseTest {
         // Ignore. Does nothing
         assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertTrue(db.isEmpty());
-        assertFalse(db.isBlocked("example.com"));
+        assertNull(db.lookup("example.com"));
 
         // Deny, the host should be blocked now.
         item.state = Configuration.Item.STATE_DENY;
         assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertFalse(db.isEmpty());
-        assertTrue(db.isBlocked("example.com"));
+        assertTrue(db.lookup("example.com").isBlocked());
 
         // Reallow again, the entry should disappear.
         item.state = Configuration.Item.STATE_ALLOW;
         assertTrue(db.loadReader(item, new StringReader("example.com")));
         assertTrue(db.isEmpty());
-        assertFalse(db.isBlocked("example.com"));
+        assertNull(db.lookup("example.com"));
 
         // Check multiple lines
         item.state = Configuration.Item.STATE_DENY;
-        assertFalse(db.isBlocked("example.com"));
-        assertFalse(db.isBlocked("foo.com"));
+        assertNull(db.lookup("example.com"));
+        assertNull(db.lookup("foo.com"));
         assertTrue(db.loadReader(item, new StringReader("example.com\n127.0.0.1 foo.com")));
         assertFalse(db.isEmpty());
-        assertTrue(db.isBlocked("example.com"));
-        assertTrue(db.isBlocked("foo.com"));
+        assertTrue(db.lookup("example.com").isBlocked());
+        assertTrue(db.lookup("foo.com").isBlocked());
 
         // Interrupted test
         Thread.currentThread().interrupt();
@@ -137,12 +139,12 @@ public class RuleDatabaseTest {
         // Test with an invalid line before a valid one.
         item.state = Configuration.Item.STATE_DENY;
         assertTrue(db.loadReader(item, new StringReader("invalid line\notherhost.com")));
-        assertTrue(db.isBlocked("otherhost.com"));
+        assertTrue(db.lookup("otherhost.com").isBlocked());
 
         // Allow again
         item.state = Configuration.Item.STATE_ALLOW;
         assertTrue(db.loadReader(item, new StringReader("invalid line\notherhost.com")));
-        assertFalse(db.isBlocked("otherhost.com"));
+        assertNull(db.lookup("otherhost.com").isBlocked());
 
         // Reader can't read, we are aborting.
         Reader reader = Mockito.mock(Reader.class);
@@ -175,13 +177,13 @@ public class RuleDatabaseTest {
         when(FileHelper.openItemFile(context, item)).thenReturn(null);
         ruleDatabase.initialize(context);
 
-        assertTrue(ruleDatabase.isBlocked("ahost.com"));
+        assertTrue(ruleDatabase.lookup("ahost.com").isBlocked());
 
         configuration.hosts.enabled = false;
 
         ruleDatabase.initialize(context);
 
-        assertFalse(ruleDatabase.isBlocked("ahost.com"));
+        assertNull(ruleDatabase.lookup("ahost.com"));
         assertTrue(ruleDatabase.isEmpty());
     }
 
@@ -206,7 +208,7 @@ public class RuleDatabaseTest {
         when(FileHelper.openItemFile(context, item)).thenReturn(null);
         ruleDatabase.initialize(context);
 
-        assertFalse(ruleDatabase.isBlocked("ahost.com"));
+        assertNull(ruleDatabase.lookup("ahost.com"));
         assertTrue(ruleDatabase.isEmpty());
     }
 
@@ -232,7 +234,7 @@ public class RuleDatabaseTest {
         when(FileHelper.openItemFile(context, item)).thenReturn(new InputStreamReader(new ByteArrayInputStream("example.com".getBytes("utf-8"))));
         ruleDatabase.initialize(context);
 
-        assertTrue(ruleDatabase.isBlocked("example.com"));
+        assertTrue(ruleDatabase.lookup("example.com").isBlocked());
 
         item.state = Configuration.Item.STATE_IGNORE;
 

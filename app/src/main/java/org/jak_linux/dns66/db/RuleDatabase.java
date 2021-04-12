@@ -46,7 +46,7 @@ public class RuleDatabase {
     public static class Rule {
 	private final boolean blocked;
 	private final InetAddress address;
-	static Rule createBlockRule() {
+	public static Rule createBlockRule() {
 	    return new Rule(true, null);
 	}
 	static Rule createMapRule(InetAddress address) {
@@ -163,6 +163,9 @@ public class RuleDatabase {
         return rules.get().get(host);
     }
 
+    boolean isEmpty() {
+        return rules.get().isEmpty();
+    }
     /**
      * Load the hosts according to the configuration
      *
