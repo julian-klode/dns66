@@ -27,6 +27,7 @@ import org.pcap4j.packet.UnknownPacket;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
+import java.net.InetAddress;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Rcode;
@@ -40,6 +41,8 @@ import java.net.DatagramPacket;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -63,7 +66,10 @@ public class DnsPacketProxy {
                     name, name, 0, 0, 0, 0, NEGATIVE_CACHE_TTL_SECONDS);
         } catch (TextParseException e) {
             throw new RuntimeException(e);
-        }
+        } catch (UnknownHostException e) {
+	    Log.i(TAG, "uh oh couldn't build hard_coded_a_record");
+	    throw new RuntimeException(e);
+	}
     }
 
     final RuleDatabase ruleDatabase;
@@ -100,6 +106,14 @@ public class DnsPacketProxy {
      * @param responsePayload The payload of the response
      */
     void handleDnsResponse(IpPacket requestPacket, byte[] responsePayload) {
+	Log.i(TAG, "THROMER handleDnsResponse raw bytes: " + Arrays.toString(responsePayload));
+        Message dnsMsg;
+        try {
+            dnsMsg = new Message(responsePayload);
+            Log.i(TAG, "THROMER handleDnsResponse: got dns response " + dnsMsg.toString());
+        } catch (IOException e) {
+            Log.i(TAG, "handleDnsResponse: non-DNS or invalid packet", e);
+        }
         UdpPacket udpOutPacket = (UdpPacket) requestPacket.getPayload();
         UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder(udpOutPacket)
                 .srcPort(udpOutPacket.getHeader().getDstPort())
@@ -143,7 +157,7 @@ public class DnsPacketProxy {
      * @throws AdVpnThread.VpnNetworkException If some network error occurred
      */
     void handleDnsRequest(byte[] packetData) throws AdVpnThread.VpnNetworkException {
-
+        Log.i(TAG, "THROMER handleDnsRequest raw packetData: " + Arrays.toString(packetData));
         IpPacket parsedPacket = null;
         try {
             parsedPacket = (IpPacket) IpSelector.newPacket(packetData, 0, packetData.length);
@@ -203,30 +217,30 @@ public class DnsPacketProxy {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-	Rule rule = ruleDatabase.lookup(dnsQueryName.toLowerCase(Locale.ENGLISH));
-	if (rule == null) {
+	      Rule rule = ruleDatabase.lookup(dnsQueryName.toLowerCase(Locale.ENGLISH));
+	      if (rule == null) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             eventLoop.forwardPacket(outPacket, parsedPacket);
         } else {
-	    if (rule.isBlocked()) {
-		Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
-		dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
-	    } else {
-		InetAddress address = rule.getAddress();
-		Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " mapped to " + address);
-		ARecord record = null;
-		try {
-		    record = new ARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
-		} catch (TextParseException e) {
-		    throw new RuntimeException(e);
-		}
-		dnsMsg.addRecord(record, Section.ANSWER);
-	    }
-	    dnsMsg.getHeader().setFlag(Flags.QR);
-	    dnsMsg.getHeader().setRcode(Rcode.NOERROR);
-	    handleDnsResponse(parsedPacket, dnsMsg.toWire());
-        }
+            if (rule.isBlocked()) {
+		            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
+                dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
+            } else {
+                InetAddress address = rule.getAddress();
+                Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " mapped to " + address);
+                ARecord record = null;
+	              try {
+    		            record = new ARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
+		            } catch (TextParseException e) {
+		                throw new RuntimeException(e);
+                }
+                dnsMsg.addRecord(record, Section.ANSWER);
+            }
+            dnsMsg.getHeader().setFlag(Flags.QR);
+            dnsMsg.getHeader().setRcode(Rcode.NOERROR);
+            handleDnsResponse(parsedPacket, dnsMsg.toWire());
+         }
     }
 
     /**

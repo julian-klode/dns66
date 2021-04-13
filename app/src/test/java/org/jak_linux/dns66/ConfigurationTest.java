@@ -5,12 +5,17 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.runner.RunWith;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -20,14 +25,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * Created by jak on 07/04/17.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Log.class)
 public class ConfigurationTest {
 
     @Rule
@@ -56,6 +67,11 @@ public class ConfigurationTest {
         assertFalse("http domain not downloadable", newItemForLocation("http.example.com").isDownloadable());
     }
 
+    @Before
+    public void setUp() {
+        mockStatic(Log.class);
+    }
+    
     @Test
     public void testResolve() throws Exception {
         Configuration.Whitelist wl = new Configuration.Whitelist() {
@@ -147,7 +163,9 @@ public class ConfigurationTest {
     }
 
     @Test
+    @PrepareForTest({Log.class})
     public void testRead() throws Exception {
+        when(Log.d(anyString(), anyString(), any(Throwable.class))).then(new CountingAnswer(null));
         Configuration config = Configuration.read(new StringReader("{}"));
 
         assertNotNull(config.hosts);
@@ -199,6 +217,23 @@ public class ConfigurationTest {
         applicationInfo.packageName = name;
         applicationInfo.flags = flags;
         return applicationInfo;
+    }
+
+    private class CountingAnswer implements Answer<Object> {
+
+        private final Object result;
+        private int numCalls;
+
+        CountingAnswer(Object result) {
+            this.result = result;
+            this.numCalls = 0;
+        }
+
+        @Override
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            numCalls++;
+            return result;
+        }
     }
 
 }

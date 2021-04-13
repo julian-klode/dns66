@@ -3,12 +3,13 @@ apply plugin: "com.hiya.jacoco-android"
 
 android {
     compileSdkVersion 29
+    // compileSdkVersion "31-rc2"
     defaultConfig {
         applicationId "org.jak_linux.dns66"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 29
-        versionName "0.6.8"
+        versionName "0.6.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -19,12 +20,14 @@ android {
     }
     lintOptions {
         warning "MissingTranslation"
+        abortOnError false
     }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
     buildToolsVersion = '29.0.3'
+    // buildToolsVersion = '31.0.0-rc2'
 }
 
 dependencies {
