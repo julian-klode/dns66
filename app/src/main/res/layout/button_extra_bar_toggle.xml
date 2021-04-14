@@ -13,5 +13,5 @@
            android:layout_marginStart="@dimen/activity_horizontal_margin_half"
            android:paddingEnd="@dimen/activity_horizontal_margin_half"
            android:paddingTop="10dp"
-           android:tint="?android:attr/textColorPrimary"
+           app:tint="?android:attr/textColorPrimary"
            app:srcCompat="@drawable/ic_expand_more_black_24dp"/>
