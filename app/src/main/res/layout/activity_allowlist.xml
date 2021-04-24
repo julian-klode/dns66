@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="org.jak_linux.dns66.main.HostsFragment">
 
-    <include layout="@layout/extra_bar_whitelist"/>
+    <include layout="@layout/extra_bar_allowlist"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh"

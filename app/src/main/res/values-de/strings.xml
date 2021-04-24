@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Fehlende Hosts-Dateien</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Benachrichtigung anzeigen</string>
     <string name="could_not_configure_vpn_service">Konnte VPN Dienst nicht konfigurieren - Prüfen Sie, ob ein durchgehend aktives VPN (wie WiFi Assistant) aktiviert ist und deaktivieren sie es</string>
     <string name="dns_description">Aktiviere deine bevorzugten DNS-Server</string>
@@ -49,7 +49,7 @@
     <string name="disable_notification_message">Deaktivieren der Benachrichtigung kann dazu führen, dass DNS66 beendet wird.\n\nSoll die Benachrichtigung deaktiviert werden?</string>
     <string name="disable_notification_ack">Benachrichtigung deaktivieren</string>
     <string name="disable_notification_nak">Abbrechen</string>
-    <string name="whitelist_description">Umgehe DNS66 für gewählte Apps</string>
+    <string name="allowlist_description">Umgehe DNS66 für gewählte Apps</string>
     <string name="switch_show_system_apps">System-Anwendungen anzeigen</string>
     <string name="location_dns">IP-Adresse des DNS-Servers (IPv4 oder IPv6)</string>
     <string name="state_dns_enabled">Diesen DNS-Server verwenden</string>
@@ -90,10 +90,10 @@
     <string name="notification_paused_text">Zum Fortsetzen tippen.</string>
     <string name="notification_paused_title">DNS66 unterbrochen</string>
     <string name="notification_action_pause">Unterbrechen</string>
-    <string name="whitelist_on_vpn">Keine Apps</string>
-    <string name="whitelist_not_on_vpn">Alle Apps</string>
-    <string name="whitelist_intelligent">System Apps (außer Browser)</string>
-    <string-array name="whitelist_defaults">
+    <string name="allowlist_on_vpn">Keine Apps</string>
+    <string name="allowlist_not_on_vpn">Alle Apps</string>
+    <string name="allowlist_intelligent">System Apps (außer Browser)</string>
+    <string-array name="allowlist_defaults">
         <item>Keine Apps umgehen standardmäßig</item>
         <item>Alle Apps umgehen standardmäßig</item>
         <item>System Apps umgehen standardmäßig</item>

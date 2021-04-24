@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Brak plików hosts</string>
     <string name="button_no">Nie</string>
     <string name="button_yes">Tak</string>
-    <string name="whitelist_tab">Aplikacje</string>
+    <string name="allowlist_tab">Aplikacje</string>
     <string name="show_notification">Pokaż powiadomienie</string>
     <string name="could_not_configure_vpn_service">Nie można skonfigurować usługi VPN - Sprawdź, czy inne aplikacje nie kolidują z usługą VPN, np. WiFi Assistant i wyłącz ją</string>
     <string name="dns_description">Włącz preferowane serwery DNS</string>
@@ -50,7 +50,7 @@
     <string name="disable_notification_message">Wyłączenie powiadomienia może spowodować, że DNS66 zostanie zatrzymany pod presją pamięci systemu.\n\nCzy na pewno chcesz wyłączyć powiadomienie?</string>
     <string name="disable_notification_ack">Wyłącz powiadomienie</string>
     <string name="disable_notification_nak">Przerwji</string>
-    <string name="whitelist_description">Wyłącz DNS66 dla wybranych aplikacji</string>
+    <string name="allowlist_description">Wyłącz DNS66 dla wybranych aplikacji</string>
     <string name="switch_show_system_apps">Pokaż aplikacje systemowe</string>
     <string name="location_dns">Adres IP serwera DNS (IPv4 oder IPv6)</string>
     <string name="state_dns_enabled">Włączone</string>
@@ -91,12 +91,12 @@
     <string name="notification_paused_title">DNS66 wstrzymany</string>
     <string name="notification_paused_text">Dotknij, aby wznowić.</string>
     <string name="notification_action_pause">Pauza</string>
-    <string name="whitelist_on_vpn">Brak aplikacji</string>
-    <string name="whitelist_not_on_vpn">Wszystkie aplikacje</string>
-    <string name="whitelist_intelligent">Aplikacje syst. z wyjątkiem przeglądarek</string>
+    <string name="allowlist_on_vpn">Brak aplikacji</string>
+    <string name="allowlist_not_on_vpn">Wszystkie aplikacje</string>
+    <string name="allowlist_intelligent">Aplikacje syst. z wyjątkiem przeglądarek</string>
     <string name="ipv6_support_description">Wyłącz tę opcję jeśli twoja sieć nie korzysta z protokołu IPv6 lub nie można uruchomić tej usługi.</string>
     <string name="ipv6_support">Obsługa protokołu IPv6</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Brak domyślnie wykluczonych aplikacji</item>
         <item>Wszystkie aplikacje wykluczone domyślnie</item>
         <item>Aplikacje systemowe wykluczone domyślnie</item>

@@ -85,11 +85,11 @@
     <string name="use_dns_server">开启</string>
     <string name="watchdog">监视连接</string>
     <string name="watchdog_description">使用较长的间隔检查连接并在其停止工作时重连</string>
-    <string name="whitelist_description">选中程序忽略 DNS66</string>
-    <string name="whitelist_intelligent">除浏览器外的系统程序</string>
-    <string name="whitelist_not_on_vpn">所有程序</string>
-    <string name="whitelist_on_vpn">无程序</string>
-    <string name="whitelist_tab">程序</string>
+    <string name="allowlist_description">选中程序忽略 DNS66</string>
+    <string name="allowlist_intelligent">除浏览器外的系统程序</string>
+    <string name="allowlist_not_on_vpn">所有程序</string>
+    <string name="allowlist_on_vpn">无程序</string>
+    <string name="allowlist_tab">程序</string>
     <string name="expand_bar_toggle_expand">打开细节面板</string>
     <string name="expand_bar_toggle_close">关闭细节面板</string>
     <string name="expand_bar_expanded">已打开</string>

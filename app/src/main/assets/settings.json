@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "minorVersion": 3,
   "autoStart": true,
   "showNotification": true,
@@ -92,7 +92,7 @@
       }
     ]
   },
-  "whitelist": {
+  "allowlist": {
     "showSystemApps": false,
     "defaultMode": 2,
     "items": [

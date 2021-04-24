@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Manglende vertsfil</string>
     <string name="button_no">Nei</string>
     <string name="button_yes">Ja</string>
-    <string name="whitelist_tab">Apper</string>
+    <string name="allowlist_tab">Apper</string>
     <string name="show_notification">Vis notifikasjoner</string>
     <string name="could_not_configure_vpn_service">Klarte ikke å sette opp VPN-tjenesten - Sjekk om du bruker en alltid-skrudd-på VPN-tjeneste som f.eks. WiFi Assistant, og skru den av.</string>
     <string name="dns_description">Aktiver dine foretrukkede DNS-tjenere</string>
@@ -50,7 +50,7 @@
     <string name="disable_notification_message">Å skru av notifikasjonen kan få DNS66 til å bli stoppet unner RAM-press.\n\nVil du skru av notifikasjonen?</string>
     <string name="disable_notification_ack">Skru av notifikasjonen</string>
     <string name="disable_notification_nak">Avbryt</string>
-    <string name="whitelist_description">Forbipasser DNS66 for de valgte appene</string>
+    <string name="allowlist_description">Forbipasser DNS66 for de valgte appene</string>
     <string name="switch_show_system_apps">Vis systemapper</string>
     <string name="location_dns">IP-adressen til DNS-tjeneren (IPv6 eller IPv4)</string>
     <string name="state_dns_enabled">Aktivert</string>
@@ -91,13 +91,13 @@
     <string name="notification_paused_title">DNS66 ble satt på pause.</string>
     <string name="notification_paused_text">Trykk for å fortsette.</string>
     <string name="notification_action_pause">Pause</string>
-    <string name="whitelist_on_vpn">Ingen apper</string>
-    <string name="whitelist_not_on_vpn">Alle apper</string>
-    <string name="whitelist_intelligent">Systemapper bortsett fra nettlesere</string>
+    <string name="allowlist_on_vpn">Ingen apper</string>
+    <string name="allowlist_not_on_vpn">Alle apper</string>
+    <string name="allowlist_intelligent">Systemapper bortsett fra nettlesere</string>
     <string name="ipv6_support_description">Skru av dette dersom nettverket ditt ikke bruker IPv6, eller hvis du ikke får startet tjenesten.</string>
     <string name="ipv6_support">IPv6-støtte</string>
     <string name="action_logcat">Logcat</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Ingen apper slipper gjennom som standard</item>
         <item>Alle apper slipper gjennom som standard</item>
         <item>Systemapper slipper gjennom som standard</item>

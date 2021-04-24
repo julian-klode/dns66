@@ -35,7 +35,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new HostsFragment();
             case 2:
-                return new WhitelistFragment();
+                return new AllowlistFragment();
             case 3:
                 return new DNSFragment();
         }
@@ -50,7 +50,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return context.getString(R.string.hosts_tab);
             case 2:
-                return context.getString(R.string.whitelist_tab);
+                return context.getString(R.string.allowlist_tab);
             case 3:
                 return context.getString(R.string.dns_tab);
         }

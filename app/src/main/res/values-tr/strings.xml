@@ -50,7 +50,7 @@
     <string name="missing_hosts_files_title">Kayıp adres dosyaları</string>
     <string name="button_no">Hayır</string>
     <string name="button_yes">Evet</string>
-    <string name="whitelist_tab">Uygulamalar</string>
+    <string name="allowlist_tab">Uygulamalar</string>
     <string name="show_notification">Bildirimi Göster</string>
     <string name="could_not_configure_vpn_service">VPN servisi ayarlanamadı - Eğer VPN servisi ile birlikte Wifi Asistanı gibi uygulama kullanıyorsan onu kapatmayı dene.</string>
     <string name="dns_description">Tercih edilen DNS sunucularını aktif et</string>
@@ -59,7 +59,7 @@
     <string name="disable_notification_message">Bildirimin devre dışı bırakılması, uygulamanın bellek baskısı altında durdurulmasına neden olabilir.\n\nBildirimi devre dışı bırakmak istiyor musunuz?</string>
     <string name="disable_notification_ack">Bildirimi Kapat</string>
     <string name="disable_notification_nak">İptal</string>
-    <string name="whitelist_description">İşaretli uygulamalar için DNS66 uygulamasını atla</string>
+    <string name="allowlist_description">İşaretli uygulamalar için DNS66 uygulamasını atla</string>
     <string name="switch_show_system_apps">Sistem uygulamalarını göster</string>
     <string name="location_dns">DNS sunucusunun IP adresi (IPv4 veya IPv6)</string>
     <string name="state_dns_enabled">Aktif Edildi</string>
@@ -92,12 +92,12 @@
     <string name="notification_paused_title">DNS66 duraklatıldı</string>
     <string name="notification_paused_text">Devam etmek için dokunun.</string>
     <string name="notification_action_pause">Duraklat</string>
-    <string name="whitelist_on_vpn">Uygulama yok</string>
-    <string name="whitelist_not_on_vpn">Tüm uygulamalar</string>
-    <string name="whitelist_intelligent">Tarayıcılar dışındaki sistem uygulamaları</string>
+    <string name="allowlist_on_vpn">Uygulama yok</string>
+    <string name="allowlist_not_on_vpn">Tüm uygulamalar</string>
+    <string name="allowlist_intelligent">Tarayıcılar dışındaki sistem uygulamaları</string>
     <string name="ipv6_support_description">Ağınız IPv6 kullanmıyorsa veya hizmeti başlatamazsanız bunu devre dışı bırakın.</string>
     <string name="ipv6_support">IPv6 desteği</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Varsayılan olarak görmezden gelinen uygulama yok</item>
         <item>Varsayılan olarak tüm uygulamalar görmezden geliniyor</item>
         <item>Varsayılan olarak sistem uygulamaları görmezden geliniyor</item>

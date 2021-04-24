@@ -44,7 +44,7 @@
     <string name="button_no">Não</string>
     <string name="button_yes">Sim</string>
     <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Mostrar a notificação</string>
     <string name="could_not_configure_vpn_service">Não foi possível configurar o serviço de VPN - Verifique se você não usa um serviço de VPN sempre ativo como o Assistente do WiFi e o desative</string>
     <string name="dns_description">Habilitar seus servidores DNS preferidos</string>
@@ -53,7 +53,7 @@
     <string name="disable_notification_message">Ao desativar a notificação o Dns66 pode ser interrompido sob pressão de memória.\n\nDesativar a notificação mesmo assim?</string>
     <string name="disable_notification_ack">Desativar notificação</string>
     <string name="disable_notification_nak">Cancelar</string>
-    <string name="whitelist_description">Permitir que o Dns66 libere os Apps selecionados</string>
+    <string name="allowlist_description">Permitir que o Dns66 libere os Apps selecionados</string>
     <string name="switch_show_system_apps">Mostrar Apps do sistema</string>
     <string name="location_dns">Endereço IP do servidor DNS (IPv4 or IPv6)</string>
     <string name="state_dns_enabled">Ativo</string>
@@ -94,9 +94,9 @@
     <string name="notification_paused_title">Dns66 pausado</string>
     <string name="notification_paused_text">Toque para retomar.</string>
     <string name="notification_action_pause">Pausar</string>
-    <string name="whitelist_on_vpn">Não há Apps</string>
-    <string name="whitelist_not_on_vpn">Todos os Apps</string>
-    <string name="whitelist_intelligent">Apps do sistema exceto navegadores</string>
+    <string name="allowlist_on_vpn">Não há Apps</string>
+    <string name="allowlist_not_on_vpn">Todos os Apps</string>
+    <string name="allowlist_intelligent">Apps do sistema exceto navegadores</string>
     <string name="ipv6_support_description">Desativar isto se a sua rede não utiliza IPv6 ou se você não pode iniciar o serviço.</string>
     <string name="ipv6_support">IPv6 suportado</string>
     <string name="action_logcat">Logcat</string>
@@ -108,7 +108,7 @@
     <string name="notifications_paused_desc">Notificações para retomar após pausar</string>
     <string name="notifications_group_service">Controle de serviços</string>
     <string name="notifications_group_updates">Atualizações</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Nenhum App liberado por padrão
 </item>
         <item>Todos os Apps liberados por padrão</item>

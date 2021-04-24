@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Puuduv hostifail</string>
     <string name="button_no">Ei</string>
     <string name="button_yes">Jah</string>
-    <string name="whitelist_tab">Rakendused</string>
+    <string name="allowlist_tab">Rakendused</string>
     <string name="show_notification">Kuva teadet</string>
     <string name="could_not_configure_vpn_service">VPN-teenust ei suudetud konfigureerida - kontrolli, kas kasutad alati sees olevat VPN-teenust nagu WiFi Assistant ja keela see</string>
     <string name="dns_description">Luba oma eelistatud DNS-serverid</string>
@@ -50,7 +50,7 @@
     <string name="disable_notification_message">Teate keelamine võib põhjustada DNS66 peatumise mälusurve tagajärjel.\n\nKas soovid teate keelata?</string>
     <string name="disable_notification_ack">Keela teade</string>
     <string name="disable_notification_nak">Tühista</string>
-    <string name="whitelist_description">Ignoreeri DNS66-te märgitud rakenduste puhul</string>
+    <string name="allowlist_description">Ignoreeri DNS66-te märgitud rakenduste puhul</string>
     <string name="switch_show_system_apps">Kuva süsteemirakendused</string>
     <string name="location_dns">DNS-serveri IP-aadress (IPv4 või IPv6)</string>
     <string name="state_dns_enabled">Lubatud</string>
@@ -91,13 +91,13 @@
     <string name="notification_paused_title">DNS66 pausil</string>
     <string name="notification_paused_text">Koputa jätkamiseks.</string>
     <string name="notification_action_pause">Paus</string>
-    <string name="whitelist_on_vpn">Mitte ühtegi rakendust</string>
-    <string name="whitelist_not_on_vpn">Kõiki rakendusi</string>
-    <string name="whitelist_intelligent">Süsteemirakendusi, v.a. brauserid</string>
+    <string name="allowlist_on_vpn">Mitte ühtegi rakendust</string>
+    <string name="allowlist_not_on_vpn">Kõiki rakendusi</string>
+    <string name="allowlist_intelligent">Süsteemirakendusi, v.a. brauserid</string>
     <string name="ipv6_support_description">Keela see, kui su võrk ei kasuta IPv6-te või sa ei saa teenust käivitada.</string>
     <string name="ipv6_support">IPv6-tugi</string>
     <string name="action_logcat">Logcat</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Ära ignoreeri vaikimisi ühtegi rakendust</item>
         <item>Ignoreeri vaikimisi kõiki rakendusi</item>
         <item>Ignoreeri vaikimisi süsteemirakendusi</item>

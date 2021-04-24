@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Ontbrekend hosts-bestand</string>
     <string name="button_no">Nee</string>
     <string name="button_yes">Ja</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Melding weergeven</string>
     <string name="could_not_configure_vpn_service">Kan VPN-service niet configureren - Controleer of je een persistente service zoals wifi assistent gebruikt en schakel deze uit</string>
     <string name="dns_description">Jouw voorkeurs-DNS-servers inschakelen</string>
@@ -50,7 +50,7 @@
     <string name="disable_notification_message">Het uitschakelen van de melding kan DNS66 doen afsluiten onder geheugendruk.\n\nWil je de melding uitschakelen?</string>
     <string name="disable_notification_ack">Melding uitschakelen</string>
     <string name="disable_notification_nak">Annuleren</string>
-    <string name="whitelist_description">DNS66 omzeilen voor gemarkeerde apps</string>
+    <string name="allowlist_description">DNS66 omzeilen voor gemarkeerde apps</string>
     <string name="switch_show_system_apps">Systeemapps weergeven</string>
     <string name="location_dns">IP-adres van DNS-server (IPv4 of IPv6)</string>
     <string name="state_dns_enabled">Ingeschakeld</string>
@@ -91,13 +91,13 @@
     <string name="notification_paused_title">DNS66 gepauzeerd</string>
     <string name="notification_paused_text">Tik om te hervatten.</string>
     <string name="notification_action_pause">Pauzeren</string>
-    <string name="whitelist_on_vpn">Geen apps</string>
-    <string name="whitelist_not_on_vpn">Alle apps</string>
-    <string name="whitelist_intelligent">Systeemapps behalve browsers</string>
+    <string name="allowlist_on_vpn">Geen apps</string>
+    <string name="allowlist_not_on_vpn">Alle apps</string>
+    <string name="allowlist_intelligent">Systeemapps behalve browsers</string>
     <string name="ipv6_support_description">Uitschakelen als je netwerk geen IPv6 gebruikt, of je de service niet kunt starten.</string>
     <string name="ipv6_support">IPv6-ondersteuning</string>
     <string name="action_logcat">Logcat</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Standaard geen apps omzeilen</item>
         <item>Standaard alle apps omzeilen</item>
         <item>Standaard systeemapps omzeilen</item>

@@ -44,7 +44,7 @@
     <string name="button_no">いいえ</string>
     <string name="button_yes">はい</string>
 
-    <string name="whitelist_tab">アプリ</string>
+    <string name="allowlist_tab">アプリ</string>
     <string name="show_notification">通知を表示</string>
     <string name="could_not_configure_vpn_service">VPN サービスを設定できません - WiFi Assistant のような VPN サービスを常にオンにしていないかを確認して、無効にしてください</string>
     <string name="dns_description">優先の DNS サーバーを有効にする</string>
@@ -53,7 +53,7 @@
     <string name="disable_notification_message">通知を無効にすると、DNS66 がメモリ不足の状態で停止することがあります。\n\n通知を無効にしてもよろしいですか?</string>
     <string name="disable_notification_ack">通知を無効にする</string>
     <string name="disable_notification_nak">中断</string>
-    <string name="whitelist_description">マークしたアプリで DNS66 をバイパスします</string>
+    <string name="allowlist_description">マークしたアプリで DNS66 をバイパスします</string>
     <string name="switch_show_system_apps">システムアプリを表示</string>
     <string name="location_dns">DNS サーバーの IP アドレス (IPv4 または IPv6)</string>
     <string name="state_dns_enabled">有効</string>
@@ -94,12 +94,12 @@
     <string name="notification_paused_title">DNS66 が一時停止しました</string>
     <string name="notification_paused_text">タップすると再開します。</string>
     <string name="notification_action_pause">一時停止</string>
-    <string name="whitelist_on_vpn">アプリなし</string>
-    <string name="whitelist_not_on_vpn">すべてのアプリ</string>
-    <string name="whitelist_intelligent">ブラウザーを除くシステムアプリ</string>
+    <string name="allowlist_on_vpn">アプリなし</string>
+    <string name="allowlist_not_on_vpn">すべてのアプリ</string>
+    <string name="allowlist_intelligent">ブラウザーを除くシステムアプリ</string>
     <string name="ipv6_support_description">ネットワークが IPv6 を使用していない場合や、サービスを開始できない場合は、これを無効にしてください。</string>
     <string name="ipv6_support">IPv6 サポート</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>デフォルトでアプリをバイパスしません</item>
         <item>デフォルトですべてのアプリをバイパスします</item>
         <item>デフォルトでシステムアプリをバイパスします</item>

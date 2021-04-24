@@ -42,7 +42,7 @@
     <string name="missing_hosts_files_title">File hosts mancante</string>
     <string name="button_no">No</string>
     <string name="button_yes">Sì</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Mostra notifica</string>
     <string name="could_not_configure_vpn_service">Impossibile configurare il servizio VPN - Controlla che non sia attivo un servizio di VPN sempre attiva (tipo: Assistente WiFi) e, nel caso, disattivalo</string>
     <string name="dns_description">Abilita i tuoi server DNS preferiti</string>
@@ -51,7 +51,7 @@
     <string name="disable_notification_message">La disabilitazione dell\'icona di notifica può causare la chiusura di DNS66, in caso di carenza di memoria.\n\nVuoi disabilitare comunque la notifica?</string>
     <string name="disable_notification_ack">Disabilita notifica</string>
     <string name="disable_notification_nak">Annulla</string>
-    <string name="whitelist_description">Applicazioni che ignorano DNS66</string>
+    <string name="allowlist_description">Applicazioni che ignorano DNS66</string>
     <string name="switch_show_system_apps">Mostra app di sistema</string>
     <string name="location_dns">Indirizzo IP del server DNS (IPv4 o IPv6)</string>
     <string name="state_dns_enabled">Abilitato</string>
@@ -92,13 +92,13 @@
     <string name="notification_paused_title">DNS66 in pausa</string>
     <string name="notification_paused_text">Tocca per riattivare.</string>
     <string name="notification_action_pause">Pause</string>
-    <string name="whitelist_on_vpn">Nessuna app</string>
-    <string name="whitelist_not_on_vpn">Tutte le app</string>
-    <string name="whitelist_intelligent">App di sistema tranne i browser</string>
+    <string name="allowlist_on_vpn">Nessuna app</string>
+    <string name="allowlist_not_on_vpn">Tutte le app</string>
+    <string name="allowlist_intelligent">App di sistema tranne i browser</string>
     <string name="ipv6_support_description">Disabilita questa voce, se la tua rete non utilizza IPv6 o non è possibile avviare il servizio.</string>
     <string name="ipv6_support">Supporto IPv6</string>
     <string name="action_logcat">Logcat</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Nessuna app esclusa per default</item>
         <item>Tutte le app escluse per default</item>
         <item>App di sistema escluse per default</item>

@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,7 +33,7 @@ import java.util.Set;
  */
 public class Configuration {
     public static final Gson GSON = new Gson();
-    static final int VERSION = 1;
+    static final int VERSION = 2;
     /* Default tweak level */
     static final int MINOR_VERSION = 3;
     private static final String TAG = "Configuration";
@@ -41,7 +42,10 @@ public class Configuration {
     public boolean autoStart;
     public Hosts hosts = new Hosts();
     public DnsServers dnsServers = new DnsServers();
-    public Whitelist whitelist = new Whitelist();
+
+    // Apologies for the legacy alternate
+    @SerializedName(value = "allowlist", alternate = "whitelist")
+    public Allowlist allowlist = new Allowlist();
     public boolean showNotification = true;
     public boolean nightMode;
     public boolean watchDog = false;
@@ -176,7 +180,7 @@ public class Configuration {
         public List<Item> items = new ArrayList<>();
     }
 
-    public static class Whitelist {
+    public static class Allowlist {
         /**
          * All apps use the VPN.
          */

@@ -47,7 +47,7 @@ public class AdVpnThreadTest {
 
         config = new Configuration();
         config.dnsServers = new Configuration.DnsServers();
-        config.whitelist = new Configuration.Whitelist() {
+        config.allowlist = new Configuration.Allowlist() {
             @Override
             public void resolve(PackageManager pm, Set<String> onVpn, Set<String> notOnVpn) {
                 onVpn.add("onVpn");
@@ -95,7 +95,7 @@ public class AdVpnThreadTest {
         // We are defaulting to disallow: allow all allowed packages.
         allowed.clear();
         disallowed.clear();
-        config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN;
+        config.allowlist.defaultMode = Configuration.Allowlist.DEFAULT_MODE_NOT_ON_VPN;
         thread.configurePackages(builder, config);
         assertTrue(allowed.contains("onVpn"));
         assertEquals(new ArrayList<String>(), disallowed);
@@ -103,7 +103,7 @@ public class AdVpnThreadTest {
         // We are defaulting to allow: deny all non-allowed packages.
         allowed.clear();
         disallowed.clear();
-        config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_ON_VPN;
+        config.allowlist.defaultMode = Configuration.Allowlist.DEFAULT_MODE_ON_VPN;
         thread.configurePackages(builder, config);
         assertTrue(disallowed.contains("notOnVpn"));
         assertEquals(new ArrayList<String>(), allowed);
@@ -111,7 +111,7 @@ public class AdVpnThreadTest {
         // Intelligent is like allow, it only disallows system apps
         allowed.clear();
         disallowed.clear();
-        config.whitelist.defaultMode = Configuration.Whitelist.DEFAULT_MODE_INTELLIGENT;
+        config.allowlist.defaultMode = Configuration.Allowlist.DEFAULT_MODE_INTELLIGENT;
         thread.configurePackages(builder, config);
         assertTrue(disallowed.contains("notOnVpn"));
         assertEquals(new ArrayList<String>(), allowed);

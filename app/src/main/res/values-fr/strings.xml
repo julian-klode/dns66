@@ -46,7 +46,7 @@
     <string name="missing_hosts_files_title">Fichier d\'hôtes manquant</string>
     <string name="button_no">Non</string>
     <string name="button_yes">Oui</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Montrer la notification</string>
     <string name="could_not_configure_vpn_service">Impossible de configurer le service de VPN – vérifiez que vous n\'utilisez pas déjà un service VPN toujours actif comme Wifi Assistant et désactivez-le le cas échéant</string>
     <string name="dns_description">Active vos serveurs DNS préférés</string>
@@ -57,7 +57,7 @@
   Souhaitez-vous désactiver la notification ?</string>
     <string name="disable_notification_ack">Désactiver la notification</string>
     <string name="disable_notification_nak">Annuler</string>
-    <string name="whitelist_description">Les apps marquées ne passent pas par DNS66</string>
+    <string name="allowlist_description">Les apps marquées ne passent pas par DNS66</string>
     <string name="switch_show_system_apps">Montrer les applications système</string>
     <string name="location_dns">Adresse IP du serveur DNS (IPv4 ou IPv6)</string>
     <string name="state_dns_enabled">Activé</string>
@@ -98,9 +98,9 @@
     <string name="notification_paused_title">DNS66 est en pause</string>
     <string name="notification_paused_text">Appuie simple pour reprendre</string>
     <string name="notification_action_pause">Pause</string>
-    <string name="whitelist_on_vpn">Aucune app</string>
-    <string name="whitelist_not_on_vpn">Toutes les apps</string>
-    <string name="whitelist_intelligent">Les apps systèmes sauf les navigateurs</string>
+    <string name="allowlist_on_vpn">Aucune app</string>
+    <string name="allowlist_not_on_vpn">Toutes les apps</string>
+    <string name="allowlist_intelligent">Les apps systèmes sauf les navigateurs</string>
     <string name="ipv6_support_description">Désactivez ceci si votre réseau n\'utilise pas IPv6 ou si ne parvenez pas à démarrer le service.</string>
     <string name="ipv6_support">Support de l\'IPv6</string>
     <string name="action_logcat">Logcat</string>
@@ -112,7 +112,7 @@
     <string name="notifications_paused_desc">Notifications pour reprendre après une pause</string>
     <string name="notifications_group_service">Contrôle du service</string>
     <string name="notifications_group_updates">Mises à joir</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Toutes les apps passent par DNS66 par défaut</item>
         <item>Aucune app ne passe par DNS66 par défaut</item>
         <item>Les apps systèmes ne passent pas par DNS66 par défaut</item>

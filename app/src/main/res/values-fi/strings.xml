@@ -42,7 +42,7 @@
     <string name="missing_hosts_files_title">Hosts-tiedosto puuttuu</string>
     <string name="button_no">Ei</string>
     <string name="button_yes">Kyllä</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Näytä ilmoitus</string>
     <string name="could_not_configure_vpn_service">Ei voitu konfiguroida VPN-palvelua - Tarkista, onko käytössä aina päällä oleva VPN-palvelu, kuten WiFi-apuri, ja sammuta se.</string>
     <string name="dns_description">Aktivoi haluamasi DNS-palvelimet</string>
@@ -51,7 +51,7 @@
     <string name="disable_notification_message">Ilmoituksen poistaminen saattaa aiheuttaa DNS66:n pysähtymisen muistin käydessä vähiin.\n\nHaluatko poistaa ilmoituksen käytöstä?</string>
     <string name="disable_notification_ack">Poista ilmoitus käytöstä</string>
     <string name="disable_notification_nak">Keskeytä</string>
-    <string name="whitelist_description">Ohita DNS66 valituille sovelluksille</string>
+    <string name="allowlist_description">Ohita DNS66 valituille sovelluksille</string>
     <string name="switch_show_system_apps">Näytä järjestelmä-sovellukset</string>
     <string name="location_dns">DNS-palvelimen IP-osoite (IPv4 tai IPv6)</string>
     <string name="state_dns_enabled">Käytössä</string>
@@ -92,9 +92,9 @@
     <string name="notification_paused_title">DNS66 tauolla</string>
     <string name="notification_paused_text">Näpäytä jatkaaksesi.</string>
     <string name="notification_action_pause">Tauota</string>
-    <string name="whitelist_on_vpn">Ei sovelluksia</string>
-    <string name="whitelist_not_on_vpn">Kaikki sovellukset</string>
-    <string name="whitelist_intelligent">Järjestelmä-sovellukset paitsi selaimet</string>
+    <string name="allowlist_on_vpn">Ei sovelluksia</string>
+    <string name="allowlist_not_on_vpn">Kaikki sovellukset</string>
+    <string name="allowlist_intelligent">Järjestelmä-sovellukset paitsi selaimet</string>
     <string name="ipv6_support_description">Kytke pois päältä jos verkkosi ei käytä IPv6:ta tai palvelun käynnistäminen ei onnistu.</string>
     <string name="ipv6_support">IPv6-tuki</string>
     <string name="action_logcat">Logcat</string>
@@ -109,7 +109,7 @@
     <string name="unstable_watchdog_message">Yhteyden tarkkailu saattaa aiheuttaa ongelmia yhteydessä</string>
     <string name="button_cancel">Peruuta</string>
     <string name="button_continue">Jatka</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Mikään sovellus ei ohita estoja oletuksena.</item>
         <item>Kaikki sovellukset ohittavat estot oletuksena.</item>
         <item>Järjestelmä-sovellukset ohittavat estot oletuksena.</item>

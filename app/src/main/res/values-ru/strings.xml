@@ -81,22 +81,22 @@
     <string name="disable_notification_message">Отключение уведомления может привести к тому, что Блокировщик Рекламы будет остановлен под давлением памяти. \n\nВы хотите отключить уведомление?</string>
     <string name="disable_notification_ack">Отключить уведомления</string>
     <string name="disable_notification_nak">Прервать</string>
-    <string name="whitelist_description">Обход DNS66 для отмеченных приложений</string>
+    <string name="allowlist_description">Обход DNS66 для отмеченных приложений</string>
     <string name="switch_show_system_apps">Показать системные приложения</string>
     <string name="location_dns">IP-адрес сервера DNS (IPv4 или IPv6)</string>
     <string name="state_dns_enabled">Включён</string>
-    <string name="whitelist_tab">Приложения</string>
+    <string name="allowlist_tab">Приложения</string>
     <string name="show_notification">Показывать уведомления</string>
     <string name="notification_paused_title">DNS66 на паузе</string>
     <string name="notification_paused_text">Нажмите, чтобы возобновить.</string>
     <string name="notification_action_pause">Пауза</string>
-    <string name="whitelist_on_vpn">Нет приложений</string>
-    <string name="whitelist_not_on_vpn">Все приложения</string>
-    <string name="whitelist_intelligent">Системные приложения, кроме браузеров</string>
+    <string name="allowlist_on_vpn">Нет приложений</string>
+    <string name="allowlist_not_on_vpn">Все приложения</string>
+    <string name="allowlist_intelligent">Системные приложения, кроме браузеров</string>
     <string name="ipv6_support_description">Отключите это, если в вашей сети не используется протокол IPv6, или вы не можете запустить службу.</string>
     <string name="ipv6_support">Поддержка IPv6</string>
     <string name="update_incomplete_description">Некоторые хост-файлы не могут быть загружены. Если файлы были загружены ранее, старые версии будут по-прежнему использоваться.</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Нет приложений для обхода блокировки по умолчанию</item>
         <item>Все приложения для обхода блокировки по умолчанию</item>
         <item>Системные приложения для обхода блокировки по умолчанию</item>

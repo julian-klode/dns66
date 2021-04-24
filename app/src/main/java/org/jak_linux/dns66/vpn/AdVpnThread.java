@@ -391,9 +391,9 @@ class AdVpnThread implements Runnable, DnsPacketProxy.EventLoop {
         Set<String> allowOnVpn = new HashSet<>();
         Set<String> doNotAllowOnVpn = new HashSet<>();
 
-        config.whitelist.resolve(vpnService.getPackageManager(), allowOnVpn, doNotAllowOnVpn);
+        config.allowlist.resolve(vpnService.getPackageManager(), allowOnVpn, doNotAllowOnVpn);
 
-        if (config.whitelist.defaultMode == Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN) {
+        if (config.allowlist.defaultMode == Configuration.Allowlist.DEFAULT_MODE_NOT_ON_VPN) {
             for (String app : allowOnVpn) {
                 try {
                     Log.d(TAG, "configure: Allowing " + app + " to use the DNS VPN");

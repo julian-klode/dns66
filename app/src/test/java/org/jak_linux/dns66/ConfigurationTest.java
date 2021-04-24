@@ -74,7 +74,7 @@ public class ConfigurationTest {
     
     @Test
     public void testResolve() throws Exception {
-        Configuration.Whitelist wl = new Configuration.Whitelist() {
+        Configuration.Allowlist wl = new Configuration.Allowlist() {
             @Override
             Intent newBrowserIntent() {
                 return mock(Intent.class);
@@ -106,7 +106,7 @@ public class ConfigurationTest {
         Set<String> onVpn = new HashSet<>();
         Set<String> notOnVpn = new HashSet<>();
 
-        wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN;
+        wl.defaultMode = Configuration.Allowlist.DEFAULT_MODE_NOT_ON_VPN;
         wl.resolve(pm, onVpn, notOnVpn);
 
         assertTrue(onVpn.contains(BuildConfig.APPLICATION_ID));
@@ -118,7 +118,7 @@ public class ConfigurationTest {
         // Default allow on vpn
         onVpn.clear();
         notOnVpn.clear();
-        wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_ON_VPN;
+        wl.defaultMode = Configuration.Allowlist.DEFAULT_MODE_ON_VPN;
         wl.resolve(pm, onVpn, notOnVpn);
 
         assertTrue(onVpn.contains(BuildConfig.APPLICATION_ID));
@@ -130,7 +130,7 @@ public class ConfigurationTest {
         // Default intelligent on vpn
         onVpn.clear();
         notOnVpn.clear();
-        wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_INTELLIGENT;
+        wl.defaultMode = Configuration.Allowlist.DEFAULT_MODE_INTELLIGENT;
         wl.resolve(pm, onVpn, notOnVpn);
 
         assertTrue(onVpn.contains(BuildConfig.APPLICATION_ID));
@@ -146,7 +146,7 @@ public class ConfigurationTest {
         wl.itemsOnVpn.clear();
         wl.items.add(BuildConfig.APPLICATION_ID);
         wl.items.add("system-browser");
-        wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_INTELLIGENT;
+        wl.defaultMode = Configuration.Allowlist.DEFAULT_MODE_INTELLIGENT;
         wl.resolve(pm, onVpn, notOnVpn);
         assertTrue(onVpn.contains(BuildConfig.APPLICATION_ID));
         assertTrue(notOnVpn.contains("system-browser"));
@@ -157,7 +157,7 @@ public class ConfigurationTest {
         wl.items.clear();
         wl.itemsOnVpn.clear();
         wl.itemsOnVpn.add("data-app");
-        wl.defaultMode = Configuration.Whitelist.DEFAULT_MODE_NOT_ON_VPN;
+        wl.defaultMode = Configuration.Allowlist.DEFAULT_MODE_NOT_ON_VPN;
         wl.resolve(pm, onVpn, notOnVpn);
         assertTrue(onVpn.contains("data-app"));
     }
@@ -170,9 +170,9 @@ public class ConfigurationTest {
 
         assertNotNull(config.hosts);
         assertNotNull(config.hosts.items);
-        assertNotNull(config.whitelist);
-        assertNotNull(config.whitelist.items);
-        assertNotNull(config.whitelist.itemsOnVpn);
+        assertNotNull(config.allowlist);
+        assertNotNull(config.allowlist.items);
+        assertNotNull(config.allowlist.itemsOnVpn);
         assertNotNull(config.dnsServers);
         assertNotNull(config.dnsServers.items);
         assertTrue(config.ipV6Support);

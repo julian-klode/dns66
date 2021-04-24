@@ -41,7 +41,7 @@
     <string name="missing_hosts_files_title">Archivos hosts no encontrados</string>
     <string name="button_no">No</string>
     <string name="button_yes">Si</string>
-    <string name="whitelist_tab">Aplicaciones</string>
+    <string name="allowlist_tab">Aplicaciones</string>
     <string name="show_notification">Ver notificación</string>
     <string name="could_not_configure_vpn_service">No se pudo configurar el servicio VPN - Compruebe si utiliza otro servicio VPN predeterminado como el Asistente WiFi y deshabilítelo</string>
     <string name="dns_description">Habilitar los servidores DNS preferidos</string>
@@ -50,7 +50,7 @@
     <string name="disable_notification_message">La desactivación de la notificación puede hacer que DNS66 se detenga bajo presión de memoria. \n\n¿Desea desactivar la notificación? </string>
     <string name="disable_notification_ack"> Desactivar Notificación </string>
     <string name="disable_notification_nak">Cancelar</string>
-    <string name="whitelist_description">Bypass DNS66 para aplicaciones seleccionadas</string>
+    <string name="allowlist_description">Bypass DNS66 para aplicaciones seleccionadas</string>
     <string name="switch_show_system_apps">Mostrar aplicaciones del sistema</string>
     <string name="location_dns">Dirección IP del servidor DNS (IPv4 o IPv6)</string>
     <string name="state_dns_enabled">Activo</string>
@@ -91,13 +91,13 @@
     <string name="notification_paused_title">DNS66 pausado</string>
     <string name="notification_paused_text">Toca para continuar.</string>
     <string name="notification_action_pause">Pausar</string>
-    <string name="whitelist_on_vpn">Sin aplicaciones</string>
-    <string name="whitelist_not_on_vpn">Todas aplicaciones</string>
-    <string name="whitelist_intelligent">Aplicaciones del sistema excepto navegadores</string>
+    <string name="allowlist_on_vpn">Sin aplicaciones</string>
+    <string name="allowlist_not_on_vpn">Todas aplicaciones</string>
+    <string name="allowlist_intelligent">Aplicaciones del sistema excepto navegadores</string>
     <string name="ipv6_support_description">Desactive esto si su red no utiliza IPv6 o no puede iniciar el servicio.</string>
     <string name="ipv6_support">IPv6 soportado</string>
     <string name="action_logcat">Logcat</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>Ninguna aplicación con bypass por defecto</item>
         <item>Todas aplicaciones con bypass por defecto</item>
         <item>Aplicaciones del sistema con bypass por defecto</item>

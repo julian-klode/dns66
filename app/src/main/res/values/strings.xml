@@ -44,7 +44,7 @@
     <string name="button_no">No</string>
     <string name="button_yes">Yes</string>
     <string name="website" translatable="false">https://github.com/julian-klode/dns66</string>
-    <string name="whitelist_tab">Apps</string>
+    <string name="allowlist_tab">Apps</string>
     <string name="show_notification">Show Notification</string>
     <string name="could_not_configure_vpn_service">Could not configure VPN service - Check if you use an always on VPN service like WiFi Assistant and disable it</string>
     <string name="dns_description">Enable your preferred DNS servers</string>
@@ -53,7 +53,7 @@
     <string name="disable_notification_message">Disabling the notification may cause DNS66 to be stopped under memory pressure.\n\nDo you want to disable the notification?</string>
     <string name="disable_notification_ack">Disable Notification</string>
     <string name="disable_notification_nak">Abort</string>
-    <string name="whitelist_description">Bypass DNS66 for marked apps</string>
+    <string name="allowlist_description">Bypass DNS66 for marked apps</string>
     <string name="switch_show_system_apps">Show system apps</string>
     <string name="location_dns">IP address of DNS server (IPv4 or IPv6)</string>
     <string name="state_dns_enabled">Enabled</string>
@@ -94,9 +94,9 @@
     <string name="notification_paused_title">DNS66 paused</string>
     <string name="notification_paused_text">Tap to resume.</string>
     <string name="notification_action_pause">Pause</string>
-    <string name="whitelist_on_vpn">No apps</string>
-    <string name="whitelist_not_on_vpn">All apps</string>
-    <string name="whitelist_intelligent">System apps except browsers</string>
+    <string name="allowlist_on_vpn">No apps</string>
+    <string name="allowlist_not_on_vpn">All apps</string>
+    <string name="allowlist_intelligent">System apps except browsers</string>
     <string name="ipv6_support_description">Disable this if your network does not use IPv6 or you cannot start the service.</string>
     <string name="ipv6_support">IPv6 support</string>
     <string name="action_logcat">Logcat</string>
@@ -112,7 +112,7 @@
     <string name="unstable_watchdog_message">Watching the connection may cause reconnects and the connection to get stuck</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_continue">Continue</string>
-    <string-array name="whitelist_defaults">
+    <string-array name="allowlist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>
         <item>System apps bypass by default</item>
