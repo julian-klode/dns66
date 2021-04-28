@@ -65,7 +65,9 @@ public class DnsPacketProxyTest {
         item.location = "blocked.example.com";
         item.state = Configuration.Item.STATE_DENY;
 
-        Mockito.when(ruleDatabase.isBlocked("blocked.example.com")).thenReturn(true);
+        Mockito.when(ruleDatabase.lookup("blocked.example.com")).thenReturn(
+                RuleDatabase.Rule.createBlockRule()
+        );
 
         PowerMockito.mockStatic(Log.class);
     }

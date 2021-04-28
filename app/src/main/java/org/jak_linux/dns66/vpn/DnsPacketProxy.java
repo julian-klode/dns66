@@ -16,6 +16,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.jak_linux.dns66.db.RuleDatabase;
+import org.jak_linux.dns66.db.RuleDatabase.Rule;
 import org.pcap4j.packet.IpPacket;
 import org.pcap4j.packet.IpSelector;
 import org.pcap4j.packet.IpV4Packet;
@@ -23,6 +24,7 @@ import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
+import org.xbill.DNS.ARecord;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;
@@ -31,6 +33,7 @@ import org.xbill.DNS.Rcode;
 import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.Section;
 import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.Type;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -149,20 +152,16 @@ public class DnsPacketProxy {
             return;
         }
 
-        UdpPacket parsedUdp;
+        UdpPacket parsedUdp = null;
         Packet udpPayload;
 
-        try {
-            parsedUdp = (UdpPacket) parsedPacket.getPayload();
-            udpPayload = parsedUdp.getPayload();
-        } catch (Exception e) {
-            try {
-                Log.i(TAG, "handleDnsRequest: Discarding unknown packet type " + parsedPacket.getHeader(), e);
-            } catch (Exception e1) {
-                Log.i(TAG, "handleDnsRequest: Discarding unknown packet type, could not log packet info", e1);
-            }
+        Packet payload = parsedPacket.getPayload();
+        if (!(payload instanceof UdpPacket)) {
+            Log.i(TAG, "handleDnsRequest: Discarding unknown packet type class=" + payload.getClass() + " header=" + String.valueOf(parsedPacket.getHeader()));
             return;
         }
+        parsedUdp = (UdpPacket)payload;
+        udpPayload = parsedUdp.getPayload();
 
         InetAddress destAddr = translateDestinationAdress(parsedPacket);
         if (destAddr == null)
@@ -200,15 +199,28 @@ public class DnsPacketProxy {
             return;
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
-        if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
+        Rule rule = ruleDatabase.lookup(dnsQueryName.toLowerCase(Locale.ENGLISH));
+        if (rule == null) {
             Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             eventLoop.forwardPacket(outPacket, parsedPacket);
         } else {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
+            if (rule.isBlocked()) {
+                Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
+                dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
+            } else {
+                InetAddress address = rule.getAddress();
+                Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " mapped to " + address);
+                ARecord record = null;
+                try {
+                    record = new ARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
+                } catch (TextParseException e) {
+                    throw new RuntimeException(e);
+                }
+                dnsMsg.addRecord(record, Section.ANSWER);
+            }
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NOERROR);
-            dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
     }

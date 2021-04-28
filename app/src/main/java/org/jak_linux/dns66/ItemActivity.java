@@ -114,6 +114,9 @@ public class ItemActivity extends AppCompatActivity {
                         case Configuration.Item.STATE_IGNORE:
                             imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_ignore));
                             break;
+                        case Configuration.Item.STATE_MAP:
+                            imageView.setImageDrawable(ContextCompat.getDrawable(ItemActivity.this, R.drawable.ic_state_map));
+                            break;
                     }
                 }
 

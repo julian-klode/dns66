@@ -19,14 +19,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashSet;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Represents hosts that are blocked.
+ * Represents hosts that are blocked or mapped.
  * <p>
- * This is a very basic set of hosts. But it supports lock-free
+ * This is a very basic map of hosts. But it supports lock-free
  * readers with writers active at the same time, only the writers
  * having to take a lock.
  */
@@ -34,8 +40,53 @@ public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
     private static final RuleDatabase instance = new RuleDatabase();
-    final AtomicReference<HashSet<String>> blockedHosts = new AtomicReference<>(new HashSet<String>());
-    HashSet<String> nextBlockedHosts = null;
+    final AtomicReference<HashMap<String, Rule>> rules = new AtomicReference<>(new HashMap<String, Rule>());
+    HashMap<String, Rule> nextRules = null;
+
+    public static class Rule {
+        private final boolean blocked;
+        private final InetAddress address;
+        public static Rule createBlockRule() {
+            return new Rule(true, null);
+        }
+        static Rule createMapRule(InetAddress address) {
+            return new Rule(false, address);
+        }
+        private Rule(boolean blocked, InetAddress address) {
+            this.blocked = blocked;
+            this.address = address;
+        }
+        public boolean isBlocked() {
+            if (this.blocked != (this.address == null)) {
+                throw new RuntimeException("Bad rule " + this);
+            }
+            return this.blocked;
+        }
+        public InetAddress getAddress() {
+            if (this.blocked != (this.address == null)) {
+                throw new RuntimeException("Bad rule " + this);
+            }
+            return this.address;
+        }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Rule that = (Rule)o;
+            if (this.blocked != that.blocked) return false;
+            if (this.address == null) return that.address == null;
+            return this.address.equals(that.address);
+        }
+        @Override
+        public int hashCode() {
+            return (this.blocked ? 1231 : 1237) ^
+                (this.address == null ? 1307 : this.address.hashCode());
+        }
+        @Override
+        public String toString() {
+            return "blocked: " + this.blocked + " address: " + String.valueOf(this.address);
+        }
+    }
 
     /**
      * Package-private constructor for instance and unit tests.
@@ -55,11 +106,11 @@ public class RuleDatabase {
     /**
      * Parse a single line in a hosts file
      *
-     * @param line A line to parse
-     * @return A host
+     * @param line A line to parse of the form <IP address> <hostname>
+     * @return A pair: IP Address (null if IP address is 0.0.0.0), hostname
      */
     @Nullable
-    static String parseLine(String line) {
+    static SimpleImmutableEntry<InetAddress, String> parseLine(Configuration.Item item, String line) {
         int endOfLine = line.indexOf('#');
 
         if (endOfLine == -1)
@@ -73,51 +124,70 @@ public class RuleDatabase {
         if (endOfLine <= 0)
             return null;
 
-        // Find beginning of host field
-        int startOfHost = 0;
+        final InetAddress address;
+        final String host;
 
-        if (line.regionMatches(0, "127.0.0.1", 0, 9) && (endOfLine <= 9 || Character.isWhitespace(line.charAt(9))))
-            startOfHost += 10;
-        else if (line.regionMatches(0, "::1", 0, 3) && (endOfLine <= 3 || Character.isWhitespace(line.charAt(3))))
-            startOfHost += 4;
-        else if (line.regionMatches(0, "0.0.0.0", 0, 7) && (endOfLine <= 7 || Character.isWhitespace(line.charAt(7))))
-            startOfHost += 8;
-
-        // Trim of space at the beginning of the host.
-        while (startOfHost < endOfLine && Character.isWhitespace(line.charAt(startOfHost)))
-            startOfHost++;
-
-        // Reject lines containing a space
-        for (int i = startOfHost; i < endOfLine; i++) {
-            if (Character.isWhitespace(line.charAt(i)))
+        if (item.state == Configuration.Item.STATE_MAP) {
+            line = line.substring(0, endOfLine);
+            Pattern LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)$");
+            Matcher matcher = LINE_PATTERN.matcher(line);
+            if (!matcher.matches()) {
+                Log.e(TAG, "Ignoring bad map entry " + line);
                 return null;
+            }
+            String addressString = matcher.group(1);
+            host = matcher.group(2);
+            try {
+                address = InetAddress.getByName(addressString);
+            } catch (UnknownHostException e) {
+                Log.e(TAG, "Unable to parse address " + addressString + " in line '" + line + "'", e);
+                return null;
+            }
+        } else {
+            address = null;
+            // Find beginning of host field
+            int startOfHost = 0;
+
+            if (line.regionMatches(0, "127.0.0.1", 0, 9) && (endOfLine <= 9 || Character.isWhitespace(line.charAt(9))))
+                startOfHost += 10;
+            else if (line.regionMatches(0, "::1", 0, 3) && (endOfLine <= 3 || Character.isWhitespace(line.charAt(3))))
+                startOfHost += 4;
+            else if (line.regionMatches(0, "0.0.0.0", 0, 7) && (endOfLine <= 7 || Character.isWhitespace(line.charAt(7))))
+                startOfHost += 8;
+
+            // Trim off space at the beginning of the host.
+            while (startOfHost < endOfLine && Character.isWhitespace(line.charAt(startOfHost)))
+                startOfHost++;
+
+            // Reject lines containing a space
+            for (int i = startOfHost; i < endOfLine; i++) {
+                if (Character.isWhitespace(line.charAt(i)))
+                    return null;
+            }
+
+            if (startOfHost >= endOfLine)
+                return null;
+
+            host = line.substring(startOfHost, endOfLine);
         }
 
-        if (startOfHost >= endOfLine)
-            return null;
-
-        return line.substring(startOfHost, endOfLine).toLowerCase(Locale.ENGLISH);
+        SimpleImmutableEntry pair = new SimpleImmutableEntry(address, host.toLowerCase(Locale.ENGLISH));
+        return pair;
     }
 
     /**
-     * Checks if a host is blocked.
+     * Returns the Rule for the hostname
      *
      * @param host A hostname
-     * @return true if the host is blocked, false otherwise.
+     * @return Rule for the host if it is blocked or mapped, otherwise null.
      */
-    public boolean isBlocked(String host) {
-        return blockedHosts.get().contains(host);
+    public Rule lookup(String host) {
+        return rules.get().get(host);
     }
 
-    /**
-     * Check if any hosts are blocked
-     *
-     * @return true if any hosts are blocked, false otherwise.
-     */
     boolean isEmpty() {
-        return blockedHosts.get().isEmpty();
+        return rules.get().isEmpty();
     }
-
     /**
      * Load the hosts according to the configuration
      *
@@ -128,12 +198,12 @@ public class RuleDatabase {
     public synchronized void initialize(Context context) throws InterruptedException {
         Configuration config = FileHelper.loadCurrentSettings(context);
 
-        nextBlockedHosts = new HashSet<>(blockedHosts.get().size());
+        nextRules = new HashMap<>(rules.get().size());
 
         Log.i(TAG, "Loading block list");
 
         if (!config.hosts.enabled) {
-            Log.d(TAG, "loadBlockedHosts: Not loading, disabled.");
+            Log.d(TAG, "loadRules: Not loading, disabled.");
         } else {
             for (Configuration.Item item : config.hosts.items) {
                 if (Thread.interrupted())
@@ -142,7 +212,7 @@ public class RuleDatabase {
             }
         }
 
-        blockedHosts.set(nextBlockedHosts);
+        rules.set(nextRules);
         Runtime.getRuntime().gc();
     }
 
@@ -166,7 +236,7 @@ public class RuleDatabase {
         }
 
         if (reader == null) {
-            addHost(item, item.location);
+            addLine(item, item.location);
             return;
         } else {
             loadReader(item, reader);
@@ -174,17 +244,32 @@ public class RuleDatabase {
     }
 
     /**
-     * Add a single host for an item.
+     * Add a single line for an item.
      *
-     * @param item The item the host belongs to
-     * @param host The host
+     * @param item The item the line belongs to
+     * @param host The line (<host> or <ip host>)
      */
-    private void addHost(Configuration.Item item, String host) {
-        // Single address to block
+    private void addLine(Configuration.Item item, String line) {
         if (item.state == Configuration.Item.STATE_ALLOW) {
-            nextBlockedHosts.remove(host);
+            nextRules.remove(line);
         } else if (item.state == Configuration.Item.STATE_DENY) {
-            nextBlockedHosts.add(host);
+            nextRules.put(line, Rule.createBlockRule());
+        } else if (item.state == Configuration.Item.STATE_MAP) {
+            SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item, line);
+            String host = addressHost.getValue();
+            InetAddress address = addressHost.getKey();
+            nextRules.put(host, Rule.createMapRule(address));
+        }
+    }
+
+    private void addHost(Configuration.Item item, InetAddress address, String host) {
+        // Single host to block or map
+        if (item.state == Configuration.Item.STATE_ALLOW) {
+            nextRules.remove(host);
+        } else if (item.state == Configuration.Item.STATE_DENY) {
+            nextRules.put(host, Rule.createBlockRule());
+        } else if (item.state == Configuration.Item.STATE_MAP) {
+            nextRules.put(host, Rule.createMapRule(address));
         }
     }
 
@@ -198,26 +283,26 @@ public class RuleDatabase {
     boolean loadReader(Configuration.Item item, Reader reader) throws InterruptedException {
         int count = 0;
         try {
-            Log.d(TAG, "loadBlockedHosts: Reading: " + item.location);
+            Log.d(TAG, "loadRules: Reading: " + item.location);
             try (BufferedReader br = new BufferedReader(reader)) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     if (Thread.interrupted())
                         throw new InterruptedException("Interrupted");
-                    String host = parseLine(line);
-                    if (host != null) {
+                    SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item, line);
+                    if (addressHost != null) {
                         count += 1;
-                        addHost(item, host);
+                        addHost(item, addressHost.getKey(), addressHost.getValue());
                     }
                 }
             }
-            Log.d(TAG, "loadBlockedHosts: Loaded " + count + " hosts from " + item.location);
+            Log.d(TAG, "loadRules: Loaded " + count + " hosts from " + item.location);
             return true;
         } catch (IOException e) {
-            Log.e(TAG, "loadBlockedHosts: Error while reading " + item.location + " after " + count + " items", e);
+            Log.e(TAG, "loadRules: Error while reading " + item.location + " after " + count + " items", e);
             return false;
         } finally {
-            FileHelper.closeOrWarn(reader, TAG, "loadBlockedHosts: Error closing " + item.location);
+            FileHelper.closeOrWarn(reader, TAG, "loadRules: Error closing " + item.location);
         }
     }
 }

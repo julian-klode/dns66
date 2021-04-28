@@ -58,7 +58,7 @@
     <string name="updating_hostfiles">Aktualisiere Hosts-Dateien</string>
     <string name="action_use_file">Datei verwenden</string>
     <string name="persistable_uri_permission_failed">Die gewählte Datei kann nicht verwendet werden: Dauerhafter Zugriff verweigert</string>
-    <string name="updating_n_host_files">Aktualisiere %1$s Hosts-Dateien</string>
+    <string name="updating_n_host_files">Aktualisiere %1$d Hosts-Dateien</string>
     <string name="permission_denied">Zugriff verweigert</string>
     <string name="invalid_url_s">Ungültige URL: %1$s</string>
     <string name="could_not_update_all_hosts">Konnte nicht alle Hosts-Dateien aktualisieren</string>
