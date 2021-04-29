@@ -26,6 +26,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 
 import static org.jak_linux.dns66.db.RuleDatabase.Rule;
+import static org.jak_linux.dns66.Configuration.Item.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.*;
@@ -52,65 +53,62 @@ public class RuleDatabaseTest {
         assertNull(instance.lookup("example.com"));
     }
 
-    private SimpleImmutableEntry makePair(String address, String host) {
+    private SimpleImmutableEntry<InetAddress, String> makePair(String address, String host) {
         try {
-            return new SimpleImmutableEntry(address == null ? null : InetAddress.getByName(address),
-                                            host);
+            return new SimpleImmutableEntry<>(address == null ? null : InetAddress.getByName(address),
+                    host);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // TODO(thromer) fix me
-    /*    
     @Test
     public void testParseLine() throws Exception {
         // Standard format lines
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("0.0.0.0 example.com"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1 example.com"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("::1 example.com"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("example.com"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY,"0.0.0.0 example.com"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1 example.com"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "::1 example.com"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "example.com"));
         // Comments
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("example.com # foo"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("0.0.0.0 example.com # foo"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("::1 example.com # foo"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "example.com # foo"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "0.0.0.0 example.com # foo"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "::1 example.com # foo"));
         // Check lower casing
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("example.cOm"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1 example.cOm"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("::1 example.cOm"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "example.cOm"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1 example.cOm"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "::1 example.cOm"));
         // Space trimming
-        assertNull(RuleDatabase.parseLine(" 127.0.0.1 example.com"));
-        assertEquals(makePair(null, "127.0.0.1.example.com"), RuleDatabase.parseLine("127.0.0.1.example.com "));
-        assertEquals(makePair(null, "::1.example.com"), RuleDatabase.parseLine("::1.example.com "));
-        assertEquals(makePair(null, "0.0.0.0.example.com"), RuleDatabase.parseLine("0.0.0.0.example.com "));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1 example.com "));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1 example.com\t"));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1   example.com "));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("127.0.0.1\t example.com "));
-        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine("::1\t example.com "));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, " 127.0.0.1 example.com"));
+        assertEquals(makePair(null, "127.0.0.1.example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1.example.com "));
+        assertEquals(makePair(null, "::1.example.com"), RuleDatabase.parseLine(STATE_DENY, "::1.example.com "));
+        assertEquals(makePair(null, "0.0.0.0.example.com"), RuleDatabase.parseLine(STATE_DENY, "0.0.0.0.example.com "));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1 example.com "));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1 example.com\t"));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1   example.com "));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "127.0.0.1\t example.com "));
+        assertEquals(makePair(null, "example.com"), RuleDatabase.parseLine(STATE_DENY, "::1\t example.com "));
         // Map to IPv4 host
-        assertEquals(makePair("1.2.3.4", "example.com"), RuleDatabase.parseLine("1.2.3.4 example.com "));
+        assertEquals(makePair("1.2.3.4", "example.com"), RuleDatabase.parseLine(STATE_MAP, "1.2.3.4 example.com "));
         // Map to IPv6 host
         assertEquals(makePair("2001:db8:3333:4444:5555:6666:7777:8888", "example.com"),
-                     RuleDatabase.parseLine("2001:db8:3333:4444:5555:6666:7777:8888 example.com "));
+                     RuleDatabase.parseLine(STATE_MAP, "2001:db8:3333:4444:5555:6666:7777:8888 example.com "));
         // Space between values / map to invalid host
-        assertNull(RuleDatabase.parseLine("non-address example.com"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "non-address example.com"));
         // Invalid lines
-        assertNull(RuleDatabase.parseLine("127.0.0.1 "));
-        assertNull(RuleDatabase.parseLine("127.0.0.1"));
-        assertNull(RuleDatabase.parseLine("0.0.0.0"));
-        assertNull(RuleDatabase.parseLine("0.0.0.0 "));
-        assertNull(RuleDatabase.parseLine("::1 "));
-        assertNull(RuleDatabase.parseLine("::1"));
-        assertNull(RuleDatabase.parseLine("invalid example.com"));
-        assertNull(RuleDatabase.parseLine("invalid\texample.com"));
-        assertNull(RuleDatabase.parseLine("invalid long line"));
-        assertNull(RuleDatabase.parseLine("# comment line"));
-        assertNull(RuleDatabase.parseLine(""));
-        assertNull(RuleDatabase.parseLine("\t"));
-        assertNull(RuleDatabase.parseLine(" "));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "127.0.0.1 "));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "127.0.0.1"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "0.0.0.0"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "0.0.0.0 "));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "::1 "));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "::1"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "invalid example.com"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "invalid\texample.com"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "invalid long line"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "# comment line"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, ""));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, "\t"));
+        assertNull(RuleDatabase.parseLine(STATE_DENY, " "));
     }
-    */
     
     @Test
     public void testLoadReader() throws Exception {

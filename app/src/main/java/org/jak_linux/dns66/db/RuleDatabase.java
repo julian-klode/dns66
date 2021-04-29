@@ -8,8 +8,9 @@
 package org.jak_linux.dns66.db;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.FileHelper;
@@ -21,13 +22,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents hosts that are blocked or mapped.
@@ -40,7 +40,7 @@ public class RuleDatabase {
 
     private static final String TAG = "RuleDatabase";
     private static final RuleDatabase instance = new RuleDatabase();
-    final AtomicReference<HashMap<String, Rule>> rules = new AtomicReference<>(new HashMap<String, Rule>());
+    final AtomicReference<HashMap<String, Rule>> rules = new AtomicReference<>(new HashMap<>());
     HashMap<String, Rule> nextRules = null;
 
     public static class Rule {
@@ -49,7 +49,7 @@ public class RuleDatabase {
         public static Rule createBlockRule() {
             return new Rule(true, null);
         }
-        static Rule createMapRule(InetAddress address) {
+        public static Rule createMapRule(InetAddress address) {
             return new Rule(false, address);
         }
         private Rule(boolean blocked, InetAddress address) {
@@ -84,7 +84,7 @@ public class RuleDatabase {
         }
         @Override
         public String toString() {
-            return "blocked: " + this.blocked + " address: " + String.valueOf(this.address);
+            return "blocked: " + this.blocked + " address: " + this.address;
         }
     }
 
@@ -110,7 +110,7 @@ public class RuleDatabase {
      * @return A pair: IP Address (null if IP address is 0.0.0.0), hostname
      */
     @Nullable
-    static SimpleImmutableEntry<InetAddress, String> parseLine(Configuration.Item item, String line) {
+    static SimpleImmutableEntry<InetAddress, String> parseLine(int state, String line) {
         int endOfLine = line.indexOf('#');
 
         if (endOfLine == -1)
@@ -127,7 +127,7 @@ public class RuleDatabase {
         final InetAddress address;
         final String host;
 
-        if (item.state == Configuration.Item.STATE_MAP) {
+        if (state == Configuration.Item.STATE_MAP) {
             line = line.substring(0, endOfLine);
             Pattern LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)$");
             Matcher matcher = LINE_PATTERN.matcher(line);
@@ -171,8 +171,7 @@ public class RuleDatabase {
             host = line.substring(startOfHost, endOfLine);
         }
 
-        SimpleImmutableEntry pair = new SimpleImmutableEntry(address, host.toLowerCase(Locale.ENGLISH));
-        return pair;
+        return new SimpleImmutableEntry<>(address, host.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -238,16 +237,15 @@ public class RuleDatabase {
         if (reader == null) {
             addLine(item, item.location);
             return;
-        } else {
-            loadReader(item, reader);
         }
+        loadReader(item, reader);
     }
 
     /**
      * Add a single line for an item.
      *
      * @param item The item the line belongs to
-     * @param host The line (<host> or <ip host>)
+     * @param line The line (<host> or <ip host>)
      */
     private void addLine(Configuration.Item item, String line) {
         if (item.state == Configuration.Item.STATE_ALLOW) {
@@ -255,10 +253,12 @@ public class RuleDatabase {
         } else if (item.state == Configuration.Item.STATE_DENY) {
             nextRules.put(line, Rule.createBlockRule());
         } else if (item.state == Configuration.Item.STATE_MAP) {
-            SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item, line);
-            String host = addressHost.getValue();
-            InetAddress address = addressHost.getKey();
-            nextRules.put(host, Rule.createMapRule(address));
+            SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item.state, line);
+            if (addressHost != null) {
+                String host = addressHost.getValue();
+                InetAddress address = addressHost.getKey();
+                nextRules.put(host, Rule.createMapRule(address));
+            }
         }
     }
 
@@ -289,7 +289,7 @@ public class RuleDatabase {
                 while ((line = br.readLine()) != null) {
                     if (Thread.interrupted())
                         throw new InterruptedException("Interrupted");
-                    SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item, line);
+                    SimpleImmutableEntry<InetAddress, String> addressHost = parseLine(item.state, line);
                     if (addressHost != null) {
                         count += 1;
                         addHost(item, addressHost.getKey(), addressHost.getValue());

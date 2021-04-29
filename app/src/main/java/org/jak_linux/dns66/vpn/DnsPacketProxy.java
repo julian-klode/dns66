@@ -24,12 +24,15 @@ import org.pcap4j.packet.IpV6Packet;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.UdpPacket;
 import org.pcap4j.packet.UnknownPacket;
+import org.xbill.DNS.AAAARecord;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
+import org.xbill.DNS.Header;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Rcode;
+import org.xbill.DNS.Record;
 import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.Section;
 import org.xbill.DNS.TextParseException;
@@ -211,16 +214,22 @@ public class DnsPacketProxy {
             } else {
                 InetAddress address = rule.getAddress();
                 Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " mapped to " + address);
-                ARecord record = null;
+                final Record record;
                 try {
-                    record = new ARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
+                    if (address instanceof Inet6Address) {
+                        record = new AAAARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
+                    } else {
+                        record = new ARecord(new Name(dnsQueryName + '.'), Type.A, 59, address);
+                    }
                 } catch (TextParseException e) {
                     throw new RuntimeException(e);
                 }
                 dnsMsg.addRecord(record, Section.ANSWER);
             }
-            dnsMsg.getHeader().setFlag(Flags.QR);
-            dnsMsg.getHeader().setRcode(Rcode.NOERROR);
+            Header header = dnsMsg.getHeader();
+            header.setFlag(Flags.QR);
+            header.setFlag(Flags.RA);
+            header.setRcode(Rcode.NOERROR);
             handleDnsResponse(parsedPacket, dnsMsg.toWire());
         }
     }

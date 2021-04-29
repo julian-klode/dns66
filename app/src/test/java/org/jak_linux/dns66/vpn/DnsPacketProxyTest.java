@@ -3,10 +3,8 @@ package org.jak_linux.dns66.vpn;
 import android.content.Context;
 import android.util.Log;
 
-import org.jak_linux.dns66.Configuration;
 import org.jak_linux.dns66.db.RuleDatabase;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -26,23 +24,32 @@ import org.pcap4j.packet.namednumber.UdpPort;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.xbill.DNS.AAAARecord;
 import org.xbill.DNS.ARecord;
+import org.xbill.DNS.Flags;
+import org.xbill.DNS.Header;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.Record;
 import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.Section;
+import org.xbill.DNS.Type;
 
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.xbill.DNS.Rcode.NOERROR;
-import static org.xbill.DNS.Rcode.NXDOMAIN;
 
 /**
  * Various tests for the core DNS packet proxying code.
@@ -56,17 +63,19 @@ public class DnsPacketProxyTest {
     private RuleDatabase ruleDatabase;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException, UnknownHostException {
         mockEventLoop = new MockEventLoop();
         ruleDatabase = Mockito.mock(RuleDatabase.class);
         dnsPacketProxy = new DnsPacketProxy(mockEventLoop, ruleDatabase);
 
-        Configuration.Item item = new Configuration.Item();
-        item.location = "blocked.example.com";
-        item.state = Configuration.Item.STATE_DENY;
-
         Mockito.when(ruleDatabase.lookup("blocked.example.com")).thenReturn(
                 RuleDatabase.Rule.createBlockRule()
+        );
+        Mockito.when(ruleDatabase.lookup("mapped.example.com")).thenReturn(
+                RuleDatabase.Rule.createMapRule(Inet4Address.getByName("1.2.3.4"))
+        );
+        Mockito.when(ruleDatabase.lookup("mapped6.example.com")).thenReturn(
+                RuleDatabase.Rule.createMapRule(Inet6Address.getByName("2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
         );
 
         PowerMockito.mockStatic(Log.class);
@@ -243,6 +252,111 @@ public class DnsPacketProxyTest {
         assertNull(mockEventLoop.lastResponse);
         assertNotNull(mockEventLoop.lastOutgoing);
         assertEquals(Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}), mockEventLoop.lastOutgoing.getAddress());
+    }
+
+    @Test
+    public void testMap() throws Exception {
+        ARecord question = new ARecord(new Name("mapped.example.com."),
+                0x01,
+                3600,
+                Inet4Address.getByAddress(new byte[]{0, 0, 0, 0})
+        );
+        Message message = Message.newQuery(question);
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr(InetAddress.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr(InetAddress.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV4Packet.Builder()
+                .version(IpVersion.IPV4)
+                .tos(IpV4Rfc791Tos.newInstance((byte) 0))
+                .protocol(IpNumber.UDP)
+                .srcAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        Record expectedQuestion = Record.newRecord(question.getName(), question.getType(), question.getDClass(), 0);
+        ARecord expectedAnswer = new ARecord(new Name("mapped.example.com."), Type.A, 59, InetAddress.getByName("1.2.3.4"));
+
+        assertNotNull(mockEventLoop.lastResponse);
+        assertNull(mockEventLoop.lastOutgoing);
+        assertTrue(mockEventLoop.lastResponse instanceof IpPacket);
+        assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
+
+        Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
+        assertArrayEquals(new Record[]{expectedQuestion}, responseMsg.getSectionArray(Section.QUESTION));
+        assertArrayEquals(new Record[]{expectedAnswer}, responseMsg.getSectionArray(Section.ANSWER));
+        assertEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        Header actualHeader = responseMsg.getHeader();
+        assertEquals(NOERROR, actualHeader.getRcode());
+        assertTrue(actualHeader.getFlag(Flags.QR));
+        assertEquals(actualHeader.getID(), actualHeader.getID());
+    }
+
+    @Test
+    public void testMap6() throws Exception {
+        AAAARecord question = new AAAARecord(new Name("mapped6.example.com."),
+                0x01,
+                3600,
+                Inet6Address.getByName("::1")
+        );
+        Message message = Message.newQuery(question);
+
+        UdpPacket.Builder payLoadBuilder = new UdpPacket.Builder()
+                .srcPort(UdpPort.DOMAIN)
+                .dstPort(UdpPort.DOMAIN)
+                .srcAddr(InetAddress.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr(InetAddress.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(
+                        new UnknownPacket.Builder()
+                                .rawData(message.toWire())
+                );
+
+        IpPacket ipOutPacket = new IpV4Packet.Builder()
+                .version(IpVersion.IPV4)
+                .tos(IpV4Rfc791Tos.newInstance((byte) 0))
+                .protocol(IpNumber.UDP)
+                .srcAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 4, 4}))
+                .dstAddr((Inet4Address) Inet4Address.getByAddress(new byte[]{8, 8, 8, 8}))
+                .correctChecksumAtBuild(true)
+                .correctLengthAtBuild(true)
+                .payloadBuilder(payLoadBuilder)
+                .build();
+
+        dnsPacketProxy.handleDnsRequest(ipOutPacket.getRawData());
+
+        Record expectedQuestion = Record.newRecord(question.getName(), question.getType(), question.getDClass(), 0);
+        Record expectedAnswer = new AAAARecord(new Name("mapped6.example.com."), Type.A, 59,
+                InetAddress.getByName("2001:0db8:85a3:0000:0000:8a2e:0370:7334"));
+
+        assertNotNull(mockEventLoop.lastResponse);
+        assertNull(mockEventLoop.lastOutgoing);
+        assertTrue(mockEventLoop.lastResponse instanceof IpPacket);
+        assertTrue(mockEventLoop.lastResponse.getPayload() instanceof UdpPacket);
+
+        Message responseMsg = new Message(mockEventLoop.lastResponse.getPayload().getPayload().getRawData());
+        assertArrayEquals(new Record[]{expectedQuestion}, responseMsg.getSectionArray(Section.QUESTION));
+        assertArrayEquals(new Record[]{expectedAnswer}, responseMsg.getSectionArray(Section.ANSWER));
+        assertEquals(0, responseMsg.getSectionArray(Section.AUTHORITY).length);
+        Header actualHeader = responseMsg.getHeader();
+        assertEquals(NOERROR, actualHeader.getRcode());
+        assertTrue(actualHeader.getFlag(Flags.QR));
+        assertEquals(actualHeader.getID(), actualHeader.getID());
     }
 
     @Test
