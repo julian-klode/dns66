@@ -62,7 +62,8 @@ Files: app/src/main/res/drawable/ic_state_ignore.xml
 Copyright: 2014-2016 Google
            2017 Julian Andres Klode
 License: Apache-2.0
- Works derived from the ic_security_black_24dp.svg by Google, licensed under the Apache license.
+ Works derived from the ic_security_black_24dp.svg and ic_east_black_24dp.svg by Google,
+ licensed under the Apache license.
 Comment:
  Created by editing the svg with Inkscape, converting to xml via Android studio, and some manual
  clean-up afterwards.

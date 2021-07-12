@@ -84,6 +84,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                         iconView.setContentDescription(context.getString(R.string.do_not_use_dns_server));
                         break;
                     case Configuration.Item.STATE_ALLOW:
+                    case Configuration.Item.STATE_MAP:
                         iconView.setImageDrawable(context.getDrawable(R.drawable.ic_check_box_black_24dp));
                         iconView.setContentDescription(context.getString(R.string.use_dns_server));
                         break;
@@ -99,6 +100,9 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                         break;
                     case Configuration.Item.STATE_ALLOW:
                         iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_allow));
+                        break;
+                    case Configuration.Item.STATE_MAP:
+                        iconView.setImageDrawable(context.getDrawable(R.drawable.ic_state_map));
                         break;
                 }
                 iconView.setContentDescription(context.getResources().getStringArray(R.array.item_states)[item.state]);

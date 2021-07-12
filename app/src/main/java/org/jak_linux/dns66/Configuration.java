@@ -157,9 +157,11 @@ public class Configuration {
     }
 
     public static class Item {
+        // Values match order in strings.xml (Deny, Allow, Ignore, Map)
         public static final int STATE_IGNORE = 2;
         public static final int STATE_DENY = 0;
         public static final int STATE_ALLOW = 1;
+        public static final int STATE_MAP = 3;
         public String title;
         public String location;
         public int state;

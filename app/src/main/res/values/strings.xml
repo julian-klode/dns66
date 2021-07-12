@@ -35,6 +35,7 @@
         <item>Deny</item>
         <item>Allow</item>
         <item>Ignore</item>
+        <item>Map</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
     <string name="translator_credits"/>
@@ -86,6 +87,7 @@
     <string name="legend_host_ignore">Ignore this entry</string>
     <string name="legend_host_allow">Allow access to hosts in this entry</string>
     <string name="legend_host_deny">Deny access to hosts in this entry</string>
+    <string name="legend_host_map">Map hosts to IPs in this entry</string>
     <string name="do_not_use_dns_server">Off</string>
     <string name="use_dns_server">On</string>
     <string name="switch_onboot_description">Start DNS66 when the device is turned on if it was active when the device was turned off.</string>
