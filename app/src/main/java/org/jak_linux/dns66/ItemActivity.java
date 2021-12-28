@@ -41,6 +41,8 @@ public class ItemActivity extends AppCompatActivity {
     private Switch stateSwitch;
     private ImageView imageView;
 
+    private int UIcheck;
+
     public void performFileSearch() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
@@ -82,9 +84,11 @@ public class ItemActivity extends AppCompatActivity {
         if (intent.getIntExtra("STATE_CHOICES", 3) == 2) {
             setContentView(R.layout.activity_item_dns);
             setTitle(R.string.activity_edit_dns_server);
+            UIcheck = 1;
         } else {
             setContentView(R.layout.activity_item);
             setTitle(R.string.activity_edit_filter);
+            UIcheck = 2;
         }
 
         titleText = (TextInputEditText) findViewById(R.id.title);
@@ -171,14 +175,27 @@ public class ItemActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         SharedPreferences.Editor spGenEditor = spGen.edit();
-        if (isSubmit) {
-            spGenEditor.putString("editTitle", "");
-            spGenEditor.putString("editLocation", "");
-            spGenEditor.putBoolean("editState", true);
-        } else {
-            spGenEditor.putString("editTitle", titleText.getText().toString());
-            spGenEditor.putString("editLocation", locationText.getText().toString());
-            spGenEditor.putBoolean("editState", stateSwitch.isChecked());
+        if(UIcheck == 1) {
+            if (isSubmit) {
+                spGenEditor.putString("editTitleDNS", "");
+                spGenEditor.putString("editLocationDNS", "");
+                spGenEditor.putBoolean("editStateDNS", true);
+            } else {
+                spGenEditor.putString("editTitleDNS", titleText.getText().toString());
+                spGenEditor.putString("editLocationDNS", locationText.getText().toString());
+                spGenEditor.putBoolean("editStateDNS", stateSwitch.isChecked());
+            }
+        }
+        else if(UIcheck == 2) {
+            if (isSubmit) {
+                spGenEditor.putString("editTitleHost", "");
+                spGenEditor.putString("editLocationHost", "");
+                spGenEditor.putInt("editStateHost", 0);
+            } else {
+                spGenEditor.putString("editTitleHost", titleText.getText().toString());
+                spGenEditor.putString("editLocationHost", locationText.getText().toString());
+                spGenEditor.putInt("editStateHost", stateSpinner.getSelectedItemPosition());
+            }
         }
         spGenEditor.commit();
     }
@@ -187,9 +204,16 @@ public class ItemActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         spGen = getSharedPreferences("MainActivity", MODE_PRIVATE);
-        titleText.setText(spGen.getString("editTitle", ""));
-        locationText.setText(spGen.getString("editLocation", ""));
-        stateSwitch.setChecked(spGen.getBoolean("editState", true));
+        if(UIcheck == 1) {
+            titleText.setText(spGen.getString("editTitleDNS", ""));
+            locationText.setText(spGen.getString("editLocationDNS", ""));
+            stateSwitch.setChecked(spGen.getBoolean("editStateDNS", true));
+        }
+        else if(UIcheck == 2) {
+            titleText.setText(spGen.getString("editTitleHost", ""));
+            locationText.setText(spGen.getString("editLocationHost", ""));
+            stateSpinner.setSelection(spGen.getInt("editStateHost", 0));
+        }
         isSubmit = false;
     }
 
