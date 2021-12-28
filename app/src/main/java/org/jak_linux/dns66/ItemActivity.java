@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -161,6 +163,36 @@ public class ItemActivity extends AppCompatActivity {
 
     }
 
+    private SharedPreferences spGen;
+
+    private boolean isSubmit;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor spGenEditor = spGen.edit();
+        if (isSubmit) {
+            spGenEditor.putString("editTitle", "");
+            spGenEditor.putString("editLocation", "");
+            spGenEditor.putBoolean("editState", true);
+        } else {
+            spGenEditor.putString("editTitle", titleText.getText().toString());
+            spGenEditor.putString("editLocation", locationText.getText().toString());
+            spGenEditor.putBoolean("editState", stateSwitch.isChecked());
+        }
+        spGenEditor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        spGen = getSharedPreferences("MainActivity", MODE_PRIVATE);
+        titleText.setText(spGen.getString("editTitle", ""));
+        locationText.setText(spGen.getString("editLocation", ""));
+        stateSwitch.setChecked(spGen.getBoolean("editState", true));
+        isSubmit = false;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -193,6 +225,7 @@ public class ItemActivity extends AppCompatActivity {
                 if (stateSwitch != null)
                     intent.putExtra("ITEM_STATE", stateSwitch.isChecked() ? 1 : 0);
                 setResult(RESULT_OK, intent);
+                isSubmit = true;
                 finish();
                 break;
         }
