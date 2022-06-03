@@ -112,6 +112,8 @@
     <string name="unstable_watchdog_message">Watching the connection may cause reconnects and the connection to get stuck</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_continue">Continue</string>
+    <string name="logcat_empty">No logcat output found</string>
+    <string name="action_send_logcat">Send</string>
     <string-array name="allowlist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>

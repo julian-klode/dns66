@@ -211,40 +211,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(infoIntent);
                 break;
             case R.id.action_logcat:
-                sendLogcat();
+                Intent logsIntent = new Intent(this, LogsActivity.class);
+                startActivity(logsIntent);
                 break;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void sendLogcat() {
-        Process proc = null;
-        try {
-            proc = Runtime.getRuntime().exec("logcat -d");
-            InputStream is = proc.getInputStream();
-            BufferedReader bis = new BufferedReader(new InputStreamReader(is));
-            StringBuilder logcat = new StringBuilder();
-            String line;
-            while ((line = bis.readLine()) != null) {
-                logcat.append(line);
-                logcat.append('\n');
-            }
-
-            Intent eMailIntent = new Intent(Intent.ACTION_SEND);
-            eMailIntent.setType("text/plain");
-            eMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"jak@jak-linux.org"});
-            eMailIntent.putExtra(Intent.EXTRA_SUBJECT, "DNS66 Logcat");
-            eMailIntent.putExtra(Intent.EXTRA_TEXT, logcat.toString());
-            eMailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(eMailIntent);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Not supported: " + e, Toast.LENGTH_LONG).show();
-        } finally {
-            if (proc != null)
-                proc.destroy();
-        }
     }
 
     @Override
