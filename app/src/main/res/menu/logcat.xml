@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_refresh_logcat"
+        android:orderInCategory="100"
+        android:title="@string/action_refresh_logcat"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
         android:id="@+id/action_send_logcat"
         android:orderInCategory="100"
         android:title="@string/action_send_logcat"

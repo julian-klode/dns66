@@ -4,23 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="org.jak_linux.dns66.LogsActivity">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/logs_output"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/logs_output"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Logcat output" />
-
-    </LinearLayout>
+        android:scrollbars="horizontal|vertical"
+        android:scrollHorizontally="true"
+        android:textIsSelectable="true"
+        tools:text="@string/sample_logs" />
 
 </ScrollView>

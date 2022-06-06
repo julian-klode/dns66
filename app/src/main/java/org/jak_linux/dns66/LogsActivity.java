@@ -37,10 +37,20 @@ public class LogsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_send_logcat) {
-            sendLogcat();
+        switch (item.getItemId()) {
+            case R.id.action_send_logcat:
+                sendLogcat();
+                break;
+            case R.id.action_refresh_logcat:
+                refresh();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void refresh() {
+        currentLogcat = "";
+        viewLogcat();
     }
 
     private void viewLogcat() {
@@ -54,7 +64,9 @@ public class LogsActivity extends AppCompatActivity {
 
             currentLogcat = logcat;
 
-            ((TextView) findViewById(R.id.logs_output)).setText(logcat);
+            TextView logsOutput = findViewById(R.id.logs_output);
+            logsOutput.setText(logcat);
+            logsOutput.setHorizontallyScrolling(true);
 
         } catch (Exception e) {
             e.printStackTrace();
