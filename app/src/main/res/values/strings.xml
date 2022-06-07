@@ -115,6 +115,7 @@
     <string name="logcat_empty">No logcat output found</string>
     <string name="action_send_logcat">Send</string>
     <string name="action_refresh_logcat">Refresh</string>
+    <string name="option_only_show_dns_requests">Filter DNS requests</string>
     <string-array name="allowlist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>
