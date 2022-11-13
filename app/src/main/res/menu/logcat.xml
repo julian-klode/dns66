@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_refresh_logcat"
+        android:icon="@drawable/ic_refresh"
+        android:orderInCategory="100"
+        android:title="@string/action_refresh_logcat"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_send_logcat"
+        android:orderInCategory="100"
+        android:title="@string/action_send_logcat"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/option_only_show_dns_requests"
+        android:checkable="true"
+        android:orderInCategory="100"
+        android:title="@string/option_only_show_dns_requests"
+        app:showAsAction="ifRoom|withText" />
+
+</menu>

@@ -37,7 +37,7 @@
         <item>Ignore</item>
     </string-array>
     <!-- Translate with something like <Language> Translation: Your Name -->
-    <string name="translator_credits"/>
+    <string name="translator_credits" />
     <string name="app_version_info">Version: %s</string>
     <string name="missing_hosts_files_message">Some of your configured (non-ignored) hosts files are missing.\n\nUse the ‘Refresh’ action to download hosts files.\n\nDo you still want to continue?</string>
     <string name="missing_hosts_files_title">Missing hosts file</string>
@@ -112,9 +112,32 @@
     <string name="unstable_watchdog_message">Watching the connection may cause reconnects and the connection to get stuck</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_continue">Continue</string>
+    <string name="logcat_empty">No logcat output found</string>
+    <string name="action_send_logcat">Send</string>
+    <string name="action_refresh_logcat">Refresh</string>
+    <string name="option_only_show_dns_requests">Filter DNS requests</string>
     <string-array name="allowlist_defaults">
         <item>No apps bypass by default</item>
         <item>All apps bypass by default</item>
         <item>System apps bypass by default</item>
     </string-array>
+    <string name="sample_logs">
+04-28 05:57:44.570   131   131 I chatty  : uid=1000(system) /system/bin/gatekeeperd expire 3 lines
+04-28 05:57:44.624   132   132 I chatty  : uid=0(root) /system/xbin/perfprofd expire 5 lines
+04-28 05:57:45.008   144   144 I chatty  : uid=0(root) /system/bin/dhcptool expire 61 lines
+04-28 05:57:46.338   270   270 I chatty  : uid=0(root) /system/bin/lmkd expire 4 lines
+04-28 05:57:47.547   274   274 D local_opengl: Starting local_opengl
+04-28 05:57:47.554   274   274 D local_opengl: Getting player version
+04-28 05:57:48.535   283   283 I chatty  : uid=0(root) /system/bin/debuggerd expire 3 lines
+04-28 05:57:48.577   287   287 I chatty  : uid=0(root) /system/bin/installd expire 9 lines
+04-28 05:57:48.911   279   279 E network_profile_handler: init_all_network_profile_state: wlan: eth1 phone:rmnet0
+04-28 05:57:48.911   279   279 I network_profile: Redis connect
+04-28 05:57:48.911   279   279 I network_profile: Redis PUB: network_profile status ready
+04-28 05:57:48.912   279   292 I network_profile: Redis read thread
+04-28 05:57:48.913   279   292 I network_profile: Redis read wait
+04-28 05:57:48.918   273   273 D vinput  : Starting Vinput Daemon
+04-28 05:57:48.918   273   273 D vinput  : send_status_async
+04-28 05:57:48.918   273   273 D vinput  : send_status
+04-28 05:57:48.919   273   273 W vinput  : Empty command, we ignore it
+    </string>
 </resources>
