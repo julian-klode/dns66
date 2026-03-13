@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -38,6 +40,8 @@ public class ItemActivity extends AppCompatActivity {
     private Spinner stateSpinner;
     private Switch stateSwitch;
     private ImageView imageView;
+
+    private int UIcheck;
 
     public void performFileSearch() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -80,9 +84,11 @@ public class ItemActivity extends AppCompatActivity {
         if (intent.getIntExtra("STATE_CHOICES", 3) == 2) {
             setContentView(R.layout.activity_item_dns);
             setTitle(R.string.activity_edit_dns_server);
+            UIcheck = 1;
         } else {
             setContentView(R.layout.activity_item);
             setTitle(R.string.activity_edit_filter);
+            UIcheck = 2;
         }
 
         titleText = (TextInputEditText) findViewById(R.id.title);
@@ -161,6 +167,56 @@ public class ItemActivity extends AppCompatActivity {
 
     }
 
+    private SharedPreferences spGen;
+
+    private boolean isSubmit;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor spGenEditor = spGen.edit();
+        if(UIcheck == 1) {
+            if (isSubmit) {
+                spGenEditor.putString("editTitleDNS", "");
+                spGenEditor.putString("editLocationDNS", "");
+                spGenEditor.putBoolean("editStateDNS", true);
+            } else {
+                spGenEditor.putString("editTitleDNS", titleText.getText().toString());
+                spGenEditor.putString("editLocationDNS", locationText.getText().toString());
+                spGenEditor.putBoolean("editStateDNS", stateSwitch.isChecked());
+            }
+        }
+        else if(UIcheck == 2) {
+            if (isSubmit) {
+                spGenEditor.putString("editTitleHost", "");
+                spGenEditor.putString("editLocationHost", "");
+                spGenEditor.putInt("editStateHost", 0);
+            } else {
+                spGenEditor.putString("editTitleHost", titleText.getText().toString());
+                spGenEditor.putString("editLocationHost", locationText.getText().toString());
+                spGenEditor.putInt("editStateHost", stateSpinner.getSelectedItemPosition());
+            }
+        }
+        spGenEditor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        spGen = getSharedPreferences("MainActivity", MODE_PRIVATE);
+        if(UIcheck == 1) {
+            titleText.setText(spGen.getString("editTitleDNS", ""));
+            locationText.setText(spGen.getString("editLocationDNS", ""));
+            stateSwitch.setChecked(spGen.getBoolean("editStateDNS", true));
+        }
+        else if(UIcheck == 2) {
+            titleText.setText(spGen.getString("editTitleHost", ""));
+            locationText.setText(spGen.getString("editLocationHost", ""));
+            stateSpinner.setSelection(spGen.getInt("editStateHost", 0));
+        }
+        isSubmit = false;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -193,6 +249,7 @@ public class ItemActivity extends AppCompatActivity {
                 if (stateSwitch != null)
                     intent.putExtra("ITEM_STATE", stateSwitch.isChecked() ? 1 : 0);
                 setResult(RESULT_OK, intent);
+                isSubmit = true;
                 finish();
                 break;
         }
