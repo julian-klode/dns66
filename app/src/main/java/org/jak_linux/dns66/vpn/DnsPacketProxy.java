@@ -46,6 +46,7 @@ import java.util.Locale;
  */
 public class DnsPacketProxy {
 
+    public static final String DNS_REQUESTS_FILTER_MESSAGE = "handleDnsRequest: DNS Name ";
     private static final String TAG = "DnsPacketProxy";
     // Choose a value that is smaller than the time needed to unblock a host.
     private static final int NEGATIVE_CACHE_TTL_SECONDS = 5;
@@ -201,11 +202,11 @@ public class DnsPacketProxy {
         }
         String dnsQueryName = dnsMsg.getQuestion().getName().toString(true);
         if (!ruleDatabase.isBlocked(dnsQueryName.toLowerCase(Locale.ENGLISH))) {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Allowed, sending to " + destAddr);
+            Log.i(TAG, DNS_REQUESTS_FILTER_MESSAGE + dnsQueryName + " Allowed, sending to " + destAddr);
             DatagramPacket outPacket = new DatagramPacket(dnsRawData, 0, dnsRawData.length, destAddr, parsedUdp.getHeader().getDstPort().valueAsInt());
             eventLoop.forwardPacket(outPacket, parsedPacket);
         } else {
-            Log.i(TAG, "handleDnsRequest: DNS Name " + dnsQueryName + " Blocked!");
+            Log.i(TAG, DNS_REQUESTS_FILTER_MESSAGE + dnsQueryName + " Blocked!");
             dnsMsg.getHeader().setFlag(Flags.QR);
             dnsMsg.getHeader().setRcode(Rcode.NOERROR);
             dnsMsg.addRecord(NEGATIVE_CACHE_SOA_RECORD, Section.AUTHORITY);

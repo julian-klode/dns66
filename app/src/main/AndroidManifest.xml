@@ -17,10 +17,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher"
         android:banner="@drawable/banner"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -32,7 +32,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -42,10 +42,16 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".LogsActivity"
+            android:label="@string/action_logcat"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ItemActivity"
             android:label="@string/activity_edit"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
+
         <service
             android:name=".vpn.AdVpnService"
             android:permission="android.permission.BIND_VPN_SERVICE">
@@ -55,8 +61,9 @@
         </service>
         <service
             android:name=".db.RuleDatabaseUpdateJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <receiver
             android:name=".vpn.BootComplete"
             android:enabled="true"
